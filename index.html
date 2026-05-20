@@ -1,0 +1,2437 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1a6b4a" />
+  <meta name="description" content="CFH – Control Financiero Hogar" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="CFH" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="icon" type="image/png" href="icon-192.png" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <title>CFH – Control Financiero Hogar</title>
+  <style>
+/* ═══════════════════════════════════════════════
+   CFH – Control Financiero Hogar
+   Global Styles
+═══════════════════════════════════════════════ */
+
+:root {
+  --font-ui: 'Outfit', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Light theme */
+  --bg: #f5f6f8;
+  --bg-card: #ffffff;
+  --bg-sidebar: #1a2340;
+  --bg-sidebar-hover: #253358;
+  --bg-sidebar-active: #0f6e56;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --text-sidebar: #94a3b8;
+  --text-sidebar-active: #ffffff;
+  --border: #e2e8f0;
+  --border-focus: #1D9E75;
+  --input-bg: #f8fafc;
+  --overlay: rgba(15, 23, 42, 0.5);
+
+  /* Brand colors */
+  --teal: #1D9E75;
+  --teal-light: #E1F5EE;
+  --teal-dark: #0F6E56;
+  --coral: #D85A30;
+  --coral-light: #FAECE7;
+  --amber: #BA7517;
+  --amber-light: #FAEEDA;
+  --blue: #185FA5;
+  --blue-light: #E6F1FB;
+  --purple: #534AB7;
+  --purple-light: #EEEDFE;
+  --red: #A32D2D;
+  --red-light: #FCEBEB;
+  --green: #3B6D11;
+  --green-light: #EAF3DE;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06);
+  --radius: 10px;
+  --radius-lg: 14px;
+  --sidebar-width: 220px;
+}
+
+[data-theme="dark"] {
+  --bg: #0d1117;
+  --bg-card: #161b22;
+  --bg-sidebar: #0d1117;
+  --bg-sidebar-hover: #1c2433;
+  --bg-sidebar-active: #0f6e56;
+  --text: #e6edf3;
+  --text-muted: #768390;
+  --text-sidebar: #768390;
+  --text-sidebar-active: #ffffff;
+  --border: #30363d;
+  --input-bg: #0d1117;
+  --overlay: rgba(0, 0, 0, 0.7);
+
+  --teal-light: #04342C;
+  --coral-light: #4A1B0C;
+  --amber-light: #412402;
+  --blue-light: #042C53;
+  --purple-light: #26215C;
+  --red-light: #501313;
+  --green-light: #173404;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-ui);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root { display: flex; min-height: 100vh; }
+
+/* ── LAYOUT ───────────────────────────────────── */
+.app-layout {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--bg-sidebar);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.main-content {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── SIDEBAR ─────────────────────────────────── */
+.sidebar-brand {
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.sidebar-brand-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--teal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 8px;
+  font-family: var(--font-mono);
+}
+
+.sidebar-brand-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  line-height: 1.3;
+}
+
+.sidebar-brand-family {
+  font-size: 11px;
+  color: var(--text-sidebar);
+  margin-top: 2px;
+}
+
+.sidebar-nav { padding: 12px 8px; flex: 1; }
+
+.nav-group-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-sidebar);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 8px 8px 4px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  color: var(--text-sidebar);
+  font-size: 13px;
+  font-weight: 400;
+  transition: background 0.15s, color 0.15s;
+  margin-bottom: 1px;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.nav-item:hover { background: var(--bg-sidebar-hover); color: #e2e8f0; }
+.nav-item.active { background: var(--bg-sidebar-active); color: var(--text-sidebar-active); font-weight: 500; }
+
+.nav-item-icon { font-size: 15px; width: 18px; text-align: center; }
+
+.sidebar-month-selector {
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+
+.sidebar-month-label {
+  font-size: 10px;
+  color: var(--text-sidebar);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.month-nav-btn {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 5px;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 3px 7px;
+  font-size: 12px;
+  transition: background 0.15s;
+}
+
+.month-nav-btn:hover { background: rgba(255,255,255,0.08); }
+
+.month-nav-current {
+  font-size: 12px;
+  font-weight: 500;
+  color: #e2e8f0;
+  text-align: center;
+  flex: 1;
+}
+
+.year-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.year-nav span { font-size: 11px; color: var(--text-sidebar); }
+
+.sidebar-balance {
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  margin-bottom: 8px;
+}
+
+.balance-label { font-size: 10px; color: var(--text-sidebar); text-transform: uppercase; letter-spacing: 0.06em; }
+.balance-value { font-size: 18px; font-weight: 600; font-family: var(--font-mono); }
+.balance-positive { color: #5DCAA5; }
+.balance-negative { color: #F09595; }
+
+/* ── HEADER ──────────────────────────────────── */
+.main-header {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.header-title { font-size: 16px; font-weight: 600; }
+.header-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+.header-actions { display: flex; align-items: center; gap: 8px; }
+
+.header-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 12px;
+  font-family: var(--font-ui);
+  transition: all 0.15s;
+}
+
+.header-btn:hover { background: var(--bg); color: var(--text); border-color: var(--border-focus); }
+.header-btn.primary { background: var(--teal); color: white; border-color: var(--teal); font-weight: 500; }
+.header-btn.primary:hover { background: var(--teal-dark); }
+
+/* ── PAGE CONTENT ─────────────────────────────── */
+.page { padding: 24px; max-width: 1100px; }
+
+/* ── CARDS ────────────────────────────────────── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
+
+.card-header-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.card-icon { font-size: 18px; }
+.card-title { font-size: 14px; font-weight: 600; }
+.card-subtitle { font-size: 12px; color: var(--text-muted); }
+.card-total { font-family: var(--font-mono); font-size: 15px; font-weight: 500; }
+.card-body { padding: 14px 18px; }
+
+/* ── KPI CARDS ───────────────────────────────── */
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; }
+
+.kpi-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  border-left: 3px solid;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s;
+}
+
+.kpi-card:hover { box-shadow: var(--shadow-md); }
+.kpi-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; margin-bottom: 8px; }
+.kpi-value { font-size: 22px; font-weight: 600; font-family: var(--font-mono); line-height: 1.2; }
+.kpi-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+.kpi-badge { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 500; padding: 2px 7px; border-radius: 20px; margin-top: 6px; }
+
+/* ── SECTION CARDS ───────────────────────────── */
+.section-grid { display: flex; flex-direction: column; gap: 14px; }
+
+/* ── LINE ITEMS ──────────────────────────────── */
+.line-items { display: flex; flex-direction: column; gap: 2px; }
+
+.line-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 7px;
+  transition: background 0.1s;
+  gap: 8px;
+}
+
+.line-item:hover { background: var(--bg); }
+
+.line-item-left { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+.line-item-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.line-item-name { font-size: 13px; font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.line-item-badge {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.line-item-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.line-item-amount { font-family: var(--font-mono); font-size: 13px; font-weight: 500; }
+.line-item-meta { font-size: 11px; color: var(--text-muted); }
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 3px 5px;
+  border-radius: 5px;
+  color: var(--text-muted);
+  font-size: 12px;
+  transition: background 0.1s, color 0.1s;
+  display: flex;
+  align-items: center;
+}
+
+.icon-btn:hover { background: var(--bg); color: var(--text); }
+.icon-btn.danger:hover { color: var(--red); }
+
+/* ── INPUTS ──────────────────────────────────── */
+.form-field { margin-bottom: 14px; }
+.form-label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.04em; }
+.form-input {
+  width: 100%;
+  padding: 9px 12px;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: var(--font-ui);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.form-input:focus { border-color: var(--border-focus); }
+.form-input[type="number"] { font-family: var(--font-mono); }
+.form-input::placeholder { color: var(--text-muted); opacity: 0.6; }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+
+/* ── BUTTONS ──────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: var(--font-ui);
+  font-weight: 400;
+  background: transparent;
+  color: var(--text);
+  transition: all 0.15s;
+}
+
+.btn:hover { background: var(--bg); }
+
+.btn-primary { background: var(--teal); color: white; border-color: var(--teal); font-weight: 500; }
+.btn-primary:hover { background: var(--teal-dark); border-color: var(--teal-dark); }
+
+.btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 6px; }
+
+.btn-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border: 1px dashed var(--border);
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: var(--font-ui);
+  background: transparent;
+  color: var(--text-muted);
+  transition: all 0.15s;
+  margin-top: 6px;
+}
+
+.btn-add:hover { border-color: var(--teal); color: var(--teal); background: var(--teal-light); }
+
+/* ── MODAL ────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-wide { max-width: 680px; }
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-title { font-size: 15px; font-weight: 600; }
+.modal-body { padding: 20px; }
+
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 16px;
+  padding: 4px;
+  border-radius: 4px;
+  transition: color 0.1s;
+}
+
+.modal-close:hover { color: var(--text); }
+
+/* ── SETUP MODAL (First month) ───────────────── */
+.setup-modal { max-width: 640px; }
+.setup-section { margin-bottom: 20px; }
+.setup-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── TABS (inline) ───────────────────────────── */
+.tab-row { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 20px; overflow-x: auto; }
+.tab-item {
+  padding: 8px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  white-space: nowrap;
+  font-family: var(--font-ui);
+  transition: color 0.15s;
+}
+.tab-item:hover { color: var(--text); }
+.tab-item.active { color: var(--teal); border-bottom-color: var(--teal); font-weight: 500; }
+
+/* ── CHARTS ──────────────────────────────────── */
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.chart-full { margin-bottom: 16px; }
+.chart-title { font-size: 14px; font-weight: 600; margin-bottom: 16px; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-muted); }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── SUMMARY TABLE ───────────────────────────── */
+.summary-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.summary-table th { text-align: left; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 6px 10px; border-bottom: 1px solid var(--border); }
+.summary-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+.summary-table tr:last-child td { border-bottom: none; }
+.summary-table .amount-col { font-family: var(--font-mono); text-align: right; }
+.summary-table .total-row td { font-weight: 600; background: var(--bg); }
+
+/* ── SETUP WIZARD ────────────────────────────── */
+.wizard-steps { display: flex; gap: 4px; margin-bottom: 20px; }
+.wizard-step {
+  flex: 1;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--border);
+  transition: background 0.2s;
+}
+.wizard-step.active { background: var(--teal); }
+.wizard-step.done { background: var(--teal); opacity: 0.4; }
+
+/* ── SETTINGS ────────────────────────────────── */
+.settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.color-swatches { display: flex; gap: 8px; flex-wrap: wrap; }
+.color-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.1s;
+}
+.color-swatch:hover { transform: scale(1.1); }
+.color-swatch.selected { border-color: var(--text); }
+
+/* ── USER PILL ────────────────────────────────── */
+.user-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  transition: all 0.15s;
+}
+.user-pill:hover, .user-pill.active { border-color: var(--teal); color: var(--teal); background: var(--teal-light); }
+.user-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+}
+
+/* ── EMPTY STATE ──────────────────────────────── */
+.empty-state { text-align: center; padding: 28px; color: var(--text-muted); font-size: 13px; }
+.empty-state-icon { font-size: 28px; margin-bottom: 8px; }
+
+/* ── PROGRESS BAR ─────────────────────────────── */
+.progress-bar { height: 5px; background: var(--bg); border-radius: 3px; overflow: hidden; margin-top: 6px; }
+.progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+
+/* ── DIVIDER ──────────────────────────────────── */
+.divider { height: 1px; background: var(--border); margin: 12px 0; }
+
+/* ── BADGE ────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* ── TOTALS BAR ──────────────────────────────── */
+.totals-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.totals-bar-item { padding: 12px 16px; background: var(--bg-card); text-align: center; }
+.totals-bar-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+.totals-bar-value { font-size: 16px; font-weight: 600; font-family: var(--font-mono); }
+
+/* ── ACCORDION SECTION ───────────────────────── */
+.accordion-section { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 10px; background: var(--bg-card); }
+.accordion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.1s;
+  gap: 12px;
+}
+.accordion-header:hover { background: var(--bg); }
+.accordion-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+.accordion-icon { font-size: 17px; flex-shrink: 0; }
+.accordion-name { font-size: 14px; font-weight: 500; }
+.accordion-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.accordion-total { font-family: var(--font-mono); font-size: 14px; font-weight: 500; }
+.accordion-chevron { font-size: 10px; color: var(--text-muted); transition: transform 0.2s; }
+.accordion-chevron.open { transform: rotate(180deg); }
+.accordion-body { border-top: 1px solid var(--border); padding: 12px 16px; }
+
+/* ── RESPONSIVE ──────────────────────────────── */
+@media (max-width: 768px) {
+  :root { --sidebar-width: 0px; }
+  .sidebar { display: none; }
+  .main-content { margin-left: 0; }
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+  .chart-grid { grid-template-columns: 1fr; }
+  .settings-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .kpi-grid { grid-template-columns: 1fr; }
+}
+
+/* ── PRINT ────────────────────────────────────── */
+@media print {
+  .sidebar, .header-actions, .btn-add, .icon-btn { display: none !important; }
+  .main-content { margin-left: 0; }
+  .card { box-shadow: none; border: 1px solid #ddd; }
+}
+
+/* ── SCROLLBAR ────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ── TRANSITIONS ──────────────────────────────── */
+.fade-in { animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+  <script>
+    window.deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      window.deferredInstallPrompt = e;
+      window.dispatchEvent(new CustomEvent('pwa-listo'));
+    });
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('sw.js')
+          .then(function(r){ console.log('SW OK', r.scope); })
+          .catch(function(e){ console.log('SW error:', e); });
+      });
+    }
+  </script>
+</head>
+<body>
+  <div id="root"><div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#64748b">Cargando CFH...</div></div>
+
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect, useMemo, useCallback, useRef } = React;
+    const { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } = Recharts;
+
+const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
+const MONTHS_S = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+const FREQ_OPTS = [
+  { value:'monthly', label:'Mensual' },
+  { value:'quarterly', label:'Trimestral' },
+  { value:'semiannual', label:'Semestral' },
+  { value:'annual', label:'Anual' },
+]
+const CHILD_CATS = [
+  { key:'clothing', label:'Ropa', icon:'👕' },
+  { key:'food', label:'Comida / Restaurantes', icon:'🍽️' },
+  { key:'education', label:'Educación', icon:'📚' },
+  { key:'treats', label:'Caprichos', icon:'🎁' },
+  { key:'leisure', label:'Ocio', icon:'🎠' },
+]
+const THEME_COLORS = ['#1D9E75','#185FA5','#7F77DD','#D85A30','#BA7517','#A32D2D','#3B6D11']
+
+const CLR = {
+  income: '#1D9E75',   incomeBg: '#E1F5EE',
+  fixed:  '#D85A30',   fixedBg:  '#FAECE7',
+  varExp: '#BA7517',   varBg:    '#FAEEDA',
+  leisure:'#7F77DD',   leisBg:   '#EEEDFE',
+  child:  '#185FA5',   childBg:  '#E6F1FB',
+  other:  '#768390',   otherBg:  '#f1f5f9',
+  savings:'#3B6D11',   savBg:    '#EAF3DE',
+  balance:'#0F6E56',
+}
+
+const STORE_KEY = 'cfh_app_v2'
+const today = new Date()
+const CY = today.getFullYear()
+const CM = today.getMonth() + 1
+const genId = () => Math.random().toString(36).slice(2, 11)
+const fmt = (n = 0) => new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 }).format(Number(n) || 0)
+const fmtDate = (s) => s ? new Date(s + 'T00:00:00').toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' }) : ''
+
+// ═══════════════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════════════
+function insAmtForMonth(ins, year, month) {
+  if (ins.freq === 'monthly') return Number(ins.amount) || 0
+  const sy = ins.sy || CY, sm = ins.sm || CM
+  const diff = (year - sy) * 12 + (month - sm)
+  if (diff < 0) return 0
+  if (ins.freq === 'annual') return diff === 0 ? (Number(ins.amount) || 0) : 0
+  if (ins.freq === 'quarterly') return diff % 3 === 0 ? (Number(ins.amount) || 0) : 0
+  if (ins.freq === 'semiannual') return diff % 6 === 0 ? (Number(ins.amount) || 0) : 0
+  return 0
+}
+
+function computeTotals(md, year, month) {
+  if (!md) return { income: 0, fixed: 0, varExp: 0, leisure: 0, children: 0, other: 0, savings: 0, total: 0, balance: 0 }
+  const income =
+    (md.incFixed || []).reduce((s, i) => s + (Number(i.amount) || 0), 0) +
+    (md.incExtra || []).reduce((s, i) => s + (Number(i.amount) || 0), 0)
+  const mortg = Number(md.mortgage) || 0
+  const loans = (md.loans || []).reduce((s, l) => s + (Number(l.amount) || 0), 0)
+  const insur = (md.insurance || []).reduce((s, i) => s + insAmtForMonth(i, year, month), 0)
+  const fixOth = (md.fixOthers || []).reduce((s, i) => s + (Number(i.amount) || 0), 0)
+  const fixed = mortg + loans + insur + fixOth
+  const ve = md.varExp || {}
+  const varExp =
+    ['electricity', 'water', 'supermarket', 'internet', 'phone', 'petrol', 'gas']
+      .reduce((s, k) => s + (Number(ve[k]) || 0), 0) +
+    (ve.others || []).reduce((s, i) => s + (Number(i.amount) || 0), 0)
+  const lei = md.leisure || {}
+  const leisure = ['entertainment', 'dining', 'treats', 'others']
+    .reduce((s, k) => s + (lei[k] || []).reduce((ss, i) => ss + (Number(i.amount) || 0), 0), 0)
+  const children = (md.children || []).reduce((s, child) =>
+    s + CHILD_CATS.map(c => c.key).reduce((ss, k) =>
+      ss + (child[k] || []).reduce((sss, i) => sss + (Number(i.amount) || 0), 0), 0), 0)
+  const oe = md.otherExp || {}
+  const other = ['gifts', 'events', 'others']
+    .reduce((s, k) => s + (oe[k] || []).reduce((ss, i) => ss + (Number(i.amount) || 0), 0), 0)
+  const sv = md.savings || {}
+  const savings =
+    ['vacation', 'home', 'emergency', 'investment'].reduce((s, k) => s + (Number(sv[k]) || 0), 0) +
+    (sv.others || []).reduce((s, i) => s + (Number(i.amount) || 0), 0)
+  const total = fixed + varExp + leisure + children + other + savings
+  return { income, fixed, varExp, leisure, children, other, savings, total, balance: income - total }
+}
+
+function buildEmptyMonth(prev) {
+  return {
+    initialized: false,
+    incFixed: prev?.incFixed?.map(i => ({ ...i, id: genId() })) || [{ id: genId(), name: 'Salario', amount: 0 }],
+    incExtra: [],
+    mortgage: prev?.mortgage || 0,
+    loans: prev?.loans?.map(l => ({ ...l, id: genId() })) || [],
+    insurance: prev?.insurance?.map(i => ({ ...i, id: genId() })) || [],
+    fixOthers: prev?.fixOthers?.map(i => ({ ...i, id: genId() })) || [],
+    varExp: { electricity: 0, water: 0, supermarket: 0, internet: prev?.varExp?.internet || 0, phone: prev?.varExp?.phone || 0, petrol: 0, gas: 0, others: [] },
+    leisure: { entertainment: [], dining: [], treats: [], others: [] },
+    children: prev?.children?.map(c => ({ ...c, id: genId(), clothing: [], food: [], education: [], treats: [], leisure: [] })) || [],
+    otherExp: { gifts: [], events: [], others: [] },
+    savings: { vacation: 0, home: 0, emergency: 0, investment: 0, others: [] },
+  }
+}
+
+function loadStore() {
+  try { const s = localStorage.getItem(STORE_KEY); return s ? JSON.parse(s) : null } catch { return null }
+}
+
+const DEFAULT_STORE = {
+  settings: { theme: 'light', primaryColor: '#1D9E75', familyName: 'Mi Familia', familyPhoto: null },
+  users: [{ id: 'u1', name: 'Usuario 1', color: '#1D9E75' }],
+  currentUser: 'u1',
+  selectedYear: CY,
+  selectedMonth: CM,
+  data: {},
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  REUSABLE COMPONENTS
+// ═══════════════════════════════════════════════════════════════
+function Modal({ title, onClose, children, wide = false }) {
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className={`modal fade-in ${wide ? 'modal-wide' : ''}`}>
+        <div className="modal-header">
+          <span className="modal-title">{title}</span>
+          <button className="modal-close" onClick={onClose}>✕</button>
+        </div>
+        <div className="modal-body">{children}</div>
+      </div>
+    </div>
+  )
+}
+
+function Field({ label, value, onChange, type = 'text', placeholder, min, step, required, children }) {
+  return (
+    <div className="form-field">
+      {label && <label className="form-label">{label}</label>}
+      {children || (
+        <input
+          className="form-input"
+          type={type}
+          value={value}
+          onChange={e => onChange(e.target.value)}
+          placeholder={placeholder}
+          min={min}
+          step={step}
+          required={required}
+        />
+      )}
+    </div>
+  )
+}
+
+function SelectField({ label, value, onChange, options }) {
+  return (
+    <div className="form-field">
+      {label && <label className="form-label">{label}</label>}
+      <select className="form-input" value={value} onChange={e => onChange(e.target.value)}>
+        {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+      </select>
+    </div>
+  )
+}
+
+function LineItem({ name, amount, color, badge, meta, onEdit, onDelete, extra }) {
+  return (
+    <div className="line-item">
+      <div className="line-item-left">
+        {color && <span className="line-item-dot" style={{ background: color }} />}
+        <span className="line-item-name">{name}</span>
+        {badge && <span className="line-item-badge" style={{ background: badge.bg, color: badge.color }}>{badge.text}</span>}
+        {meta && <span className="line-item-meta">{meta}</span>}
+      </div>
+      <div className="line-item-right">
+        {extra && <span className="line-item-meta">{extra}</span>}
+        <span className="line-item-amount">{fmt(amount)}</span>
+        {onEdit && <button className="icon-btn" onClick={onEdit} title="Editar">✏️</button>}
+        {onDelete && <button className="icon-btn danger" onClick={onDelete} title="Eliminar">🗑️</button>}
+      </div>
+    </div>
+  )
+}
+
+function AccordionSection({ icon, title, total, color, colorBg, children, defaultOpen = true, onAdd, addLabel }) {
+  const [open, setOpen] = useState(defaultOpen)
+  return (
+    <div className="accordion-section">
+      <div className="accordion-header" onClick={() => setOpen(!open)}>
+        <div className="accordion-left">
+          <span className="accordion-icon">{icon}</span>
+          <span className="accordion-name">{title}</span>
+        </div>
+        <div className="accordion-right">
+          <span className="accordion-total" style={{ color }}>{fmt(total)}</span>
+          {onAdd && (
+            <button className="btn btn-sm" style={{ background: colorBg, color, borderColor: 'transparent', fontSize: 12 }}
+              onClick={e => { e.stopPropagation(); onAdd() }}>
+              + {addLabel || 'Añadir'}
+            </button>
+          )}
+          <span className={`accordion-chevron ${open ? 'open' : ''}`}>▼</span>
+        </div>
+      </div>
+      {open && <div className="accordion-body fade-in">{children}</div>}
+    </div>
+  )
+}
+
+function KpiCard({ label, value, color, sub, badge }) {
+  return (
+    <div className="kpi-card" style={{ borderLeftColor: color }}>
+      <div className="kpi-label">{label}</div>
+      <div className="kpi-value" style={{ color }}>{value}</div>
+      {sub && <div className="kpi-sub">{sub}</div>}
+      {badge && (
+        <span className="kpi-badge" style={{ background: badge.bg, color: badge.color }}>
+          {badge.text}
+        </span>
+      )}
+    </div>
+  )
+}
+
+function EmptyState({ icon, text }) {
+  return (
+    <div className="empty-state">
+      <div className="empty-state-icon">{icon}</div>
+      <div>{text}</div>
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SETUP WIZARD MODAL
+// ═══════════════════════════════════════════════════════════════
+function SetupModal({ month, year, monthData, onSave, onSkip }) {
+  const [step, setStep] = useState(0)
+  const [mortgage, setMortgage] = useState(String(monthData?.mortgage || ''))
+  const [loans, setLoans] = useState(monthData?.loans || [])
+  const [insurance, setInsurance] = useState(monthData?.insurance || [])
+  const [fixOthers, setFixOthers] = useState(monthData?.fixOthers || [])
+  const [incFixed, setIncFixed] = useState(monthData?.incFixed || [{ id: genId(), name: 'Salario', amount: '' }])
+
+  const steps = ['Ingresos fijos', 'Hipoteca y préstamos', 'Seguros', 'Otros fijos']
+
+  const addLoan = () => setLoans(l => [...l, { id: genId(), name: '', amount: '' }])
+  const updLoan = (id, k, v) => setLoans(l => l.map(x => x.id === id ? { ...x, [k]: v } : x))
+  const delLoan = (id) => setLoans(l => l.filter(x => x.id !== id))
+
+  const addIns = () => setInsurance(l => [...l, { id: genId(), name: '', amount: '', freq: 'monthly', sy: year, sm: month }])
+  const updIns = (id, k, v) => setInsurance(l => l.map(x => x.id === id ? { ...x, [k]: v } : x))
+  const delIns = (id) => setInsurance(l => l.filter(x => x.id !== id))
+
+  const addOther = () => setFixOthers(l => [...l, { id: genId(), name: '', amount: '' }])
+  const updOther = (id, k, v) => setFixOthers(l => l.map(x => x.id === id ? { ...x, [k]: v } : x))
+  const delOther = (id) => setFixOthers(l => l.filter(x => x.id !== id))
+
+  const addInc = () => setIncFixed(l => [...l, { id: genId(), name: '', amount: '' }])
+  const updInc = (id, k, v) => setIncFixed(l => l.map(x => x.id === id ? { ...x, [k]: v } : x))
+  const delInc = (id) => setIncFixed(l => l.filter(x => x.id !== id))
+
+  const handleSave = () => {
+    onSave({ mortgage: Number(mortgage) || 0, loans, insurance, fixOthers, incFixed })
+  }
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal modal-wide fade-in" style={{ maxWidth: 600 }}>
+        <div className="modal-header">
+          <div>
+            <div className="modal-title">⚙️ Configurar {MONTHS[month - 1]} {year}</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>Paso {step + 1} de {steps.length}</div>
+          </div>
+          <button className="modal-close" onClick={onSkip}>✕</button>
+        </div>
+        <div style={{ padding: '0 20px', paddingTop: 16 }}>
+          <div className="wizard-steps">
+            {steps.map((s, i) => (
+              <div key={i} className={`wizard-step ${i < step ? 'done' : i === step ? 'active' : ''}`} />
+            ))}
+          </div>
+          <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 14 }}>{steps[step]}</div>
+        </div>
+        <div className="modal-body" style={{ paddingTop: 0 }}>
+
+          {step === 0 && (
+            <div>
+              {incFixed.map(i => (
+                <div key={i.id} style={{ display: 'grid', gridTemplateColumns: '1fr 120px 36px', gap: 8, marginBottom: 8 }}>
+                  <input className="form-input" placeholder="Nombre ingreso" value={i.name} onChange={e => updInc(i.id, 'name', e.target.value)} />
+                  <input className="form-input" type="number" placeholder="Importe €" min="0" value={i.amount} onChange={e => updInc(i.id, 'amount', e.target.value)} />
+                  <button className="icon-btn danger" onClick={() => delInc(i.id)} style={{ border: '1px solid var(--border)', borderRadius: 7 }}>🗑️</button>
+                </div>
+              ))}
+              <button className="btn-add" onClick={addInc}>+ Añadir ingreso fijo</button>
+            </div>
+          )}
+
+          {step === 1 && (
+            <div>
+              <Field label="Hipoteca / Alquiler mensual">
+                <input className="form-input" type="number" min="0" placeholder="0,00 €" value={mortgage} onChange={e => setMortgage(e.target.value)} />
+              </Field>
+              <div style={{ fontWeight: 500, fontSize: 13, marginBottom: 8, marginTop: 4 }}>Préstamos:</div>
+              {loans.map(l => (
+                <div key={l.id} style={{ display: 'grid', gridTemplateColumns: '1fr 120px 36px', gap: 8, marginBottom: 8 }}>
+                  <input className="form-input" placeholder="Nombre préstamo" value={l.name} onChange={e => updLoan(l.id, 'name', e.target.value)} />
+                  <input className="form-input" type="number" placeholder="Cuota €" min="0" value={l.amount} onChange={e => updLoan(l.id, 'amount', e.target.value)} />
+                  <button className="icon-btn danger" onClick={() => delLoan(l.id)} style={{ border: '1px solid var(--border)', borderRadius: 7 }}>🗑️</button>
+                </div>
+              ))}
+              <button className="btn-add" onClick={addLoan}>+ Añadir préstamo</button>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div>
+              <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 12 }}>
+                Los seguros anuales/trimestrales/semestrales solo computan en el mes que se introducen.
+              </p>
+              {insurance.map(i => (
+                <div key={i.id} style={{ display: 'grid', gridTemplateColumns: '1fr 110px 120px 36px', gap: 8, marginBottom: 8 }}>
+                  <input className="form-input" placeholder="Nombre seguro" value={i.name} onChange={e => updIns(i.id, 'name', e.target.value)} />
+                  <input className="form-input" type="number" placeholder="Importe €" min="0" value={i.amount} onChange={e => updIns(i.id, 'amount', e.target.value)} />
+                  <select className="form-input" value={i.freq} onChange={e => updIns(i.id, 'freq', e.target.value)}>
+                    {FREQ_OPTS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                  </select>
+                  <button className="icon-btn danger" onClick={() => delIns(i.id)} style={{ border: '1px solid var(--border)', borderRadius: 7 }}>🗑️</button>
+                </div>
+              ))}
+              <button className="btn-add" onClick={addIns}>+ Añadir seguro</button>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div>
+              {fixOthers.map(o => (
+                <div key={o.id} style={{ display: 'grid', gridTemplateColumns: '1fr 120px 36px', gap: 8, marginBottom: 8 }}>
+                  <input className="form-input" placeholder="Nombre gasto fijo" value={o.name} onChange={e => updOther(o.id, 'name', e.target.value)} />
+                  <input className="form-input" type="number" placeholder="Importe €" min="0" value={o.amount} onChange={e => updOther(o.id, 'amount', e.target.value)} />
+                  <button className="icon-btn danger" onClick={() => delOther(o.id)} style={{ border: '1px solid var(--border)', borderRadius: 7 }}>🗑️</button>
+                </div>
+              ))}
+              <button className="btn-add" onClick={addOther}>+ Añadir otro gasto fijo</button>
+            </div>
+          )}
+
+          <div className="form-actions" style={{ marginTop: 20 }}>
+            {step > 0 && <button className="btn" onClick={() => setStep(s => s - 1)}>← Anterior</button>}
+            {step < steps.length - 1 ? (
+              <button className="btn btn-primary" onClick={() => setStep(s => s + 1)}>Siguiente →</button>
+            ) : (
+              <button className="btn btn-primary" onClick={handleSave}>✓ Guardar y continuar</button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: RESUMEN (Dashboard)
+// ═══════════════════════════════════════════════════════════════
+function TabResumen({ monthData, totals, year, month, allMonthsData }) {
+  const t = totals
+  const savingsRate = t.income > 0 ? Math.round(((t.income - t.total) / t.income) * 100) : 0
+
+  const annualSummary = useMemo(() => {
+    return MONTHS_S.map((name, i) => {
+      const m = i + 1
+      const key = `${year}-${m}`
+      const md = allMonthsData[key]
+      const mt = computeTotals(md, year, m)
+      return { name, ingresos: mt.income, gastos: mt.total, ahorro: mt.balance }
+    })
+  }, [allMonthsData, year])
+
+  const expBreakdown = [
+    { name: 'G. Fijos', value: t.fixed, color: CLR.fixed },
+    { name: 'G. Variables', value: t.varExp, color: CLR.varExp },
+    { name: 'Ocio', value: t.leisure, color: CLR.leisure },
+    { name: 'Hijos', value: t.children, color: CLR.child },
+    { name: 'Otros', value: t.other, color: CLR.other },
+    { name: 'Ahorro', value: t.savings, color: CLR.savings },
+  ].filter(x => x.value > 0)
+
+  return (
+    <div className="fade-in">
+      <div className="kpi-grid">
+        <KpiCard label="Ingresos del mes" value={fmt(t.income)} color={CLR.income}
+          sub={`${MONTHS[month - 1]} ${year}`}
+          badge={{ text: 'ENTRADAS', bg: CLR.incomeBg, color: CLR.income }} />
+        <KpiCard label="Gastos totales" value={fmt(t.total)} color={CLR.fixed}
+          sub={`Fijos: ${fmt(t.fixed)}`}
+          badge={{ text: 'SALIDAS', bg: CLR.fixedBg, color: CLR.fixed }} />
+        <KpiCard label="Ahorro / Saldo" value={fmt(t.balance)} color={t.balance >= 0 ? CLR.income : CLR.fixed}
+          sub={`Tasa ahorro: ${savingsRate}%`}
+          badge={t.balance >= 0 ? { text: '✓ POSITIVO', bg: CLR.incomeBg, color: CLR.income } : { text: '⚠ NEGATIVO', bg: CLR.fixedBg, color: CLR.fixed }} />
+        <KpiCard label="Ahorro / Inversión" value={fmt(t.savings)} color={CLR.savings}
+          sub="Asignado este mes"
+          badge={{ text: 'AHORRO', bg: CLR.savBg, color: CLR.savings }} />
+      </div>
+
+      <div className="chart-grid">
+        <div className="card">
+          <div className="card-body">
+            <div className="chart-title">Evolución anual {year}</div>
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={annualSummary} barGap={2}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                <XAxis dataKey="name" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v} />
+                <Tooltip formatter={(v) => fmt(v)} contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
+                <Bar dataKey="ingresos" name="Ingresos" fill={CLR.income} radius={[3, 3, 0, 0]} />
+                <Bar dataKey="gastos" name="Gastos" fill={CLR.fixed} radius={[3, 3, 0, 0]} />
+                <Bar dataKey="ahorro" name="Ahorro" fill={CLR.savings} radius={[3, 3, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-body">
+            <div className="chart-title">Distribución gastos — {MONTHS_S[month - 1]}</div>
+            {expBreakdown.length > 0 ? (
+              <>
+                <ResponsiveContainer width="100%" height={160}>
+                  <PieChart>
+                    <Pie data={expBreakdown} dataKey="value" innerRadius={45} outerRadius={70} strokeWidth={0} paddingAngle={2}>
+                      {expBreakdown.map((e, i) => <Cell key={i} fill={e.color} />)}
+                    </Pie>
+                    <Tooltip formatter={(v) => fmt(v)} contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="chart-legend">
+                  {expBreakdown.map((e, i) => (
+                    <div key={i} className="legend-item">
+                      <span className="legend-dot" style={{ background: e.color }} />
+                      <span>{e.name}: {fmt(e.value)}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : <EmptyState icon="📊" text="Sin datos de gastos este mes" />}
+          </div>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-header">
+          <div className="card-header-left">
+            <span className="card-icon">📋</span>
+            <div>
+              <div className="card-title">Resumen del mes — {MONTHS[month - 1]} {year}</div>
+              <div className="card-subtitle">Desglose completo de ingresos y gastos</div>
+            </div>
+          </div>
+        </div>
+        <div className="card-body">
+          <table className="summary-table">
+            <thead>
+              <tr>
+                <th>Categoría</th>
+                <th className="amount-col">Importe</th>
+                <th className="amount-col">% s/ ingresos</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style={{ background: CLR.incomeBg }}><td style={{ color: CLR.income, fontWeight: 500 }}>💰 Ingresos totales</td><td className="amount-col" style={{ color: CLR.income, fontWeight: 600 }}>{fmt(t.income)}</td><td className="amount-col">100%</td></tr>
+              {[
+                { label: '🔒 Gastos fijos', val: t.fixed, color: CLR.fixed },
+                { label: '📊 Gastos variables', val: t.varExp, color: CLR.varExp },
+                { label: '🎭 Ocio', val: t.leisure, color: CLR.leisure },
+                { label: '👶 Hijos', val: t.children, color: CLR.child },
+                { label: '📦 Otros gastos', val: t.other, color: CLR.other },
+                { label: '🎯 Ahorro e inversión', val: t.savings, color: CLR.savings },
+              ].map((row, i) => (
+                <tr key={i}>
+                  <td style={{ color: row.color }}>{row.label}</td>
+                  <td className="amount-col">{fmt(row.val)}</td>
+                  <td className="amount-col">{t.income > 0 ? Math.round((row.val / t.income) * 100) : 0}%</td>
+                </tr>
+              ))}
+              <tr className="total-row">
+                <td>💸 Total gastos</td>
+                <td className="amount-col">{fmt(t.total)}</td>
+                <td className="amount-col">{t.income > 0 ? Math.round((t.total / t.income) * 100) : 0}%</td>
+              </tr>
+              <tr className="total-row" style={{ background: t.balance >= 0 ? CLR.incomeBg : CLR.fixedBg }}>
+                <td style={{ color: t.balance >= 0 ? CLR.income : CLR.fixed }}>{t.balance >= 0 ? '✅' : '❌'} Saldo neto</td>
+                <td className="amount-col" style={{ color: t.balance >= 0 ? CLR.income : CLR.fixed }}>{fmt(t.balance)}</td>
+                <td className="amount-col" style={{ color: t.balance >= 0 ? CLR.income : CLR.fixed }}>{savingsRate}%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: INGRESOS
+// ═══════════════════════════════════════════════════════════════
+function TabIngresos({ monthData, updateMonth }) {
+  const [modalType, setModalType] = useState(null) // 'fixed'|'extra'
+  const [editing, setEditing] = useState(null)
+  const [form, setForm] = useState({ name: '', amount: '', date: '', isFixed: false })
+
+  const incFixed = monthData?.incFixed || []
+  const incExtra = monthData?.incExtra || []
+  const totalFixed = incFixed.reduce((s, i) => s + (Number(i.amount) || 0), 0)
+  const totalExtra = incExtra.reduce((s, i) => s + (Number(i.amount) || 0), 0)
+
+  const openAdd = (type) => {
+    setEditing(null)
+    setForm({ name: '', amount: '', date: today.toISOString().split('T')[0] })
+    setModalType(type)
+  }
+
+  const openEdit = (type, item) => {
+    setEditing(item.id)
+    setForm({ name: item.name, amount: String(item.amount), date: item.date || '' })
+    setModalType(type)
+  }
+
+  const handleSave = () => {
+    if (!form.name || !form.amount) return
+    const item = { id: editing || genId(), name: form.name, amount: Number(form.amount), date: form.date }
+    if (modalType === 'fixed') {
+      updateMonth(md => ({
+        ...md,
+        incFixed: editing ? md.incFixed.map(x => x.id === editing ? item : x) : [...(md.incFixed || []), item]
+      }))
+    } else {
+      updateMonth(md => ({
+        ...md,
+        incExtra: editing ? md.incExtra.map(x => x.id === editing ? item : x) : [...(md.incExtra || []), item]
+      }))
+    }
+    setModalType(null)
+  }
+
+  const del = (type, id) => updateMonth(md => ({
+    ...md,
+    [type === 'fixed' ? 'incFixed' : 'incExtra']: md[type === 'fixed' ? 'incFixed' : 'incExtra'].filter(x => x.id !== id)
+  }))
+
+  return (
+    <div className="fade-in section-grid">
+      <AccordionSection icon="💼" title="Ingresos fijos (nómina, etc.)" total={totalFixed} color={CLR.income} colorBg={CLR.incomeBg} onAdd={() => openAdd('fixed')} addLabel="Ingreso fijo">
+        {incFixed.length === 0 ? <EmptyState icon="💼" text="Sin ingresos fijos configurados" /> :
+          <div className="line-items">
+            {incFixed.map(i => <LineItem key={i.id} name={i.name} amount={i.amount} color={CLR.income} onEdit={() => openEdit('fixed', i)} onDelete={() => del('fixed', i.id)} />)}
+          </div>}
+      </AccordionSection>
+
+      <AccordionSection icon="💡" title="Ingresos extra / extraordinarios" total={totalExtra} color="#7F77DD" colorBg="#EEEDFE" onAdd={() => openAdd('extra')} addLabel="Ingreso extra">
+        {incExtra.length === 0 ? <EmptyState icon="💡" text="Sin ingresos extra este mes" /> :
+          <div className="line-items">
+            {incExtra.map(i => <LineItem key={i.id} name={i.name} amount={i.amount} color="#7F77DD" meta={fmtDate(i.date)} onEdit={() => openEdit('extra', i)} onDelete={() => del('extra', i.id)} />)}
+          </div>}
+      </AccordionSection>
+
+      <div className="card">
+        <div className="card-body" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontWeight: 600, color: 'var(--text-muted)', fontSize: 13 }}>TOTAL INGRESOS</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 600, color: CLR.income }}>{fmt(totalFixed + totalExtra)}</span>
+        </div>
+      </div>
+
+      {modalType && (
+        <Modal title={`${editing ? 'Editar' : 'Añadir'} ingreso ${modalType === 'fixed' ? 'fijo' : 'extra'}`} onClose={() => setModalType(null)}>
+          <Field label="Nombre" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Ej: Salario, Freelance, Dividendos..." />
+          <Field label="Importe (€)" value={form.amount} onChange={v => setForm(f => ({ ...f, amount: v }))} type="number" min="0" step="0.01" placeholder="0,00" />
+          {modalType === 'extra' && <Field label="Fecha" value={form.date} onChange={v => setForm(f => ({ ...f, date: v }))} type="date" />}
+          <div className="form-actions">
+            <button className="btn" onClick={() => setModalType(null)}>Cancelar</button>
+            <button className="btn btn-primary" onClick={handleSave}>✓ Guardar</button>
+          </div>
+        </Modal>
+      )}
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: GASTOS FIJOS
+// ═══════════════════════════════════════════════════════════════
+function TabGastosFijos({ monthData, updateMonth, year, month }) {
+  const [modal, setModal] = useState(null) // 'loan'|'ins'|'other'
+  const [editing, setEditing] = useState(null)
+  const [form, setForm] = useState({ name: '', amount: '', freq: 'monthly' })
+
+  const mortgage = Number(monthData?.mortgage) || 0
+  const loans = monthData?.loans || []
+  const insurance = monthData?.insurance || []
+  const fixOthers = monthData?.fixOthers || []
+  const insTotal = insurance.reduce((s, i) => s + insAmtForMonth(i, year, month), 0)
+  const totalLoans = loans.reduce((s, l) => s + (Number(l.amount) || 0), 0)
+  const totalOthers = fixOthers.reduce((s, o) => s + (Number(o.amount) || 0), 0)
+  const grandTotal = mortgage + totalLoans + insTotal + totalOthers
+
+  const openAdd = (type) => { setEditing(null); setForm({ name: '', amount: '', freq: 'monthly' }); setModal(type) }
+  const openEdit = (type, item) => { setEditing(item.id); setForm({ name: item.name, amount: String(item.amount), freq: item.freq || 'monthly' }); setModal(type) }
+
+  const handleSave = () => {
+    if (!form.name || !form.amount) return
+    if (modal === 'loan') {
+      const item = { id: editing || genId(), name: form.name, amount: Number(form.amount) }
+      updateMonth(md => ({ ...md, loans: editing ? md.loans.map(x => x.id === editing ? item : x) : [...(md.loans || []), item] }))
+    } else if (modal === 'ins') {
+      const item = { id: editing || genId(), name: form.name, amount: Number(form.amount), freq: form.freq, sy: year, sm: month }
+      updateMonth(md => ({ ...md, insurance: editing ? md.insurance.map(x => x.id === editing ? item : x) : [...(md.insurance || []), item] }))
+    } else {
+      const item = { id: editing || genId(), name: form.name, amount: Number(form.amount) }
+      updateMonth(md => ({ ...md, fixOthers: editing ? md.fixOthers.map(x => x.id === editing ? item : x) : [...(md.fixOthers || []), item] }))
+    }
+    setModal(null)
+  }
+
+  const del = (type, id) => updateMonth(md => ({ ...md, [type]: md[type].filter(x => x.id !== id) }))
+  const freqLabel = (f) => FREQ_OPTS.find(o => o.value === f)?.label || f
+
+  return (
+    <div className="fade-in section-grid">
+      <AccordionSection icon="🏠" title="Hipoteca / Alquiler" total={mortgage} color={CLR.fixed} colorBg={CLR.fixedBg}>
+        <div className="line-items">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <input className="form-input" type="number" min="0" step="0.01" placeholder="Importe mensual" style={{ maxWidth: 180 }}
+              value={mortgage || ''} onChange={e => updateMonth(md => ({ ...md, mortgage: Number(e.target.value) || 0 }))} />
+            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>€/mes</span>
+          </div>
+        </div>
+      </AccordionSection>
+
+      <AccordionSection icon="🏦" title="Préstamos" total={totalLoans} color={CLR.fixed} colorBg={CLR.fixedBg} onAdd={() => openAdd('loan')} addLabel="Préstamo">
+        {loans.length === 0 ? <EmptyState icon="🏦" text="Sin préstamos registrados" /> :
+          <div className="line-items">{loans.map(l => <LineItem key={l.id} name={l.name} amount={l.amount} color={CLR.fixed} onEdit={() => openEdit('loan', l)} onDelete={() => del('loans', l.id)} />)}</div>}
+      </AccordionSection>
+
+      <AccordionSection icon="🛡️" title="Seguros" total={insTotal} color={CLR.fixed} colorBg={CLR.fixedBg} onAdd={() => openAdd('ins')} addLabel="Seguro">
+        {insurance.length === 0 ? <EmptyState icon="🛡️" text="Sin seguros registrados" /> :
+          <div className="line-items">
+            {insurance.map(i => {
+              const amt = insAmtForMonth(i, year, month)
+              return <LineItem key={i.id} name={i.name} amount={amt} color={amt > 0 ? CLR.fixed : 'var(--text-muted)'}
+                badge={{ text: freqLabel(i.freq), bg: amt > 0 ? CLR.fixedBg : 'var(--bg)', color: amt > 0 ? CLR.fixed : 'var(--text-muted)' }}
+                onEdit={() => openEdit('ins', i)} onDelete={() => del('insurance', i.id)} />
+            })}
+          </div>}
+      </AccordionSection>
+
+      <AccordionSection icon="📌" title="Otros gastos fijos" total={totalOthers} color={CLR.fixed} colorBg={CLR.fixedBg} onAdd={() => openAdd('other')} addLabel="Otro fijo">
+        {fixOthers.length === 0 ? <EmptyState icon="📌" text="Sin otros gastos fijos" /> :
+          <div className="line-items">{fixOthers.map(o => <LineItem key={o.id} name={o.name} amount={o.amount} color={CLR.fixed} onEdit={() => openEdit('other', o)} onDelete={() => del('fixOthers', o.id)} />)}</div>}
+      </AccordionSection>
+
+      <div className="card">
+        <div className="card-body" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontWeight: 600, color: 'var(--text-muted)', fontSize: 13 }}>TOTAL GASTOS FIJOS</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 600, color: CLR.fixed }}>{fmt(grandTotal)}</span>
+        </div>
+      </div>
+
+      {modal && (
+        <Modal title={`${editing ? 'Editar' : 'Añadir'} ${modal === 'loan' ? 'préstamo' : modal === 'ins' ? 'seguro' : 'gasto fijo'}`} onClose={() => setModal(null)}>
+          <Field label="Nombre" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Nombre descriptivo" />
+          <Field label="Importe (€)" value={form.amount} onChange={v => setForm(f => ({ ...f, amount: v }))} type="number" min="0" step="0.01" />
+          {modal === 'ins' && (
+            <SelectField label="Periodicidad" value={form.freq} onChange={v => setForm(f => ({ ...f, freq: v }))} options={FREQ_OPTS} />
+          )}
+          {modal === 'ins' && form.freq !== 'monthly' && (
+            <div style={{ padding: '10px 14px', background: 'var(--amber-light)', borderRadius: 7, fontSize: 12, color: 'var(--text-muted)', marginBottom: 12 }}>
+              ⚠️ Este seguro solo computará en el cálculo de este mes ({MONTHS[month - 1]}), y cada {form.freq === 'quarterly' ? '3 meses' : form.freq === 'semiannual' ? '6 meses' : 'año'} desde esta fecha.
+            </div>
+          )}
+          <div className="form-actions">
+            <button className="btn" onClick={() => setModal(null)}>Cancelar</button>
+            <button className="btn btn-primary" onClick={handleSave}>✓ Guardar</button>
+          </div>
+        </Modal>
+      )}
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: GASTOS VARIABLES
+// ═══════════════════════════════════════════════════════════════
+function TabGastosVariables({ monthData, updateMonth }) {
+  const [modal, setModal] = useState(false)
+  const [editing, setEditing] = useState(null)
+  const [form, setForm] = useState({ name: '', amount: '' })
+  const ve = monthData?.varExp || {}
+
+  const VAR_FIELDS = [
+    { key: 'electricity', label: '💡 Luz', icon: '💡' },
+    { key: 'water', label: '💧 Agua', icon: '💧' },
+    { key: 'supermarket', label: '🛒 Supermercado', icon: '🛒' },
+    { key: 'internet', label: '🌐 Internet', icon: '🌐' },
+    { key: 'phone', label: '📱 Telefonía', icon: '📱' },
+    { key: 'petrol', label: '⛽ Gasolina', icon: '⛽' },
+    { key: 'gas', label: '🔥 Gas', icon: '🔥' },
+  ]
+
+  const others = ve.others || []
+  const standardTotal = VAR_FIELDS.reduce((s, f) => s + (Number(ve[f.key]) || 0), 0)
+  const othersTotal = others.reduce((s, i) => s + (Number(i.amount) || 0), 0)
+  const grandTotal = standardTotal + othersTotal
+
+  const setField = (key, val) => updateMonth(md => ({ ...md, varExp: { ...(md.varExp || {}), [key]: Number(val) || 0 } }))
+
+  const handleSave = () => {
+    if (!form.name || !form.amount) return
+    const item = { id: editing || genId(), name: form.name, amount: Number(form.amount) }
+    updateMonth(md => ({
+      ...md, varExp: {
+        ...(md.varExp || {}),
+        others: editing ? (md.varExp?.others || []).map(x => x.id === editing ? item : x) : [...(md.varExp?.others || []), item]
+      }
+    }))
+    setModal(false)
+  }
+
+  return (
+    <div className="fade-in">
+      <div className="card" style={{ marginBottom: 14 }}>
+        <div className="card-header">
+          <div className="card-header-left">
+            <span className="card-icon">📊</span>
+            <div className="card-title">Gastos variables estándar</div>
+          </div>
+          <span className="card-total" style={{ color: CLR.varExp }}>{fmt(standardTotal)}</span>
+        </div>
+        <div className="card-body">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 10 }}>
+            {VAR_FIELDS.map(f => (
+              <div key={f.key}>
+                <label className="form-label">{f.label}</label>
+                <input className="form-input" type="number" min="0" step="0.01" placeholder="0,00"
+                  value={ve[f.key] || ''} onChange={e => setField(f.key, e.target.value)} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <AccordionSection icon="➕" title="Otros gastos variables" total={othersTotal} color={CLR.varExp} colorBg={CLR.varBg}
+        onAdd={() => { setEditing(null); setForm({ name: '', amount: '' }); setModal(true) }} addLabel="Otro variable">
+        {others.length === 0 ? <EmptyState icon="➕" text="Sin otros gastos variables" /> :
+          <div className="line-items">
+            {others.map(o => <LineItem key={o.id} name={o.name} amount={o.amount} color={CLR.varExp}
+              onEdit={() => { setEditing(o.id); setForm({ name: o.name, amount: String(o.amount) }); setModal(true) }}
+              onDelete={() => updateMonth(md => ({ ...md, varExp: { ...md.varExp, others: md.varExp.others.filter(x => x.id !== o.id) } }))} />)}
+          </div>}
+      </AccordionSection>
+
+      <div className="card">
+        <div className="card-body" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontWeight: 600, color: 'var(--text-muted)', fontSize: 13 }}>TOTAL GASTOS VARIABLES</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 600, color: CLR.varExp }}>{fmt(grandTotal)}</span>
+        </div>
+      </div>
+
+      {modal && (
+        <Modal title={`${editing ? 'Editar' : 'Añadir'} gasto variable`} onClose={() => setModal(false)}>
+          <Field label="Nombre" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Ej: Parking, Gimnasio..." />
+          <Field label="Importe (€)" value={form.amount} onChange={v => setForm(f => ({ ...f, amount: v }))} type="number" min="0" step="0.01" />
+          <div className="form-actions">
+            <button className="btn" onClick={() => setModal(false)}>Cancelar</button>
+            <button className="btn btn-primary" onClick={handleSave}>✓ Guardar</button>
+          </div>
+        </Modal>
+      )}
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: OCIO
+// ═══════════════════════════════════════════════════════════════
+function TabOcio({ monthData, updateMonth }) {
+  const [modal, setModal] = useState(null) // section key
+  const [editing, setEditing] = useState(null)
+  const [form, setForm] = useState({ name: '', amount: '', date: '', person: '', isFixed: false, isAnnual: false })
+  const lei = monthData?.leisure || {}
+
+  const SECTIONS = [
+    { key: 'entertainment', label: 'Entretenimiento', icon: '🎬', color: CLR.leisure, bg: CLR.leisBg },
+    { key: 'dining', label: 'Restauración', icon: '🍽️', color: '#D85A30', bg: '#FAECE7' },
+    { key: 'treats', label: 'Caprichos', icon: '🛍️', color: '#BA7517', bg: '#FAEEDA' },
+    { key: 'others', label: 'Otros ocio', icon: '✨', color: '#768390', bg: '#f1f5f9' },
+  ]
+
+  const openAdd = (key) => { setEditing(null); setForm({ name: '', amount: '', date: today.toISOString().split('T')[0], person: '', isFixed: false, isAnnual: false }); setModal(key) }
+  const openEdit = (key, item) => { setEditing(item.id); setForm({ name: item.name, amount: String(item.amount), date: item.date || '', person: item.person || '', isFixed: !!item.isFixed, isAnnual: !!item.isAnnual }); setModal(key) }
+
+  const handleSave = () => {
+    if (!form.name || !form.amount) return
+    const item = { id: editing || genId(), name: form.name, amount: Number(form.amount), date: form.date, person: form.person, isFixed: form.isFixed, isAnnual: form.isAnnual }
+    updateMonth(md => ({
+      ...md, leisure: {
+        ...(md.leisure || {}),
+        [modal]: editing ? (lei[modal] || []).map(x => x.id === editing ? item : x) : [...(lei[modal] || []), item]
+      }
+    }))
+    setModal(null)
+  }
+
+  const del = (key, id) => updateMonth(md => ({ ...md, leisure: { ...(md.leisure || {}), [key]: (lei[key] || []).filter(x => x.id !== id) } }))
+
+  const totalAll = SECTIONS.reduce((s, sec) => s + (lei[sec.key] || []).reduce((ss, i) => ss + (Number(i.amount) || 0), 0), 0)
+
+  return (
+    <div className="fade-in section-grid">
+      {SECTIONS.map(sec => {
+        const items = lei[sec.key] || []
+        const total = items.reduce((s, i) => s + (Number(i.amount) || 0), 0)
+        return (
+          <AccordionSection key={sec.key} icon={sec.icon} title={sec.label} total={total} color={sec.color} colorBg={sec.bg}
+            onAdd={() => openAdd(sec.key)} addLabel={sec.label}>
+            {items.length === 0 ? <EmptyState icon={sec.icon} text={`Sin ${sec.label.toLowerCase()} este mes`} /> :
+              <div className="line-items">
+                {items.map(i => (
+                  <LineItem key={i.id} name={i.name} amount={i.amount} color={sec.color}
+                    meta={[fmtDate(i.date), i.person].filter(Boolean).join(' · ')}
+                    badge={i.isFixed ? { text: 'FIJO', bg: sec.bg, color: sec.color } : i.isAnnual ? { text: 'ANUAL', bg: '#FAEEDA', color: '#BA7517' } : null}
+                    onEdit={() => openEdit(sec.key, i)} onDelete={() => del(sec.key, i.id)} />
+                ))}
+              </div>}
+          </AccordionSection>
+        )
+      })}
+
+      <div className="card">
+        <div className="card-body" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontWeight: 600, color: 'var(--text-muted)', fontSize: 13 }}>TOTAL OCIO</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 600, color: CLR.leisure }}>{fmt(totalAll)}</span>
+        </div>
+      </div>
+
+      {modal && (
+        <Modal title={`Añadir ${SECTIONS.find(s => s.key === modal)?.label || ''}`} onClose={() => setModal(null)}>
+          <Field label="Nombre / Descripción" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Ej: Cine, Restaurante La Paloma..." />
+          <div className="form-row">
+            <Field label="Importe (€)" value={form.amount} onChange={v => setForm(f => ({ ...f, amount: v }))} type="number" min="0" step="0.01" />
+            <Field label="Fecha" value={form.date} onChange={v => setForm(f => ({ ...f, date: v }))} type="date" />
+          </div>
+          <Field label="Mano rota (¿quién gasta?)" value={form.person} onChange={v => setForm(f => ({ ...f, person: v }))} placeholder="Nombre de la persona" />
+          <div style={{ display: 'flex', gap: 16, marginBottom: 14 }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, cursor: 'pointer' }}>
+              <input type="checkbox" checked={form.isFixed} onChange={e => setForm(f => ({ ...f, isFixed: e.target.checked, isAnnual: false }))} />
+              Gasto fijo mensual
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, cursor: 'pointer' }}>
+              <input type="checkbox" checked={form.isAnnual} onChange={e => setForm(f => ({ ...f, isAnnual: e.target.checked, isFixed: false }))} />
+              Pago anual (solo este mes)
+            </label>
+          </div>
+          <div className="form-actions">
+            <button className="btn" onClick={() => setModal(null)}>Cancelar</button>
+            <button className="btn btn-primary" onClick={handleSave}>✓ Guardar</button>
+          </div>
+        </Modal>
+      )}
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: HIJOS
+// ═══════════════════════════════════════════════════════════════
+function TabHijos({ monthData, updateMonth }) {
+  const [addChildModal, setAddChildModal] = useState(false)
+  const [childName, setChildName] = useState('')
+  const [modal, setModal] = useState(null) // { childId, catKey }
+  const [editing, setEditing] = useState(null)
+  const [form, setForm] = useState({ name: '', amount: '', date: '' })
+  const children = monthData?.children || []
+
+  const addChild = () => {
+    if (!childName.trim()) return
+    const child = { id: genId(), name: childName.trim(), clothing: [], food: [], education: [], treats: [], leisure: [] }
+    updateMonth(md => ({ ...md, children: [...(md.children || []), child] }))
+    setChildName(''); setAddChildModal(false)
+  }
+  const delChild = (id) => updateMonth(md => ({ ...md, children: md.children.filter(c => c.id !== id) }))
+
+  const openAdd = (childId, catKey) => { setEditing(null); setForm({ name: '', amount: '', date: today.toISOString().split('T')[0] }); setModal({ childId, catKey }) }
+  const openEdit = (childId, catKey, item) => { setEditing(item.id); setForm({ name: item.name, amount: String(item.amount), date: item.date || '' }); setModal({ childId, catKey }) }
+
+  const handleSave = () => {
+    if (!form.name || !form.amount) return
+    const item = { id: editing || genId(), name: form.name, amount: Number(form.amount), date: form.date }
+    updateMonth(md => ({
+      ...md,
+      children: md.children.map(c => c.id === modal.childId ? {
+        ...c,
+        [modal.catKey]: editing ? c[modal.catKey].map(x => x.id === editing ? item : x) : [...(c[modal.catKey] || []), item]
+      } : c)
+    }))
+    setModal(null)
+  }
+
+  const delItem = (childId, catKey, itemId) => updateMonth(md => ({
+    ...md, children: md.children.map(c => c.id === childId ? { ...c, [catKey]: c[catKey].filter(x => x.id !== itemId) } : c)
+  }))
+
+  const childTotal = (child) => CHILD_CATS.reduce((s, cat) => s + (child[cat.key] || []).reduce((ss, i) => ss + (Number(i.amount) || 0), 0), 0)
+
+  return (
+    <div className="fade-in">
+      {children.length === 0 ? (
+        <div className="card" style={{ marginBottom: 14 }}>
+          <div className="card-body" style={{ textAlign: 'center', padding: '32px' }}>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>👶</div>
+            <div style={{ fontSize: 15, fontWeight: 500, marginBottom: 8 }}>Sin hijos configurados</div>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 20 }}>Añade hijos para registrar sus gastos</div>
+            <button className="btn btn-primary" onClick={() => setAddChildModal(true)}>+ Añadir hijo/a</button>
+          </div>
+        </div>
+      ) : (
+        <div className="section-grid">
+          {children.map(child => (
+            <div key={child.id} className="card">
+              <div className="card-header">
+                <div className="card-header-left">
+                  <span style={{ fontSize: 20 }}>👶</span>
+                  <div>
+                    <div className="card-title">{child.name}</div>
+                    <div className="card-subtitle">Total: {fmt(childTotal(child))}</div>
+                  </div>
+                </div>
+                <button className="btn btn-sm" style={{ color: 'var(--red)', borderColor: 'var(--red)' }} onClick={() => delChild(child.id)}>Eliminar</button>
+              </div>
+              <div className="card-body">
+                {CHILD_CATS.map(cat => {
+                  const items = child[cat.key] || []
+                  const total = items.reduce((s, i) => s + (Number(i.amount) || 0), 0)
+                  return (
+                    <AccordionSection key={cat.key} icon={cat.icon} title={cat.label} total={total} color={CLR.child} colorBg={CLR.childBg}
+                      defaultOpen={false} onAdd={() => openAdd(child.id, cat.key)} addLabel="Gasto">
+                      {items.length === 0 ? <EmptyState icon={cat.icon} text={`Sin gastos de ${cat.label.toLowerCase()}`} /> :
+                        <div className="line-items">
+                          {items.map(i => <LineItem key={i.id} name={i.name} amount={i.amount} color={CLR.child}
+                            meta={fmtDate(i.date)}
+                            onEdit={() => openEdit(child.id, cat.key, i)}
+                            onDelete={() => delItem(child.id, cat.key, i.id)} />)}
+                        </div>}
+                    </AccordionSection>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
+          <button className="btn-add" style={{ width: '100%', padding: '12px', justifyContent: 'center' }} onClick={() => setAddChildModal(true)}>
+            + Añadir otro hijo/a
+          </button>
+        </div>
+      )}
+
+      {addChildModal && (
+        <Modal title="Añadir hijo/a" onClose={() => setAddChildModal(false)}>
+          <Field label="Nombre del hijo/a" value={childName} onChange={setChildName} placeholder="Ej: Carlos, María..." />
+          <div className="form-actions">
+            <button className="btn" onClick={() => setAddChildModal(false)}>Cancelar</button>
+            <button className="btn btn-primary" onClick={addChild}>✓ Añadir</button>
+          </div>
+        </Modal>
+      )}
+
+      {modal && (
+        <Modal title={`Añadir gasto — ${CHILD_CATS.find(c => c.key === modal.catKey)?.label}`} onClose={() => setModal(null)}>
+          <Field label="Descripción" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Descripción del gasto" />
+          <div className="form-row">
+            <Field label="Importe (€)" value={form.amount} onChange={v => setForm(f => ({ ...f, amount: v }))} type="number" min="0" step="0.01" />
+            <Field label="Fecha" value={form.date} onChange={v => setForm(f => ({ ...f, date: v }))} type="date" />
+          </div>
+          <div className="form-actions">
+            <button className="btn" onClick={() => setModal(null)}>Cancelar</button>
+            <button className="btn btn-primary" onClick={handleSave}>✓ Guardar</button>
+          </div>
+        </Modal>
+      )}
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: OTROS GASTOS
+// ═══════════════════════════════════════════════════════════════
+function TabOtrosGastos({ monthData, updateMonth }) {
+  const [modal, setModal] = useState(null)
+  const [editing, setEditing] = useState(null)
+  const [form, setForm] = useState({ name: '', amount: '', date: '' })
+  const oe = monthData?.otherExp || {}
+
+  const SECS = [
+    { key: 'gifts', label: 'Regalos', icon: '🎁', color: '#D85A30', bg: '#FAECE7' },
+    { key: 'events', label: 'Eventos', icon: '🎉', color: '#7F77DD', bg: '#EEEDFE' },
+    { key: 'others', label: 'Otros', icon: '📦', color: CLR.other, bg: CLR.otherBg },
+  ]
+
+  const openAdd = (key) => { setEditing(null); setForm({ name: '', amount: '', date: today.toISOString().split('T')[0] }); setModal(key) }
+  const openEdit = (key, item) => { setEditing(item.id); setForm({ name: item.name, amount: String(item.amount), date: item.date || '' }); setModal(key) }
+
+  const handleSave = () => {
+    if (!form.name || !form.amount) return
+    const item = { id: editing || genId(), name: form.name, amount: Number(form.amount), date: form.date }
+    updateMonth(md => ({
+      ...md, otherExp: {
+        ...(md.otherExp || {}),
+        [modal]: editing ? (oe[modal] || []).map(x => x.id === editing ? item : x) : [...(oe[modal] || []), item]
+      }
+    }))
+    setModal(null)
+  }
+
+  const del = (key, id) => updateMonth(md => ({ ...md, otherExp: { ...md.otherExp, [key]: (oe[key] || []).filter(x => x.id !== id) } }))
+  const grandTotal = SECS.reduce((s, sec) => s + (oe[sec.key] || []).reduce((ss, i) => ss + (Number(i.amount) || 0), 0), 0)
+
+  return (
+    <div className="fade-in section-grid">
+      {SECS.map(sec => {
+        const items = oe[sec.key] || []
+        const total = items.reduce((s, i) => s + (Number(i.amount) || 0), 0)
+        return (
+          <AccordionSection key={sec.key} icon={sec.icon} title={sec.label} total={total} color={sec.color} colorBg={sec.bg}
+            onAdd={() => openAdd(sec.key)} addLabel={sec.label}>
+            {items.length === 0 ? <EmptyState icon={sec.icon} text={`Sin ${sec.label.toLowerCase()} este mes`} /> :
+              <div className="line-items">
+                {items.map(i => <LineItem key={i.id} name={i.name} amount={i.amount} color={sec.color} meta={fmtDate(i.date)}
+                  onEdit={() => openEdit(sec.key, i)} onDelete={() => del(sec.key, i.id)} />)}
+              </div>}
+          </AccordionSection>
+        )
+      })}
+      <div className="card">
+        <div className="card-body" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontWeight: 600, color: 'var(--text-muted)', fontSize: 13 }}>TOTAL OTROS GASTOS</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 600, color: CLR.other }}>{fmt(grandTotal)}</span>
+        </div>
+      </div>
+
+      {modal && (
+        <Modal title={`Añadir ${SECS.find(s => s.key === modal)?.label || ''}`} onClose={() => setModal(null)}>
+          <Field label="Descripción" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Descripción del gasto" />
+          <div className="form-row">
+            <Field label="Importe (€)" value={form.amount} onChange={v => setForm(f => ({ ...f, amount: v }))} type="number" min="0" step="0.01" />
+            <Field label="Fecha" value={form.date} onChange={v => setForm(f => ({ ...f, date: v }))} type="date" />
+          </div>
+          <div className="form-actions">
+            <button className="btn" onClick={() => setModal(null)}>Cancelar</button>
+            <button className="btn btn-primary" onClick={handleSave}>✓ Guardar</button>
+          </div>
+        </Modal>
+      )}
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: AHORRO E INVERSIÓN
+// ═══════════════════════════════════════════════════════════════
+function TabAhorro({ monthData, updateMonth }) {
+  const [modal, setModal] = useState(false)
+  const [editing, setEditing] = useState(null)
+  const [form, setForm] = useState({ name: '', amount: '' })
+  const sv = monthData?.savings || {}
+
+  const STD_FIELDS = [
+    { key: 'vacation', label: '🏖️ Ahorro vacaciones', color: '#185FA5' },
+    { key: 'home', label: '🏠 Ahorro hogar', color: '#1D9E75' },
+    { key: 'emergency', label: '🛟 Fondo de emergencia', color: '#D85A30' },
+    { key: 'investment', label: '📈 Inversión', color: '#7F77DD' },
+  ]
+  const others = sv.others || []
+  const stdTotal = STD_FIELDS.reduce((s, f) => s + (Number(sv[f.key]) || 0), 0)
+  const othersTotal = others.reduce((s, i) => s + (Number(i.amount) || 0), 0)
+  const grandTotal = stdTotal + othersTotal
+  const setField = (key, val) => updateMonth(md => ({ ...md, savings: { ...(md.savings || {}), [key]: Number(val) || 0 } }))
+
+  const handleSave = () => {
+    if (!form.name || !form.amount) return
+    const item = { id: editing || genId(), name: form.name, amount: Number(form.amount) }
+    updateMonth(md => ({
+      ...md, savings: {
+        ...(md.savings || {}),
+        others: editing ? (md.savings?.others || []).map(x => x.id === editing ? item : x) : [...(md.savings?.others || []), item]
+      }
+    }))
+    setModal(false)
+  }
+
+  return (
+    <div className="fade-in">
+      <div className="card" style={{ marginBottom: 14 }}>
+        <div className="card-header">
+          <div className="card-header-left">
+            <span className="card-icon">🎯</span>
+            <div className="card-title">Ahorro e inversión mensual</div>
+          </div>
+          <span className="card-total" style={{ color: CLR.savings }}>{fmt(stdTotal)}</span>
+        </div>
+        <div className="card-body">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 10 }}>
+            {STD_FIELDS.map(f => (
+              <div key={f.key}>
+                <label className="form-label">{f.label}</label>
+                <input className="form-input" type="number" min="0" step="0.01" placeholder="0,00"
+                  value={sv[f.key] || ''} onChange={e => setField(f.key, e.target.value)} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <AccordionSection icon="➕" title="Otros ahorros / objetivos" total={othersTotal} color={CLR.savings} colorBg={CLR.savBg}
+        onAdd={() => { setEditing(null); setForm({ name: '', amount: '' }); setModal(true) }} addLabel="Objetivo">
+        {others.length === 0 ? <EmptyState icon="🎯" text="Sin otros objetivos de ahorro" /> :
+          <div className="line-items">
+            {others.map(o => <LineItem key={o.id} name={o.name} amount={o.amount} color={CLR.savings}
+              onEdit={() => { setEditing(o.id); setForm({ name: o.name, amount: String(o.amount) }); setModal(true) }}
+              onDelete={() => updateMonth(md => ({ ...md, savings: { ...md.savings, others: md.savings.others.filter(x => x.id !== o.id) } }))} />)}
+          </div>}
+      </AccordionSection>
+
+      <div className="card">
+        <div className="card-body" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontWeight: 600, color: 'var(--text-muted)', fontSize: 13 }}>TOTAL AHORRO E INVERSIÓN</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 600, color: CLR.savings }}>{fmt(grandTotal)}</span>
+        </div>
+      </div>
+
+      {modal && (
+        <Modal title={`${editing ? 'Editar' : 'Añadir'} objetivo de ahorro`} onClose={() => setModal(false)}>
+          <Field label="Nombre del objetivo" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Ej: Ahorro coche, Viaje Japón..." />
+          <Field label="Importe mensual (€)" value={form.amount} onChange={v => setForm(f => ({ ...f, amount: v }))} type="number" min="0" step="0.01" />
+          <div className="form-actions">
+            <button className="btn" onClick={() => setModal(false)}>Cancelar</button>
+            <button className="btn btn-primary" onClick={handleSave}>✓ Guardar</button>
+          </div>
+        </Modal>
+      )}
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: GRÁFICOS
+// ═══════════════════════════════════════════════════════════════
+function TabGraficos({ allMonthsData, year, month }) {
+  const [selMonth, setSelMonth] = useState(month)
+
+  const selMd = allMonthsData[`${year}-${selMonth}`]
+  const selTotals = computeTotals(selMd, year, selMonth)
+
+  const annualData = useMemo(() => MONTHS_S.map((name, i) => {
+    const m = i + 1
+    const md = allMonthsData[`${year}-${m}`]
+    const t = computeTotals(md, year, m)
+    return { name, ingresos: t.income, 'G. Fijos': t.fixed, 'G. Variables': t.varExp, Ocio: t.leisure, Ahorro: t.savings, total: t.total }
+  }), [allMonthsData, year])
+
+  const monthBreakdown = [
+    { name: 'G. Fijos', value: selTotals.fixed, fill: CLR.fixed },
+    { name: 'G. Variables', value: selTotals.varExp, fill: CLR.varExp },
+    { name: 'Ocio', value: selTotals.leisure, fill: CLR.leisure },
+    { name: 'Hijos', value: selTotals.children, fill: CLR.child },
+    { name: 'Otros', value: selTotals.other, fill: CLR.other },
+    { name: 'Ahorro', value: selTotals.savings, fill: CLR.savings },
+  ].filter(x => x.value > 0)
+
+  const barData = [
+    { name: 'Ingresos', value: selTotals.income, fill: CLR.income },
+    ...monthBreakdown,
+    { name: 'SALDO', value: selTotals.balance, fill: selTotals.balance >= 0 ? CLR.income : CLR.fixed },
+  ]
+
+  const TT_STYLE = { background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }
+
+  return (
+    <div className="fade-in">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+        <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Mes detallado:</span>
+        <select className="form-input" style={{ width: 160 }} value={selMonth} onChange={e => setSelMonth(Number(e.target.value))}>
+          {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
+        </select>
+      </div>
+
+      {/* Chart 1: Month bars */}
+      <div className="card chart-full">
+        <div className="card-body">
+          <div className="chart-title">📊 Ingresos vs. Gastos — {MONTHS[selMonth - 1]} {year}</div>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={barData} layout="vertical" margin={{ left: 80, right: 20 }}>
+              <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--border)" />
+              <XAxis type="number" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false}
+                tickFormatter={v => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v} />
+              <YAxis type="category" dataKey="name" tick={{ fill: 'var(--text)', fontSize: 12 }} axisLine={false} tickLine={false} width={80} />
+              <Tooltip formatter={(v) => fmt(v)} contentStyle={TT_STYLE} />
+              <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                {barData.map((d, i) => <Cell key={i} fill={d.fill} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Chart 2: Annual */}
+      <div className="card chart-full">
+        <div className="card-body">
+          <div className="chart-title">📈 Evolución anual — {year}</div>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={annualData} barGap={2} barCategoryGap="25%">
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+              <XAxis dataKey="name" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false}
+                tickFormatter={v => v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v} />
+              <Tooltip formatter={(v) => fmt(v)} contentStyle={TT_STYLE} />
+              <Legend wrapperStyle={{ fontSize: 12 }} />
+              <Bar dataKey="ingresos" name="Ingresos" fill={CLR.income} radius={[3, 3, 0, 0]} />
+              <Bar dataKey="total" name="Gastos totales" fill={CLR.fixed} radius={[3, 3, 0, 0]} />
+              <Bar dataKey="Ahorro" name="Ahorro" fill={CLR.savings} radius={[3, 3, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Chart 3: Pie */}
+      <div className="chart-grid">
+        <div className="card">
+          <div className="card-body">
+            <div className="chart-title">🥧 Distribución gastos — {MONTHS[selMonth - 1]}</div>
+            {monthBreakdown.length > 0 ? (
+              <>
+                <ResponsiveContainer width="100%" height={220}>
+                  <PieChart>
+                    <Pie data={monthBreakdown} dataKey="value" cx="50%" cy="50%" outerRadius={85} strokeWidth={0} paddingAngle={2}
+                      label={({ name, percent }) => `${name} ${Math.round(percent * 100)}%`}
+                      labelLine={{ stroke: 'var(--border)', strokeWidth: 1 }}>
+                      {monthBreakdown.map((d, i) => <Cell key={i} fill={d.fill} />)}
+                    </Pie>
+                    <Tooltip formatter={(v) => fmt(v)} contentStyle={TT_STYLE} />
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="chart-legend" style={{ justifyContent: 'center' }}>
+                  {monthBreakdown.map((d, i) => (
+                    <div key={i} className="legend-item">
+                      <span className="legend-dot" style={{ background: d.fill }} />
+                      <span>{d.name}: {fmt(d.value)}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : <EmptyState icon="📊" text="Sin datos de gastos para este mes" />}
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-body">
+            <div className="chart-title">📋 Resumen acumulado {year}</div>
+            <table className="summary-table">
+              <thead><tr><th>Mes</th><th className="amount-col">Ingresos</th><th className="amount-col">Gastos</th><th className="amount-col">Saldo</th></tr></thead>
+              <tbody>
+                {annualData.filter(d => d.ingresos > 0 || d.total > 0).map((d, i) => (
+                  <tr key={i}>
+                    <td>{d.name}</td>
+                    <td className="amount-col" style={{ color: CLR.income }}>{fmt(d.ingresos)}</td>
+                    <td className="amount-col" style={{ color: CLR.fixed }}>{fmt(d.total)}</td>
+                    <td className="amount-col" style={{ color: d.ingresos - d.total >= 0 ? CLR.income : CLR.fixed }}>{fmt(d.ingresos - d.total)}</td>
+                  </tr>
+                ))}
+                {(() => {
+                  const totInc = annualData.reduce((s, d) => s + d.ingresos, 0)
+                  const totGas = annualData.reduce((s, d) => s + d.total, 0)
+                  return (
+                    <tr className="total-row">
+                      <td>TOTAL</td>
+                      <td className="amount-col" style={{ color: CLR.income }}>{fmt(totInc)}</td>
+                      <td className="amount-col" style={{ color: CLR.fixed }}>{fmt(totGas)}</td>
+                      <td className="amount-col" style={{ color: totInc - totGas >= 0 ? CLR.income : CLR.fixed }}>{fmt(totInc - totGas)}</td>
+                    </tr>
+                  )
+                })()}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: AJUSTES
+// ═══════════════════════════════════════════════════════════════
+function TabAjustes({ store, setStore }) {
+  const { settings, users } = store
+  const [addUserModal, setAddUserModal] = useState(false)
+  const [newUserName, setNewUserName] = useState('')
+  const [newUserColor, setNewUserColor] = useState(THEME_COLORS[0])
+
+  const updSetting = (key, val) => setStore(s => ({ ...s, settings: { ...s.settings, [key]: val } }))
+
+  const exportData = () => {
+    const json = JSON.stringify(store, null, 2)
+    const blob = new Blob([json], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `CFH_backup_${new Date().toISOString().slice(0, 10)}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const importData = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target.result)
+        if (data.users && data.data) { setStore(data); alert('✅ Datos importados correctamente') }
+        else alert('❌ Archivo no válido')
+      } catch { alert('❌ Error al leer el archivo') }
+    }
+    reader.readAsText(file)
+  }
+
+  const addUser = () => {
+    if (!newUserName.trim()) return
+    const newUser = { id: genId(), name: newUserName.trim(), color: newUserColor }
+    setStore(s => ({ ...s, users: [...s.users, newUser] }))
+    setNewUserName(''); setAddUserModal(false)
+  }
+
+  const delUser = (id) => {
+    if (users.length <= 1) return alert('Debe haber al menos un usuario.')
+    setStore(s => ({ ...s, users: s.users.filter(u => u.id !== id), currentUser: s.currentUser === id ? s.users[0].id : s.currentUser, data: Object.fromEntries(Object.entries(s.data).filter(([k]) => k !== id)) }))
+  }
+
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => updSetting('familyPhoto', ev.target.result)
+    reader.readAsDataURL(file)
+  }
+
+  return (
+    <div className="fade-in">
+      <div className="settings-grid">
+        <div className="card">
+          <div className="card-header"><div className="card-header-left"><span className="card-icon">👨‍👩‍👧‍👦</span><div className="card-title">Familia</div></div></div>
+          <div className="card-body">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
+              <div style={{ width: 56, height: 56, borderRadius: '50%', background: settings.primaryColor, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', cursor: 'pointer', border: '2px dashed var(--border)' }}
+                onClick={() => document.getElementById('photo-upload').click()}>
+                {settings.familyPhoto ? <img src={settings.familyPhoto} alt="Familia" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> :
+                  <span style={{ fontSize: 22 }}>🏠</span>}
+              </div>
+              <div style={{ flex: 1 }}>
+                <Field label="Nombre de la familia">
+                  <input className="form-input" value={settings.familyName} onChange={e => updSetting('familyName', e.target.value)} placeholder="Familia..." />
+                </Field>
+              </div>
+              <input id="photo-upload" type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhotoUpload} />
+            </div>
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-header"><div className="card-header-left"><span className="card-icon">🎨</span><div className="card-title">Apariencia</div></div></div>
+          <div className="card-body">
+            <div className="form-field">
+              <div className="form-label">Tema</div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                {['light', 'dark'].map(t => (
+                  <button key={t} className={`btn ${settings.theme === t ? 'btn-primary' : ''}`} onClick={() => updSetting('theme', t)}>
+                    {t === 'light' ? '☀️ Claro' : '🌙 Oscuro'}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="form-field">
+              <div className="form-label">Color principal</div>
+              <div className="color-swatches">
+                {THEME_COLORS.map(c => (
+                  <div key={c} className={`color-swatch ${settings.primaryColor === c ? 'selected' : ''}`}
+                    style={{ background: c }} onClick={() => updSetting('primaryColor', c)} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-header"><div className="card-header-left"><span className="card-icon">👥</span><div className="card-title">Usuarios</div></div>
+            <button className="btn btn-sm" onClick={() => setAddUserModal(true)}>+ Añadir</button>
+          </div>
+          <div className="card-body">
+            {users.map(u => (
+              <div key={u.id} className="line-item">
+                <div className="line-item-left">
+                  <div style={{ width: 28, height: 28, borderRadius: '50%', background: u.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 11, fontWeight: 600 }}>
+                    {u.name.slice(0, 2).toUpperCase()}
+                  </div>
+                  <span className="line-item-name">{u.name}</span>
+                  {u.id === store.currentUser && <span className="badge" style={{ background: CLR.incomeBg, color: CLR.income, fontSize: 10 }}>Activo</span>}
+                </div>
+                <div className="line-item-right">
+                  <button className="icon-btn danger" onClick={() => delUser(u.id)}>🗑️</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-header"><div className="card-header-left"><span className="card-icon">💾</span><div className="card-title">Copia de seguridad</div></div></div>
+          <div className="card-body">
+            <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 16 }}>Exporta todos tus datos en un archivo JSON. Importa un backup previo para restaurar.</p>
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+              <button className="btn btn-primary" onClick={exportData}>⬇️ Exportar backup</button>
+              <label className="btn" style={{ cursor: 'pointer' }}>
+                ⬆️ Importar backup
+                <input type="file" accept=".json" style={{ display: 'none' }} onChange={importData} />
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {addUserModal && (
+        <Modal title="Añadir usuario" onClose={() => setAddUserModal(false)}>
+          <Field label="Nombre del usuario" value={newUserName} onChange={setNewUserName} placeholder="Ej: María, Papá..." />
+          <div className="form-field">
+            <div className="form-label">Color</div>
+            <div className="color-swatches">
+              {THEME_COLORS.map(c => <div key={c} className={`color-swatch ${newUserColor === c ? 'selected' : ''}`} style={{ background: c }} onClick={() => setNewUserColor(c)} />)}
+            </div>
+          </div>
+          <div className="form-actions">
+            <button className="btn" onClick={() => setAddUserModal(false)}>Cancelar</button>
+            <button className="btn btn-primary" onClick={addUser}>✓ Añadir</button>
+          </div>
+        </Modal>
+      )}
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  MAIN APP
+// ═══════════════════════════════════════════════════════════════
+function App() {
+  const [store, setStore] = useState(() => loadStore() || DEFAULT_STORE)
+  const [tab, setTab] = useState('resumen')
+  const [showSetup, setShowSetup] = useState(false)
+  const fileInputRef = useRef(null)
+  const [deferredPrompt, setDeferredPrompt] = useState(null)
+
+  useEffect(() => {
+    if (window.deferredInstallPrompt) setDeferredPrompt(window.deferredInstallPrompt)
+    const handler = (e) => { e.preventDefault(); setDeferredPrompt(e); window.deferredInstallPrompt = e }
+    const pwaReady = () => { if (window.deferredInstallPrompt) setDeferredPrompt(window.deferredInstallPrompt) }
+    window.addEventListener('beforeinstallprompt', handler)
+    window.addEventListener('pwa-listo', pwaReady)
+    window.addEventListener('appinstalled', () => { setDeferredPrompt(null); window.deferredInstallPrompt = null })
+    return () => { window.removeEventListener('beforeinstallprompt', handler); window.removeEventListener('pwa-listo', pwaReady) }
+  }, [])
+
+  const installApp = () => {
+    if (!deferredPrompt) return
+    deferredPrompt.prompt()
+    deferredPrompt.userChoice.then(() => { setDeferredPrompt(null); window.deferredInstallPrompt = null })
+  }
+
+  const { settings, users, currentUser, selectedYear, selectedMonth, data } = store
+  const userData = data[currentUser] || {}
+  const monthKey = `${selectedYear}-${selectedMonth}`
+  const monthData = userData[monthKey]
+  const totals = useMemo(() => computeTotals(monthData, selectedYear, selectedMonth), [monthData, selectedYear, selectedMonth])
+
+  // Apply theme
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', settings.theme)
+    document.documentElement.style.setProperty('--teal', settings.primaryColor)
+    document.documentElement.style.setProperty('--teal-dark', settings.primaryColor)
+    document.documentElement.style.setProperty('--bg-sidebar-active', settings.primaryColor)
+  }, [settings.theme, settings.primaryColor])
+
+  // Save to localStorage
+  useEffect(() => { localStorage.setItem(STORE_KEY, JSON.stringify(store)) }, [store])
+
+  // Initialize month
+  useEffect(() => {
+    if (!monthData) {
+      const prev = Object.keys(userData).sort().filter(k => k < monthKey).pop()
+      const prevMd = prev ? userData[prev] : null
+      const newMd = buildEmptyMonth(prevMd)
+      setStore(s => ({
+        ...s,
+        data: { ...s.data, [s.currentUser]: { ...userData, [monthKey]: newMd } }
+      }))
+      setShowSetup(true)
+    } else if (!monthData.initialized && !showSetup) {
+      setShowSetup(true)
+    }
+  }, [monthKey, currentUser])
+
+  const updateMonth = useCallback((updater) => {
+    setStore(s => {
+      const ud = s.data[s.currentUser] || {}
+      const key = `${s.selectedYear}-${s.selectedMonth}`
+      return { ...s, data: { ...s.data, [s.currentUser]: { ...ud, [key]: updater(ud[key] || {}) } } }
+    })
+  }, [])
+
+  const handleSetupSave = (fixedData) => {
+    updateMonth(md => ({ ...md, ...fixedData, initialized: true }))
+    setShowSetup(false)
+  }
+
+  const prevMonth = () => {
+    setStore(s => {
+      let m = s.selectedMonth - 1, y = s.selectedYear
+      if (m < 1) { m = 12; y-- }
+      return { ...s, selectedYear: y, selectedMonth: m }
+    })
+  }
+
+  const nextMonth = () => {
+    setStore(s => {
+      let m = s.selectedMonth + 1, y = s.selectedYear
+      if (m > 12) { m = 1; y++ }
+      return { ...s, selectedYear: y, selectedMonth: m }
+    })
+  }
+
+  const NAV = [
+    { id: 'resumen', label: 'Resumen', icon: '🏠', group: 'Principal' },
+    { id: 'ingresos', label: 'Ingresos', icon: '💰', group: 'Finanzas' },
+    { id: 'fijos', label: 'G. Fijos', icon: '🔒', group: 'Finanzas' },
+    { id: 'variables', label: 'G. Variables', icon: '📊', group: 'Finanzas' },
+    { id: 'ocio', label: 'Ocio', icon: '🎭', group: 'Finanzas' },
+    { id: 'hijos', label: 'Hijos', icon: '👶', group: 'Finanzas' },
+    { id: 'otros', label: 'Otros Gastos', icon: '📦', group: 'Finanzas' },
+    { id: 'ahorro', label: 'Ahorro', icon: '🎯', group: 'Finanzas' },
+    { id: 'graficos', label: 'Gráficos', icon: '📈', group: 'Análisis' },
+    { id: 'ajustes', label: 'Ajustes', icon: '⚙️', group: 'Configuración' },
+  ]
+
+  const groups = [...new Set(NAV.map(n => n.group))]
+
+  const PAGE_TITLES = {
+    resumen: { title: 'Resumen', sub: 'Vista general del mes' },
+    ingresos: { title: 'Ingresos', sub: 'Nóminas y extras' },
+    fijos: { title: 'Gastos Fijos', sub: 'Hipoteca, préstamos, seguros' },
+    variables: { title: 'Gastos Variables', sub: 'Luz, agua, supermercado...' },
+    ocio: { title: 'Ocio', sub: 'Entretenimiento y restauración' },
+    hijos: { title: 'Hijos', sub: 'Gastos por hijo/a' },
+    otros: { title: 'Otros Gastos', sub: 'Regalos y eventos' },
+    ahorro: { title: 'Ahorro e Inversión', sub: 'Fondos y objetivos' },
+    graficos: { title: 'Gráficos', sub: 'Visualización de datos' },
+    ajustes: { title: 'Ajustes', sub: 'Configuración de la app' },
+  }
+
+  const currentUser_obj = users.find(u => u.id === currentUser) || users[0]
+
+  return (
+    <div className="app-layout">
+      {/* SIDEBAR */}
+      <aside className="sidebar">
+        <div className="sidebar-brand">
+          <div className="sidebar-brand-logo">CFH</div>
+          <div className="sidebar-brand-name">Control Financiero<br />Hogar</div>
+          {settings.familyName && <div className="sidebar-brand-family">{settings.familyName}</div>}
+        </div>
+
+        <div className="sidebar-month-selector">
+          <div className="sidebar-month-label">Período activo</div>
+          <div className="year-nav">
+            <button className="month-nav-btn" onClick={() => setStore(s => ({ ...s, selectedYear: s.selectedYear - 1 }))}>‹</button>
+            <span style={{ fontSize: 12, color: '#e2e8f0', fontWeight: 500 }}>{selectedYear}</span>
+            <button className="month-nav-btn" onClick={() => setStore(s => ({ ...s, selectedYear: s.selectedYear + 1 }))}>›</button>
+          </div>
+          <div className="month-nav" style={{ marginTop: 4 }}>
+            <button className="month-nav-btn" onClick={prevMonth}>‹</button>
+            <span className="month-nav-current">{MONTHS[selectedMonth - 1]}</span>
+            <button className="month-nav-btn" onClick={nextMonth}>›</button>
+          </div>
+        </div>
+
+        <div className="sidebar-balance">
+          <div className="balance-label">Saldo del mes</div>
+          <div className={`balance-value ${totals.balance >= 0 ? 'balance-positive' : 'balance-negative'}`}>
+            {fmt(totals.balance)}
+          </div>
+        </div>
+
+        <nav className="sidebar-nav">
+          {groups.map(group => (
+            <div key={group}>
+              <div className="nav-group-label">{group}</div>
+              {NAV.filter(n => n.group === group).map(n => (
+                <button key={n.id} className={`nav-item ${tab === n.id ? 'active' : ''}`} onClick={() => setTab(n.id)}>
+                  <span className="nav-item-icon">{n.icon}</span>
+                  <span>{n.label}</span>
+                </button>
+              ))}
+            </div>
+          ))}
+        </nav>
+
+        {/* User switcher */}
+        {users.length > 1 && (
+          <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+            <div className="sidebar-month-label">Usuario</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 6 }}>
+              {users.map(u => (
+                <button key={u.id} className={`nav-item ${currentUser === u.id ? 'active' : ''}`}
+                  onClick={() => setStore(s => ({ ...s, currentUser: u.id }))}>
+                  <div style={{ width: 18, height: 18, borderRadius: '50%', background: u.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 9, fontWeight: 700 }}>
+                    {u.name.slice(0, 2).toUpperCase()}
+                  </div>
+                  <span>{u.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </aside>
+
+      {/* MAIN */}
+      <div className="main-content">
+        <header className="main-header">
+          <div>
+            <div className="header-title">{PAGE_TITLES[tab]?.title}</div>
+            <div className="header-subtitle">{MONTHS[selectedMonth - 1]} {selectedYear} · {PAGE_TITLES[tab]?.sub}</div>
+          </div>
+          <div className="header-actions">
+            {deferredPrompt && (
+              <button className="header-btn primary" onClick={installApp}>📲 Instalar CFH</button>
+            )}
+            {!monthData?.initialized && (
+              <button className="header-btn" onClick={() => setShowSetup(true)}>⚙️ Configurar mes</button>
+            )}
+            <button className="header-btn" onClick={() => {
+              const json = JSON.stringify(store, null, 2)
+              const blob = new Blob([json], { type: 'application/json' })
+              const url = URL.createObjectURL(blob)
+              const a = document.createElement('a'); a.href = url
+              a.download = `CFH_backup_${new Date().toISOString().slice(0, 10)}.json`; a.click()
+              URL.revokeObjectURL(url)
+            }}>💾 Backup</button>
+          </div>
+        </header>
+
+        <main className="page">
+          {tab === 'resumen' && (
+            <TabResumen monthData={monthData} totals={totals} year={selectedYear} month={selectedMonth} allMonthsData={userData} />
+          )}
+          {tab === 'ingresos' && <TabIngresos monthData={monthData} updateMonth={updateMonth} />}
+          {tab === 'fijos' && <TabGastosFijos monthData={monthData} updateMonth={updateMonth} year={selectedYear} month={selectedMonth} />}
+          {tab === 'variables' && <TabGastosVariables monthData={monthData} updateMonth={updateMonth} />}
+          {tab === 'ocio' && <TabOcio monthData={monthData} updateMonth={updateMonth} />}
+          {tab === 'hijos' && <TabHijos monthData={monthData} updateMonth={updateMonth} />}
+          {tab === 'otros' && <TabOtrosGastos monthData={monthData} updateMonth={updateMonth} />}
+          {tab === 'ahorro' && <TabAhorro monthData={monthData} updateMonth={updateMonth} />}
+          {tab === 'graficos' && <TabGraficos allMonthsData={userData} year={selectedYear} month={selectedMonth} />}
+          {tab === 'ajustes' && <TabAjustes store={store} setStore={setStore} />}
+        </main>
+
+        <nav className="mobile-nav">
+          {NAV.map(n => (
+            <button key={n.id}
+              className={`mobile-nav-item ${tab === n.id ? 'active' : ''}`}
+              onClick={() => setTab(n.id)}>
+              <span className="mobile-nav-icon">{n.icon}</span>
+              <span className="mobile-nav-label">{n.label}</span>
+            </button>
+          ))}
+        </nav>
+
+      </div>
+
+      {/* SETUP MODAL */}
+      {showSetup && (
+        <SetupModal
+          month={selectedMonth}
+          year={selectedYear}
+          monthData={monthData}
+          onSave={handleSetupSave}
+          onSkip={() => { updateMonth(md => ({ ...md, initialized: true })); setShowSetup(false) }}
+        />
+      )}
+    </div>
+  )
+}
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
