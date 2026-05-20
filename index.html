@@ -4,18 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#1a6b4a" />
-  <meta name="description" content="CFH – Control Financiero Hogar" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="CFH" />
   <link rel="apple-touch-icon" href="icon-192.png" />
-  <link rel="icon" type="image/png" href="icon-192.png" />
+  <link rel="icon" href="icon-192.png" />
   <link rel="manifest" href="manifest.json" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <title>CFH – Control Financiero Hogar</title>
+  <title>CFH</title>
   <style>
 /* ═══════════════════════════════════════════════
    CFH – Control Financiero Hogar
@@ -702,64 +699,66 @@ body {
 .fade-in { animation: fadeIn 0.2s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
   </style>
+</head>
+<body>
+  <div id="root">
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:Outfit,sans-serif;gap:12px;color:#64748b">
+      <div style="font-size:32px">🏠</div>
+      <div style="font-size:16px;font-weight:500">CFH</div>
+      <div style="font-size:13px" id="loading-msg">Iniciando...</div>
+    </div>
+  </div>
+
   <script>
+    // PWA install capture (before React loads)
     window.deferredInstallPrompt = null;
     window.addEventListener('beforeinstallprompt', function(e) {
       e.preventDefault();
       window.deferredInstallPrompt = e;
       window.dispatchEvent(new CustomEvent('pwa-listo'));
     });
+    // Error handler - shows errors on screen instead of blank
+    window.addEventListener('error', function(e) {
+      document.getElementById('root').innerHTML =
+        '<div style="padding:20px;font-family:monospace;font-size:12px;color:red;background:#fff;margin:20px;border-radius:8px;border:1px solid red">' +
+        '<strong>Error al cargar:</strong><br>' + e.message + '<br><small>' + (e.filename||'') + ':' + e.lineno + '</small></div>';
+    });
+    // Service worker
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('sw.js')
-          .then(function(r){ console.log('SW OK:', r.scope); })
-          .catch(function(e){ console.log('SW error:', e); });
-      });
+      navigator.serviceWorker.register('sw.js').catch(function(){});
     }
   </script>
-</head>
-<body>
-  <div id="root"></div>
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js" crossorigin></script>
+
   <script>
-    /* ── Globals disponibles en todo el script ── */
-    var useState    = React.useState;
-    var useEffect   = React.useEffect;
-    var useMemo     = React.useMemo;
+    // Make React hooks and Recharts components available as globals
+    var useState = React.useState;
+    var useEffect = React.useEffect;
+    var useMemo = React.useMemo;
     var useCallback = React.useCallback;
-    var useRef      = React.useRef;
-    var BarChart          = Recharts.BarChart;
-    var Bar               = Recharts.Bar;
-    var PieChart          = Recharts.PieChart;
-    var Pie               = Recharts.Pie;
-    var Cell              = Recharts.Cell;
-    var XAxis             = Recharts.XAxis;
-    var YAxis             = Recharts.YAxis;
-    var Tooltip           = Recharts.Tooltip;
+    var useRef = React.useRef;
+    var BarChart = Recharts.BarChart;
+    var Bar = Recharts.Bar;
+    var PieChart = Recharts.PieChart;
+    var Pie = Recharts.Pie;
+    var Cell = Recharts.Cell;
+    var XAxis = Recharts.XAxis;
+    var YAxis = Recharts.YAxis;
+    var Tooltip = Recharts.Tooltip;
     var ResponsiveContainer = Recharts.ResponsiveContainer;
-    var CartesianGrid     = Recharts.CartesianGrid;
-    var Legend            = Recharts.Legend;
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
-function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
-function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
-function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
-function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-var MONTHS = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-var MONTHS_S = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-var FREQ_OPTS = [{
+    var CartesianGrid = Recharts.CartesianGrid;
+    var Legend = Recharts.Legend;
+
+    document.getElementById('loading-msg').textContent = 'Cargando componentes...';
+  </script>
+
+  <script>
+const MONTHS = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+const MONTHS_S = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+const FREQ_OPTS = [{
   value: 'monthly',
   label: 'Mensual'
 }, {
@@ -772,7 +771,7 @@ var FREQ_OPTS = [{
   value: 'annual',
   label: 'Anual'
 }];
-var CHILD_CATS = [{
+const CHILD_CATS = [{
   key: 'clothing',
   label: 'Ropa',
   icon: '👕'
@@ -793,8 +792,8 @@ var CHILD_CATS = [{
   label: 'Ocio',
   icon: '🎠'
 }];
-var THEME_COLORS = ['#1D9E75', '#185FA5', '#7F77DD', '#D85A30', '#BA7517', '#A32D2D', '#3B6D11'];
-var CLR = {
+const THEME_COLORS = ['#1D9E75', '#185FA5', '#7F77DD', '#D85A30', '#BA7517', '#A32D2D', '#3B6D11'];
+const CLR = {
   income: '#1D9E75',
   incomeBg: '#E1F5EE',
   fixed: '#D85A30',
@@ -811,36 +810,29 @@ var CLR = {
   savBg: '#EAF3DE',
   balance: '#0F6E56'
 };
-var STORE_KEY = 'cfh_app_v2';
-var today = new Date();
-var CY = today.getFullYear();
-var CM = today.getMonth() + 1;
-var genId = function genId() {
-  return Math.random().toString(36).slice(2, 11);
-};
-var fmt = function fmt() {
-  var n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-  return new Intl.NumberFormat('es-ES', {
-    style: 'currency',
-    currency: 'EUR',
-    maximumFractionDigits: 2
-  }).format(Number(n) || 0);
-};
-var fmtDate = function fmtDate(s) {
-  return s ? new Date(s + 'T00:00:00').toLocaleDateString('es-ES', {
-    day: '2-digit',
-    month: '2-digit'
-  }) : '';
-};
+const STORE_KEY = 'cfh_app_v2';
+const today = new Date();
+const CY = today.getFullYear();
+const CM = today.getMonth() + 1;
+const genId = () => Math.random().toString(36).slice(2, 11);
+const fmt = (n = 0) => new Intl.NumberFormat('es-ES', {
+  style: 'currency',
+  currency: 'EUR',
+  maximumFractionDigits: 2
+}).format(Number(n) || 0);
+const fmtDate = s => s ? new Date(s + 'T00:00:00').toLocaleDateString('es-ES', {
+  day: '2-digit',
+  month: '2-digit'
+}) : '';
 
 // ═══════════════════════════════════════════════════════════════
 //  HELPERS
 // ═══════════════════════════════════════════════════════════════
 function insAmtForMonth(ins, year, month) {
   if (ins.freq === 'monthly') return Number(ins.amount) || 0;
-  var sy = ins.sy || CY,
+  const sy = ins.sy || CY,
     sm = ins.sm || CM;
-  var diff = (year - sy) * 12 + (month - sm);
+  const diff = (year - sy) * 12 + (month - sm);
   if (diff < 0) return 0;
   if (ins.freq === 'annual') return diff === 0 ? Number(ins.amount) || 0 : 0;
   if (ins.freq === 'quarterly') return diff % 3 === 0 ? Number(ins.amount) || 0 : 0;
@@ -859,104 +851,65 @@ function computeTotals(md, year, month) {
     total: 0,
     balance: 0
   };
-  var income = (md.incFixed || []).reduce(function (s, i) {
-    return s + (Number(i.amount) || 0);
-  }, 0) + (md.incExtra || []).reduce(function (s, i) {
-    return s + (Number(i.amount) || 0);
-  }, 0);
-  var mortg = Number(md.mortgage) || 0;
-  var loans = (md.loans || []).reduce(function (s, l) {
-    return s + (Number(l.amount) || 0);
-  }, 0);
-  var insur = (md.insurance || []).reduce(function (s, i) {
-    return s + insAmtForMonth(i, year, month);
-  }, 0);
-  var fixOth = (md.fixOthers || []).reduce(function (s, i) {
-    return s + (Number(i.amount) || 0);
-  }, 0);
-  var fixed = mortg + loans + insur + fixOth;
-  var ve = md.varExp || {};
-  var varExp = ['electricity', 'water', 'supermarket', 'internet', 'phone', 'petrol', 'gas'].reduce(function (s, k) {
-    return s + (Number(ve[k]) || 0);
-  }, 0) + (ve.others || []).reduce(function (s, i) {
-    return s + (Number(i.amount) || 0);
-  }, 0);
-  var lei = md.leisure || {};
-  var leisure = ['entertainment', 'dining', 'treats', 'others'].reduce(function (s, k) {
-    return s + (lei[k] || []).reduce(function (ss, i) {
-      return ss + (Number(i.amount) || 0);
-    }, 0);
-  }, 0);
-  var children = (md.children || []).reduce(function (s, child) {
-    return s + CHILD_CATS.map(function (c) {
-      return c.key;
-    }).reduce(function (ss, k) {
-      return ss + (child[k] || []).reduce(function (sss, i) {
-        return sss + (Number(i.amount) || 0);
-      }, 0);
-    }, 0);
-  }, 0);
-  var oe = md.otherExp || {};
-  var other = ['gifts', 'events', 'others'].reduce(function (s, k) {
-    return s + (oe[k] || []).reduce(function (ss, i) {
-      return ss + (Number(i.amount) || 0);
-    }, 0);
-  }, 0);
-  var sv = md.savings || {};
-  var savings = ['vacation', 'home', 'emergency', 'investment'].reduce(function (s, k) {
-    return s + (Number(sv[k]) || 0);
-  }, 0) + (sv.others || []).reduce(function (s, i) {
-    return s + (Number(i.amount) || 0);
-  }, 0);
-  var total = fixed + varExp + leisure + children + other + savings;
+  const income = (md.incFixed || []).reduce((s, i) => s + (Number(i.amount) || 0), 0) + (md.incExtra || []).reduce((s, i) => s + (Number(i.amount) || 0), 0);
+  const mortg = Number(md.mortgage) || 0;
+  const loans = (md.loans || []).reduce((s, l) => s + (Number(l.amount) || 0), 0);
+  const insur = (md.insurance || []).reduce((s, i) => s + insAmtForMonth(i, year, month), 0);
+  const fixOth = (md.fixOthers || []).reduce((s, i) => s + (Number(i.amount) || 0), 0);
+  const fixed = mortg + loans + insur + fixOth;
+  const ve = md.varExp || {};
+  const varExp = ['electricity', 'water', 'supermarket', 'internet', 'phone', 'petrol', 'gas'].reduce((s, k) => s + (Number(ve[k]) || 0), 0) + (ve.others || []).reduce((s, i) => s + (Number(i.amount) || 0), 0);
+  const lei = md.leisure || {};
+  const leisure = ['entertainment', 'dining', 'treats', 'others'].reduce((s, k) => s + (lei[k] || []).reduce((ss, i) => ss + (Number(i.amount) || 0), 0), 0);
+  const children = (md.children || []).reduce((s, child) => s + CHILD_CATS.map(c => c.key).reduce((ss, k) => ss + (child[k] || []).reduce((sss, i) => sss + (Number(i.amount) || 0), 0), 0), 0);
+  const oe = md.otherExp || {};
+  const other = ['gifts', 'events', 'others'].reduce((s, k) => s + (oe[k] || []).reduce((ss, i) => ss + (Number(i.amount) || 0), 0), 0);
+  const sv = md.savings || {};
+  const savings = ['vacation', 'home', 'emergency', 'investment'].reduce((s, k) => s + (Number(sv[k]) || 0), 0) + (sv.others || []).reduce((s, i) => s + (Number(i.amount) || 0), 0);
+  const total = fixed + varExp + leisure + children + other + savings;
   return {
-    income: income,
-    fixed: fixed,
-    varExp: varExp,
-    leisure: leisure,
-    children: children,
-    other: other,
-    savings: savings,
-    total: total,
+    income,
+    fixed,
+    varExp,
+    leisure,
+    children,
+    other,
+    savings,
+    total,
     balance: income - total
   };
 }
 function buildEmptyMonth(prev) {
-  var _prev$incFixed, _prev$loans, _prev$insurance, _prev$fixOthers, _prev$varExp, _prev$varExp2, _prev$children;
   return {
     initialized: false,
-    incFixed: (prev === null || prev === void 0 || (_prev$incFixed = prev.incFixed) === null || _prev$incFixed === void 0 ? void 0 : _prev$incFixed.map(function (i) {
-      return _objectSpread(_objectSpread({}, i), {}, {
-        id: genId()
-      });
+    incFixed: prev?.incFixed?.map(i => ({
+      ...i,
+      id: genId()
     })) || [{
       id: genId(),
       name: 'Salario',
       amount: 0
     }],
     incExtra: [],
-    mortgage: (prev === null || prev === void 0 ? void 0 : prev.mortgage) || 0,
-    loans: (prev === null || prev === void 0 || (_prev$loans = prev.loans) === null || _prev$loans === void 0 ? void 0 : _prev$loans.map(function (l) {
-      return _objectSpread(_objectSpread({}, l), {}, {
-        id: genId()
-      });
+    mortgage: prev?.mortgage || 0,
+    loans: prev?.loans?.map(l => ({
+      ...l,
+      id: genId()
     })) || [],
-    insurance: (prev === null || prev === void 0 || (_prev$insurance = prev.insurance) === null || _prev$insurance === void 0 ? void 0 : _prev$insurance.map(function (i) {
-      return _objectSpread(_objectSpread({}, i), {}, {
-        id: genId()
-      });
+    insurance: prev?.insurance?.map(i => ({
+      ...i,
+      id: genId()
     })) || [],
-    fixOthers: (prev === null || prev === void 0 || (_prev$fixOthers = prev.fixOthers) === null || _prev$fixOthers === void 0 ? void 0 : _prev$fixOthers.map(function (i) {
-      return _objectSpread(_objectSpread({}, i), {}, {
-        id: genId()
-      });
+    fixOthers: prev?.fixOthers?.map(i => ({
+      ...i,
+      id: genId()
     })) || [],
     varExp: {
       electricity: 0,
       water: 0,
       supermarket: 0,
-      internet: (prev === null || prev === void 0 || (_prev$varExp = prev.varExp) === null || _prev$varExp === void 0 ? void 0 : _prev$varExp.internet) || 0,
-      phone: (prev === null || prev === void 0 || (_prev$varExp2 = prev.varExp) === null || _prev$varExp2 === void 0 ? void 0 : _prev$varExp2.phone) || 0,
+      internet: prev?.varExp?.internet || 0,
+      phone: prev?.varExp?.phone || 0,
       petrol: 0,
       gas: 0,
       others: []
@@ -967,15 +920,14 @@ function buildEmptyMonth(prev) {
       treats: [],
       others: []
     },
-    children: (prev === null || prev === void 0 || (_prev$children = prev.children) === null || _prev$children === void 0 ? void 0 : _prev$children.map(function (c) {
-      return _objectSpread(_objectSpread({}, c), {}, {
-        id: genId(),
-        clothing: [],
-        food: [],
-        education: [],
-        treats: [],
-        leisure: []
-      });
+    children: prev?.children?.map(c => ({
+      ...c,
+      id: genId(),
+      clothing: [],
+      food: [],
+      education: [],
+      treats: [],
+      leisure: []
     })) || [],
     otherExp: {
       gifts: [],
@@ -993,13 +945,13 @@ function buildEmptyMonth(prev) {
 }
 function loadStore() {
   try {
-    var s = localStorage.getItem(STORE_KEY);
+    const s = localStorage.getItem(STORE_KEY);
     return s ? JSON.parse(s) : null;
-  } catch (_unused) {
+  } catch {
     return null;
   }
 }
-var DEFAULT_STORE = {
+const DEFAULT_STORE = {
   settings: {
     theme: 'light',
     primaryColor: '#1D9E75',
@@ -1020,19 +972,17 @@ var DEFAULT_STORE = {
 // ═══════════════════════════════════════════════════════════════
 //  REUSABLE COMPONENTS
 // ═══════════════════════════════════════════════════════════════
-function Modal(_ref) {
-  var title = _ref.title,
-    onClose = _ref.onClose,
-    children = _ref.children,
-    _ref$wide = _ref.wide,
-    wide = _ref$wide === void 0 ? false : _ref$wide;
+function Modal({
+  title,
+  onClose,
+  children,
+  wide = false
+}) {
   return /*#__PURE__*/React.createElement("div", {
     className: "modal-overlay",
-    onClick: function onClick(e) {
-      return e.target === e.currentTarget && onClose();
-    }
+    onClick: e => e.target === e.currentTarget && onClose()
   }, /*#__PURE__*/React.createElement("div", {
-    className: "modal fade-in ".concat(wide ? 'modal-wide' : '')
+    className: `modal fade-in ${wide ? 'modal-wide' : ''}`
   }, /*#__PURE__*/React.createElement("div", {
     className: "modal-header"
   }, /*#__PURE__*/React.createElement("span", {
@@ -1044,17 +994,17 @@ function Modal(_ref) {
     className: "modal-body"
   }, children)));
 }
-function Field(_ref2) {
-  var label = _ref2.label,
-    value = _ref2.value,
-    _onChange = _ref2.onChange,
-    _ref2$type = _ref2.type,
-    type = _ref2$type === void 0 ? 'text' : _ref2$type,
-    placeholder = _ref2.placeholder,
-    min = _ref2.min,
-    step = _ref2.step,
-    required = _ref2.required,
-    children = _ref2.children;
+function Field({
+  label,
+  value,
+  onChange,
+  type = 'text',
+  placeholder,
+  min,
+  step,
+  required,
+  children
+}) {
   return /*#__PURE__*/React.createElement("div", {
     className: "form-field"
   }, label && /*#__PURE__*/React.createElement("label", {
@@ -1063,20 +1013,19 @@ function Field(_ref2) {
     className: "form-input",
     type: type,
     value: value,
-    onChange: function onChange(e) {
-      return _onChange(e.target.value);
-    },
+    onChange: e => onChange(e.target.value),
     placeholder: placeholder,
     min: min,
     step: step,
     required: required
   }));
 }
-function SelectField(_ref3) {
-  var label = _ref3.label,
-    value = _ref3.value,
-    _onChange2 = _ref3.onChange,
-    options = _ref3.options;
+function SelectField({
+  label,
+  value,
+  onChange,
+  options
+}) {
   return /*#__PURE__*/React.createElement("div", {
     className: "form-field"
   }, label && /*#__PURE__*/React.createElement("label", {
@@ -1084,25 +1033,22 @@ function SelectField(_ref3) {
   }, label), /*#__PURE__*/React.createElement("select", {
     className: "form-input",
     value: value,
-    onChange: function onChange(e) {
-      return _onChange2(e.target.value);
-    }
-  }, options.map(function (o) {
-    return /*#__PURE__*/React.createElement("option", {
-      key: o.value,
-      value: o.value
-    }, o.label);
-  })));
+    onChange: e => onChange(e.target.value)
+  }, options.map(o => /*#__PURE__*/React.createElement("option", {
+    key: o.value,
+    value: o.value
+  }, o.label))));
 }
-function LineItem(_ref4) {
-  var name = _ref4.name,
-    amount = _ref4.amount,
-    color = _ref4.color,
-    badge = _ref4.badge,
-    meta = _ref4.meta,
-    onEdit = _ref4.onEdit,
-    onDelete = _ref4.onDelete,
-    extra = _ref4.extra;
+function LineItem({
+  name,
+  amount,
+  color,
+  badge,
+  meta,
+  onEdit,
+  onDelete,
+  extra
+}) {
   return /*#__PURE__*/React.createElement("div", {
     className: "line-item"
   }, /*#__PURE__*/React.createElement("div", {
@@ -1138,28 +1084,23 @@ function LineItem(_ref4) {
     title: "Eliminar"
   }, "\uD83D\uDDD1\uFE0F")));
 }
-function AccordionSection(_ref5) {
-  var icon = _ref5.icon,
-    title = _ref5.title,
-    total = _ref5.total,
-    color = _ref5.color,
-    colorBg = _ref5.colorBg,
-    children = _ref5.children,
-    _ref5$defaultOpen = _ref5.defaultOpen,
-    defaultOpen = _ref5$defaultOpen === void 0 ? true : _ref5$defaultOpen,
-    onAdd = _ref5.onAdd,
-    addLabel = _ref5.addLabel;
-  var _useState = useState(defaultOpen),
-    _useState2 = _slicedToArray(_useState, 2),
-    open = _useState2[0],
-    setOpen = _useState2[1];
+function AccordionSection({
+  icon,
+  title,
+  total,
+  color,
+  colorBg,
+  children,
+  defaultOpen = true,
+  onAdd,
+  addLabel
+}) {
+  const [open, setOpen] = useState(defaultOpen);
   return /*#__PURE__*/React.createElement("div", {
     className: "accordion-section"
   }, /*#__PURE__*/React.createElement("div", {
     className: "accordion-header",
-    onClick: function onClick() {
-      return setOpen(!open);
-    }
+    onClick: () => setOpen(!open)
   }, /*#__PURE__*/React.createElement("div", {
     className: "accordion-left"
   }, /*#__PURE__*/React.createElement("span", {
@@ -1171,32 +1112,33 @@ function AccordionSection(_ref5) {
   }, /*#__PURE__*/React.createElement("span", {
     className: "accordion-total",
     style: {
-      color: color
+      color
     }
   }, fmt(total)), onAdd && /*#__PURE__*/React.createElement("button", {
     className: "btn btn-sm",
     style: {
       background: colorBg,
-      color: color,
+      color,
       borderColor: 'transparent',
       fontSize: 12
     },
-    onClick: function onClick(e) {
+    onClick: e => {
       e.stopPropagation();
       onAdd();
     }
   }, "+ ", addLabel || 'Añadir'), /*#__PURE__*/React.createElement("span", {
-    className: "accordion-chevron ".concat(open ? 'open' : '')
+    className: `accordion-chevron ${open ? 'open' : ''}`
   }, "\u25BC"))), open && /*#__PURE__*/React.createElement("div", {
     className: "accordion-body fade-in"
   }, children));
 }
-function KpiCard(_ref6) {
-  var label = _ref6.label,
-    value = _ref6.value,
-    color = _ref6.color,
-    sub = _ref6.sub,
-    badge = _ref6.badge;
+function KpiCard({
+  label,
+  value,
+  color,
+  sub,
+  badge
+}) {
   return /*#__PURE__*/React.createElement("div", {
     className: "kpi-card",
     style: {
@@ -1207,7 +1149,7 @@ function KpiCard(_ref6) {
   }, label), /*#__PURE__*/React.createElement("div", {
     className: "kpi-value",
     style: {
-      color: color
+      color
     }
   }, value), sub && /*#__PURE__*/React.createElement("div", {
     className: "kpi-sub"
@@ -1219,9 +1161,10 @@ function KpiCard(_ref6) {
     }
   }, badge.text));
 }
-function EmptyState(_ref7) {
-  var icon = _ref7.icon,
-    text = _ref7.text;
+function EmptyState({
+  icon,
+  text
+}) {
   return /*#__PURE__*/React.createElement("div", {
     className: "empty-state"
   }, /*#__PURE__*/React.createElement("div", {
@@ -1232,143 +1175,74 @@ function EmptyState(_ref7) {
 // ═══════════════════════════════════════════════════════════════
 //  SETUP WIZARD MODAL
 // ═══════════════════════════════════════════════════════════════
-function SetupModal(_ref8) {
-  var month = _ref8.month,
-    year = _ref8.year,
-    monthData = _ref8.monthData,
-    onSave = _ref8.onSave,
-    onSkip = _ref8.onSkip;
-  var _useState3 = useState(0),
-    _useState4 = _slicedToArray(_useState3, 2),
-    step = _useState4[0],
-    setStep = _useState4[1];
-  var _useState5 = useState(String((monthData === null || monthData === void 0 ? void 0 : monthData.mortgage) || '')),
-    _useState6 = _slicedToArray(_useState5, 2),
-    mortgage = _useState6[0],
-    setMortgage = _useState6[1];
-  var _useState7 = useState((monthData === null || monthData === void 0 ? void 0 : monthData.loans) || []),
-    _useState8 = _slicedToArray(_useState7, 2),
-    loans = _useState8[0],
-    setLoans = _useState8[1];
-  var _useState9 = useState((monthData === null || monthData === void 0 ? void 0 : monthData.insurance) || []),
-    _useState0 = _slicedToArray(_useState9, 2),
-    insurance = _useState0[0],
-    setInsurance = _useState0[1];
-  var _useState1 = useState((monthData === null || monthData === void 0 ? void 0 : monthData.fixOthers) || []),
-    _useState10 = _slicedToArray(_useState1, 2),
-    fixOthers = _useState10[0],
-    setFixOthers = _useState10[1];
-  var _useState11 = useState((monthData === null || monthData === void 0 ? void 0 : monthData.incFixed) || [{
-      id: genId(),
-      name: 'Salario',
-      amount: ''
-    }]),
-    _useState12 = _slicedToArray(_useState11, 2),
-    incFixed = _useState12[0],
-    setIncFixed = _useState12[1];
-  var steps = ['Ingresos fijos', 'Hipoteca y préstamos', 'Seguros', 'Otros fijos'];
-  var addLoan = function addLoan() {
-    return setLoans(function (l) {
-      return [].concat(_toConsumableArray(l), [{
-        id: genId(),
-        name: '',
-        amount: ''
-      }]);
-    });
-  };
-  var updLoan = function updLoan(id, k, v) {
-    return setLoans(function (l) {
-      return l.map(function (x) {
-        return x.id === id ? _objectSpread(_objectSpread({}, x), {}, _defineProperty({}, k, v)) : x;
-      });
-    });
-  };
-  var delLoan = function delLoan(id) {
-    return setLoans(function (l) {
-      return l.filter(function (x) {
-        return x.id !== id;
-      });
-    });
-  };
-  var addIns = function addIns() {
-    return setInsurance(function (l) {
-      return [].concat(_toConsumableArray(l), [{
-        id: genId(),
-        name: '',
-        amount: '',
-        freq: 'monthly',
-        sy: year,
-        sm: month
-      }]);
-    });
-  };
-  var updIns = function updIns(id, k, v) {
-    return setInsurance(function (l) {
-      return l.map(function (x) {
-        return x.id === id ? _objectSpread(_objectSpread({}, x), {}, _defineProperty({}, k, v)) : x;
-      });
-    });
-  };
-  var delIns = function delIns(id) {
-    return setInsurance(function (l) {
-      return l.filter(function (x) {
-        return x.id !== id;
-      });
-    });
-  };
-  var addOther = function addOther() {
-    return setFixOthers(function (l) {
-      return [].concat(_toConsumableArray(l), [{
-        id: genId(),
-        name: '',
-        amount: ''
-      }]);
-    });
-  };
-  var updOther = function updOther(id, k, v) {
-    return setFixOthers(function (l) {
-      return l.map(function (x) {
-        return x.id === id ? _objectSpread(_objectSpread({}, x), {}, _defineProperty({}, k, v)) : x;
-      });
-    });
-  };
-  var delOther = function delOther(id) {
-    return setFixOthers(function (l) {
-      return l.filter(function (x) {
-        return x.id !== id;
-      });
-    });
-  };
-  var addInc = function addInc() {
-    return setIncFixed(function (l) {
-      return [].concat(_toConsumableArray(l), [{
-        id: genId(),
-        name: '',
-        amount: ''
-      }]);
-    });
-  };
-  var updInc = function updInc(id, k, v) {
-    return setIncFixed(function (l) {
-      return l.map(function (x) {
-        return x.id === id ? _objectSpread(_objectSpread({}, x), {}, _defineProperty({}, k, v)) : x;
-      });
-    });
-  };
-  var delInc = function delInc(id) {
-    return setIncFixed(function (l) {
-      return l.filter(function (x) {
-        return x.id !== id;
-      });
-    });
-  };
-  var handleSave = function handleSave() {
+function SetupModal({
+  month,
+  year,
+  monthData,
+  onSave,
+  onSkip
+}) {
+  const [step, setStep] = useState(0);
+  const [mortgage, setMortgage] = useState(String(monthData?.mortgage || ''));
+  const [loans, setLoans] = useState(monthData?.loans || []);
+  const [insurance, setInsurance] = useState(monthData?.insurance || []);
+  const [fixOthers, setFixOthers] = useState(monthData?.fixOthers || []);
+  const [incFixed, setIncFixed] = useState(monthData?.incFixed || [{
+    id: genId(),
+    name: 'Salario',
+    amount: ''
+  }]);
+  const steps = ['Ingresos fijos', 'Hipoteca y préstamos', 'Seguros', 'Otros fijos'];
+  const addLoan = () => setLoans(l => [...l, {
+    id: genId(),
+    name: '',
+    amount: ''
+  }]);
+  const updLoan = (id, k, v) => setLoans(l => l.map(x => x.id === id ? {
+    ...x,
+    [k]: v
+  } : x));
+  const delLoan = id => setLoans(l => l.filter(x => x.id !== id));
+  const addIns = () => setInsurance(l => [...l, {
+    id: genId(),
+    name: '',
+    amount: '',
+    freq: 'monthly',
+    sy: year,
+    sm: month
+  }]);
+  const updIns = (id, k, v) => setInsurance(l => l.map(x => x.id === id ? {
+    ...x,
+    [k]: v
+  } : x));
+  const delIns = id => setInsurance(l => l.filter(x => x.id !== id));
+  const addOther = () => setFixOthers(l => [...l, {
+    id: genId(),
+    name: '',
+    amount: ''
+  }]);
+  const updOther = (id, k, v) => setFixOthers(l => l.map(x => x.id === id ? {
+    ...x,
+    [k]: v
+  } : x));
+  const delOther = id => setFixOthers(l => l.filter(x => x.id !== id));
+  const addInc = () => setIncFixed(l => [...l, {
+    id: genId(),
+    name: '',
+    amount: ''
+  }]);
+  const updInc = (id, k, v) => setIncFixed(l => l.map(x => x.id === id ? {
+    ...x,
+    [k]: v
+  } : x));
+  const delInc = id => setIncFixed(l => l.filter(x => x.id !== id));
+  const handleSave = () => {
     onSave({
       mortgage: Number(mortgage) || 0,
-      loans: loans,
-      insurance: insurance,
-      fixOthers: fixOthers,
-      incFixed: incFixed
+      loans,
+      insurance,
+      fixOthers,
+      incFixed
     });
   };
   return /*#__PURE__*/React.createElement("div", {
@@ -1398,12 +1272,10 @@ function SetupModal(_ref8) {
     }
   }, /*#__PURE__*/React.createElement("div", {
     className: "wizard-steps"
-  }, steps.map(function (s, i) {
-    return /*#__PURE__*/React.createElement("div", {
-      key: i,
-      className: "wizard-step ".concat(i < step ? 'done' : i === step ? 'active' : '')
-    });
-  })), /*#__PURE__*/React.createElement("div", {
+  }, steps.map((s, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: `wizard-step ${i < step ? 'done' : i === step ? 'active' : ''}`
+  }))), /*#__PURE__*/React.createElement("div", {
     style: {
       fontWeight: 600,
       fontSize: 14,
@@ -1414,42 +1286,34 @@ function SetupModal(_ref8) {
     style: {
       paddingTop: 0
     }
-  }, step === 0 && /*#__PURE__*/React.createElement("div", null, incFixed.map(function (i) {
-    return /*#__PURE__*/React.createElement("div", {
-      key: i.id,
-      style: {
-        display: 'grid',
-        gridTemplateColumns: '1fr 120px 36px',
-        gap: 8,
-        marginBottom: 8
-      }
-    }, /*#__PURE__*/React.createElement("input", {
-      className: "form-input",
-      placeholder: "Nombre ingreso",
-      value: i.name,
-      onChange: function onChange(e) {
-        return updInc(i.id, 'name', e.target.value);
-      }
-    }), /*#__PURE__*/React.createElement("input", {
-      className: "form-input",
-      type: "number",
-      placeholder: "Importe \u20AC",
-      min: "0",
-      value: i.amount,
-      onChange: function onChange(e) {
-        return updInc(i.id, 'amount', e.target.value);
-      }
-    }), /*#__PURE__*/React.createElement("button", {
-      className: "icon-btn danger",
-      onClick: function onClick() {
-        return delInc(i.id);
-      },
-      style: {
-        border: '1px solid var(--border)',
-        borderRadius: 7
-      }
-    }, "\uD83D\uDDD1\uFE0F"));
+  }, step === 0 && /*#__PURE__*/React.createElement("div", null, incFixed.map(i => /*#__PURE__*/React.createElement("div", {
+    key: i.id,
+    style: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 120px 36px',
+      gap: 8,
+      marginBottom: 8
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "form-input",
+    placeholder: "Nombre ingreso",
+    value: i.name,
+    onChange: e => updInc(i.id, 'name', e.target.value)
+  }), /*#__PURE__*/React.createElement("input", {
+    className: "form-input",
+    type: "number",
+    placeholder: "Importe \u20AC",
+    min: "0",
+    value: i.amount,
+    onChange: e => updInc(i.id, 'amount', e.target.value)
   }), /*#__PURE__*/React.createElement("button", {
+    className: "icon-btn danger",
+    onClick: () => delInc(i.id),
+    style: {
+      border: '1px solid var(--border)',
+      borderRadius: 7
+    }
+  }, "\uD83D\uDDD1\uFE0F"))), /*#__PURE__*/React.createElement("button", {
     className: "btn-add",
     onClick: addInc
   }, "+ A\xF1adir ingreso fijo")), step === 1 && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Field, {
@@ -1460,9 +1324,7 @@ function SetupModal(_ref8) {
     min: "0",
     placeholder: "0,00 \u20AC",
     value: mortgage,
-    onChange: function onChange(e) {
-      return setMortgage(e.target.value);
-    }
+    onChange: e => setMortgage(e.target.value)
   })), /*#__PURE__*/React.createElement("div", {
     style: {
       fontWeight: 500,
@@ -1470,42 +1332,34 @@ function SetupModal(_ref8) {
       marginBottom: 8,
       marginTop: 4
     }
-  }, "Pr\xE9stamos:"), loans.map(function (l) {
-    return /*#__PURE__*/React.createElement("div", {
-      key: l.id,
-      style: {
-        display: 'grid',
-        gridTemplateColumns: '1fr 120px 36px',
-        gap: 8,
-        marginBottom: 8
-      }
-    }, /*#__PURE__*/React.createElement("input", {
-      className: "form-input",
-      placeholder: "Nombre pr\xE9stamo",
-      value: l.name,
-      onChange: function onChange(e) {
-        return updLoan(l.id, 'name', e.target.value);
-      }
-    }), /*#__PURE__*/React.createElement("input", {
-      className: "form-input",
-      type: "number",
-      placeholder: "Cuota \u20AC",
-      min: "0",
-      value: l.amount,
-      onChange: function onChange(e) {
-        return updLoan(l.id, 'amount', e.target.value);
-      }
-    }), /*#__PURE__*/React.createElement("button", {
-      className: "icon-btn danger",
-      onClick: function onClick() {
-        return delLoan(l.id);
-      },
-      style: {
-        border: '1px solid var(--border)',
-        borderRadius: 7
-      }
-    }, "\uD83D\uDDD1\uFE0F"));
+  }, "Pr\xE9stamos:"), loans.map(l => /*#__PURE__*/React.createElement("div", {
+    key: l.id,
+    style: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 120px 36px',
+      gap: 8,
+      marginBottom: 8
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "form-input",
+    placeholder: "Nombre pr\xE9stamo",
+    value: l.name,
+    onChange: e => updLoan(l.id, 'name', e.target.value)
+  }), /*#__PURE__*/React.createElement("input", {
+    className: "form-input",
+    type: "number",
+    placeholder: "Cuota \u20AC",
+    min: "0",
+    value: l.amount,
+    onChange: e => updLoan(l.id, 'amount', e.target.value)
   }), /*#__PURE__*/React.createElement("button", {
+    className: "icon-btn danger",
+    onClick: () => delLoan(l.id),
+    style: {
+      border: '1px solid var(--border)',
+      borderRadius: 7
+    }
+  }, "\uD83D\uDDD1\uFE0F"))), /*#__PURE__*/React.createElement("button", {
     className: "btn-add",
     onClick: addLoan
   }, "+ A\xF1adir pr\xE9stamo")), step === 2 && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
@@ -1514,91 +1368,71 @@ function SetupModal(_ref8) {
       color: 'var(--text-muted)',
       marginBottom: 12
     }
-  }, "Los seguros anuales/trimestrales/semestrales solo computan en el mes que se introducen."), insurance.map(function (i) {
-    return /*#__PURE__*/React.createElement("div", {
-      key: i.id,
-      style: {
-        display: 'grid',
-        gridTemplateColumns: '1fr 110px 120px 36px',
-        gap: 8,
-        marginBottom: 8
-      }
-    }, /*#__PURE__*/React.createElement("input", {
-      className: "form-input",
-      placeholder: "Nombre seguro",
-      value: i.name,
-      onChange: function onChange(e) {
-        return updIns(i.id, 'name', e.target.value);
-      }
-    }), /*#__PURE__*/React.createElement("input", {
-      className: "form-input",
-      type: "number",
-      placeholder: "Importe \u20AC",
-      min: "0",
-      value: i.amount,
-      onChange: function onChange(e) {
-        return updIns(i.id, 'amount', e.target.value);
-      }
-    }), /*#__PURE__*/React.createElement("select", {
-      className: "form-input",
-      value: i.freq,
-      onChange: function onChange(e) {
-        return updIns(i.id, 'freq', e.target.value);
-      }
-    }, FREQ_OPTS.map(function (o) {
-      return /*#__PURE__*/React.createElement("option", {
-        key: o.value,
-        value: o.value
-      }, o.label);
-    })), /*#__PURE__*/React.createElement("button", {
-      className: "icon-btn danger",
-      onClick: function onClick() {
-        return delIns(i.id);
-      },
-      style: {
-        border: '1px solid var(--border)',
-        borderRadius: 7
-      }
-    }, "\uD83D\uDDD1\uFE0F"));
-  }), /*#__PURE__*/React.createElement("button", {
+  }, "Los seguros anuales/trimestrales/semestrales solo computan en el mes que se introducen."), insurance.map(i => /*#__PURE__*/React.createElement("div", {
+    key: i.id,
+    style: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 110px 120px 36px',
+      gap: 8,
+      marginBottom: 8
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "form-input",
+    placeholder: "Nombre seguro",
+    value: i.name,
+    onChange: e => updIns(i.id, 'name', e.target.value)
+  }), /*#__PURE__*/React.createElement("input", {
+    className: "form-input",
+    type: "number",
+    placeholder: "Importe \u20AC",
+    min: "0",
+    value: i.amount,
+    onChange: e => updIns(i.id, 'amount', e.target.value)
+  }), /*#__PURE__*/React.createElement("select", {
+    className: "form-input",
+    value: i.freq,
+    onChange: e => updIns(i.id, 'freq', e.target.value)
+  }, FREQ_OPTS.map(o => /*#__PURE__*/React.createElement("option", {
+    key: o.value,
+    value: o.value
+  }, o.label))), /*#__PURE__*/React.createElement("button", {
+    className: "icon-btn danger",
+    onClick: () => delIns(i.id),
+    style: {
+      border: '1px solid var(--border)',
+      borderRadius: 7
+    }
+  }, "\uD83D\uDDD1\uFE0F"))), /*#__PURE__*/React.createElement("button", {
     className: "btn-add",
     onClick: addIns
-  }, "+ A\xF1adir seguro")), step === 3 && /*#__PURE__*/React.createElement("div", null, fixOthers.map(function (o) {
-    return /*#__PURE__*/React.createElement("div", {
-      key: o.id,
-      style: {
-        display: 'grid',
-        gridTemplateColumns: '1fr 120px 36px',
-        gap: 8,
-        marginBottom: 8
-      }
-    }, /*#__PURE__*/React.createElement("input", {
-      className: "form-input",
-      placeholder: "Nombre gasto fijo",
-      value: o.name,
-      onChange: function onChange(e) {
-        return updOther(o.id, 'name', e.target.value);
-      }
-    }), /*#__PURE__*/React.createElement("input", {
-      className: "form-input",
-      type: "number",
-      placeholder: "Importe \u20AC",
-      min: "0",
-      value: o.amount,
-      onChange: function onChange(e) {
-        return updOther(o.id, 'amount', e.target.value);
-      }
-    }), /*#__PURE__*/React.createElement("button", {
-      className: "icon-btn danger",
-      onClick: function onClick() {
-        return delOther(o.id);
-      },
-      style: {
-        border: '1px solid var(--border)',
-        borderRadius: 7
-      }
-    }, "\uD83D\uDDD1\uFE0F"));
+  }, "+ A\xF1adir seguro")), step === 3 && /*#__PURE__*/React.createElement("div", null, fixOthers.map(o => /*#__PURE__*/React.createElement("div", {
+    key: o.id,
+    style: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 120px 36px',
+      gap: 8,
+      marginBottom: 8
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "form-input",
+    placeholder: "Nombre gasto fijo",
+    value: o.name,
+    onChange: e => updOther(o.id, 'name', e.target.value)
+  }), /*#__PURE__*/React.createElement("input", {
+    className: "form-input",
+    type: "number",
+    placeholder: "Importe \u20AC",
+    min: "0",
+    value: o.amount,
+    onChange: e => updOther(o.id, 'amount', e.target.value)
   }), /*#__PURE__*/React.createElement("button", {
+    className: "icon-btn danger",
+    onClick: () => delOther(o.id),
+    style: {
+      border: '1px solid var(--border)',
+      borderRadius: 7
+    }
+  }, "\uD83D\uDDD1\uFE0F"))), /*#__PURE__*/React.createElement("button", {
     className: "btn-add",
     onClick: addOther
   }, "+ A\xF1adir otro gasto fijo")), /*#__PURE__*/React.createElement("div", {
@@ -1608,18 +1442,10 @@ function SetupModal(_ref8) {
     }
   }, step > 0 && /*#__PURE__*/React.createElement("button", {
     className: "btn",
-    onClick: function onClick() {
-      return setStep(function (s) {
-        return s - 1;
-      });
-    }
+    onClick: () => setStep(s => s - 1)
   }, "\u2190 Anterior"), step < steps.length - 1 ? /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
-    onClick: function onClick() {
-      return setStep(function (s) {
-        return s + 1;
-      });
-    }
+    onClick: () => setStep(s => s + 1)
   }, "Siguiente \u2192") : /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: handleSave
@@ -1629,29 +1455,30 @@ function SetupModal(_ref8) {
 // ═══════════════════════════════════════════════════════════════
 //  TAB: RESUMEN (Dashboard)
 // ═══════════════════════════════════════════════════════════════
-function TabResumen(_ref9) {
-  var monthData = _ref9.monthData,
-    totals = _ref9.totals,
-    year = _ref9.year,
-    month = _ref9.month,
-    allMonthsData = _ref9.allMonthsData;
-  var t = totals;
-  var savingsRate = t.income > 0 ? Math.round((t.income - t.total) / t.income * 100) : 0;
-  var annualSummary = useMemo(function () {
-    return MONTHS_S.map(function (name, i) {
-      var m = i + 1;
-      var key = "".concat(year, "-").concat(m);
-      var md = allMonthsData[key];
-      var mt = computeTotals(md, year, m);
+function TabResumen({
+  monthData,
+  totals,
+  year,
+  month,
+  allMonthsData
+}) {
+  const t = totals;
+  const savingsRate = t.income > 0 ? Math.round((t.income - t.total) / t.income * 100) : 0;
+  const annualSummary = useMemo(() => {
+    return MONTHS_S.map((name, i) => {
+      const m = i + 1;
+      const key = `${year}-${m}`;
+      const md = allMonthsData[key];
+      const mt = computeTotals(md, year, m);
       return {
-        name: name,
+        name,
         ingresos: mt.income,
         gastos: mt.total,
         ahorro: mt.balance
       };
     });
   }, [allMonthsData, year]);
-  var expBreakdown = [{
+  const expBreakdown = [{
     name: 'G. Fijos',
     value: t.fixed,
     color: CLR.fixed
@@ -1675,9 +1502,7 @@ function TabResumen(_ref9) {
     name: 'Ahorro',
     value: t.savings,
     color: CLR.savings
-  }].filter(function (x) {
-    return x.value > 0;
-  });
+  }].filter(x => x.value > 0);
   return /*#__PURE__*/React.createElement("div", {
     className: "fade-in"
   }, /*#__PURE__*/React.createElement("div", {
@@ -1686,7 +1511,7 @@ function TabResumen(_ref9) {
     label: "Ingresos del mes",
     value: fmt(t.income),
     color: CLR.income,
-    sub: "".concat(MONTHS[month - 1], " ").concat(year),
+    sub: `${MONTHS[month - 1]} ${year}`,
     badge: {
       text: 'ENTRADAS',
       bg: CLR.incomeBg,
@@ -1696,7 +1521,7 @@ function TabResumen(_ref9) {
     label: "Gastos totales",
     value: fmt(t.total),
     color: CLR.fixed,
-    sub: "Fijos: ".concat(fmt(t.fixed)),
+    sub: `Fijos: ${fmt(t.fixed)}`,
     badge: {
       text: 'SALIDAS',
       bg: CLR.fixedBg,
@@ -1706,7 +1531,7 @@ function TabResumen(_ref9) {
     label: "Ahorro / Saldo",
     value: fmt(t.balance),
     color: t.balance >= 0 ? CLR.income : CLR.fixed,
-    sub: "Tasa ahorro: ".concat(savingsRate, "%"),
+    sub: `Tasa ahorro: ${savingsRate}%`,
     badge: t.balance >= 0 ? {
       text: '✓ POSITIVO',
       bg: CLR.incomeBg,
@@ -1759,13 +1584,9 @@ function TabResumen(_ref9) {
     },
     axisLine: false,
     tickLine: false,
-    tickFormatter: function tickFormatter(v) {
-      return v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v;
-    }
+    tickFormatter: v => v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v
   }), /*#__PURE__*/React.createElement(Tooltip, {
-    formatter: function formatter(v) {
-      return fmt(v);
-    },
+    formatter: v => fmt(v),
     contentStyle: {
       background: 'var(--bg-card)',
       border: '1px solid var(--border)',
@@ -1807,15 +1628,11 @@ function TabResumen(_ref9) {
     outerRadius: 70,
     strokeWidth: 0,
     paddingAngle: 2
-  }, expBreakdown.map(function (e, i) {
-    return /*#__PURE__*/React.createElement(Cell, {
-      key: i,
-      fill: e.color
-    });
-  })), /*#__PURE__*/React.createElement(Tooltip, {
-    formatter: function formatter(v) {
-      return fmt(v);
-    },
+  }, expBreakdown.map((e, i) => /*#__PURE__*/React.createElement(Cell, {
+    key: i,
+    fill: e.color
+  }))), /*#__PURE__*/React.createElement(Tooltip, {
+    formatter: v => fmt(v),
     contentStyle: {
       background: 'var(--bg-card)',
       border: '1px solid var(--border)',
@@ -1824,17 +1641,15 @@ function TabResumen(_ref9) {
     }
   }))), /*#__PURE__*/React.createElement("div", {
     className: "chart-legend"
-  }, expBreakdown.map(function (e, i) {
-    return /*#__PURE__*/React.createElement("div", {
-      key: i,
-      className: "legend-item"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "legend-dot",
-      style: {
-        background: e.color
-      }
-    }), /*#__PURE__*/React.createElement("span", null, e.name, ": ", fmt(e.value)));
-  }))) : /*#__PURE__*/React.createElement(EmptyState, {
+  }, expBreakdown.map((e, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: "legend-item"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "legend-dot",
+    style: {
+      background: e.color
+    }
+  }), /*#__PURE__*/React.createElement("span", null, e.name, ": ", fmt(e.value)))))) : /*#__PURE__*/React.createElement(EmptyState, {
     icon: "\uD83D\uDCCA",
     text: "Sin datos de gastos este mes"
   })))), /*#__PURE__*/React.createElement("div", {
@@ -1898,19 +1713,17 @@ function TabResumen(_ref9) {
     label: '🎯 Ahorro e inversión',
     val: t.savings,
     color: CLR.savings
-  }].map(function (row, i) {
-    return /*#__PURE__*/React.createElement("tr", {
-      key: i
-    }, /*#__PURE__*/React.createElement("td", {
-      style: {
-        color: row.color
-      }
-    }, row.label), /*#__PURE__*/React.createElement("td", {
-      className: "amount-col"
-    }, fmt(row.val)), /*#__PURE__*/React.createElement("td", {
-      className: "amount-col"
-    }, t.income > 0 ? Math.round(row.val / t.income * 100) : 0, "%"));
-  }), /*#__PURE__*/React.createElement("tr", {
+  }].map((row, i) => /*#__PURE__*/React.createElement("tr", {
+    key: i
+  }, /*#__PURE__*/React.createElement("td", {
+    style: {
+      color: row.color
+    }
+  }, row.label), /*#__PURE__*/React.createElement("td", {
+    className: "amount-col"
+  }, fmt(row.val)), /*#__PURE__*/React.createElement("td", {
+    className: "amount-col"
+  }, t.income > 0 ? Math.round(row.val / t.income * 100) : 0, "%"))), /*#__PURE__*/React.createElement("tr", {
     className: "total-row"
   }, /*#__PURE__*/React.createElement("td", null, "\uD83D\uDCB8 Total gastos"), /*#__PURE__*/React.createElement("td", {
     className: "amount-col"
@@ -1941,35 +1754,23 @@ function TabResumen(_ref9) {
 // ═══════════════════════════════════════════════════════════════
 //  TAB: INGRESOS
 // ═══════════════════════════════════════════════════════════════
-function TabIngresos(_ref0) {
-  var monthData = _ref0.monthData,
-    updateMonth = _ref0.updateMonth;
-  var _useState13 = useState(null),
-    _useState14 = _slicedToArray(_useState13, 2),
-    modalType = _useState14[0],
-    setModalType = _useState14[1]; // 'fixed'|'extra'
-  var _useState15 = useState(null),
-    _useState16 = _slicedToArray(_useState15, 2),
-    editing = _useState16[0],
-    setEditing = _useState16[1];
-  var _useState17 = useState({
-      name: '',
-      amount: '',
-      date: '',
-      isFixed: false
-    }),
-    _useState18 = _slicedToArray(_useState17, 2),
-    form = _useState18[0],
-    setForm = _useState18[1];
-  var incFixed = (monthData === null || monthData === void 0 ? void 0 : monthData.incFixed) || [];
-  var incExtra = (monthData === null || monthData === void 0 ? void 0 : monthData.incExtra) || [];
-  var totalFixed = incFixed.reduce(function (s, i) {
-    return s + (Number(i.amount) || 0);
-  }, 0);
-  var totalExtra = incExtra.reduce(function (s, i) {
-    return s + (Number(i.amount) || 0);
-  }, 0);
-  var openAdd = function openAdd(type) {
+function TabIngresos({
+  monthData,
+  updateMonth
+}) {
+  const [modalType, setModalType] = useState(null); // 'fixed'|'extra'
+  const [editing, setEditing] = useState(null);
+  const [form, setForm] = useState({
+    name: '',
+    amount: '',
+    date: '',
+    isFixed: false
+  });
+  const incFixed = monthData?.incFixed || [];
+  const incExtra = monthData?.incExtra || [];
+  const totalFixed = incFixed.reduce((s, i) => s + (Number(i.amount) || 0), 0);
+  const totalExtra = incExtra.reduce((s, i) => s + (Number(i.amount) || 0), 0);
+  const openAdd = type => {
     setEditing(null);
     setForm({
       name: '',
@@ -1978,7 +1779,7 @@ function TabIngresos(_ref0) {
     });
     setModalType(type);
   };
-  var openEdit = function openEdit(type, item) {
+  const openEdit = (type, item) => {
     setEditing(item.id);
     setForm({
       name: item.name,
@@ -1987,40 +1788,31 @@ function TabIngresos(_ref0) {
     });
     setModalType(type);
   };
-  var handleSave = function handleSave() {
+  const handleSave = () => {
     if (!form.name || !form.amount) return;
-    var item = {
+    const item = {
       id: editing || genId(),
       name: form.name,
       amount: Number(form.amount),
       date: form.date
     };
     if (modalType === 'fixed') {
-      updateMonth(function (md) {
-        return _objectSpread(_objectSpread({}, md), {}, {
-          incFixed: editing ? md.incFixed.map(function (x) {
-            return x.id === editing ? item : x;
-          }) : [].concat(_toConsumableArray(md.incFixed || []), [item])
-        });
-      });
+      updateMonth(md => ({
+        ...md,
+        incFixed: editing ? md.incFixed.map(x => x.id === editing ? item : x) : [...(md.incFixed || []), item]
+      }));
     } else {
-      updateMonth(function (md) {
-        return _objectSpread(_objectSpread({}, md), {}, {
-          incExtra: editing ? md.incExtra.map(function (x) {
-            return x.id === editing ? item : x;
-          }) : [].concat(_toConsumableArray(md.incExtra || []), [item])
-        });
-      });
+      updateMonth(md => ({
+        ...md,
+        incExtra: editing ? md.incExtra.map(x => x.id === editing ? item : x) : [...(md.incExtra || []), item]
+      }));
     }
     setModalType(null);
   };
-  var del = function del(type, id) {
-    return updateMonth(function (md) {
-      return _objectSpread(_objectSpread({}, md), {}, _defineProperty({}, type === 'fixed' ? 'incFixed' : 'incExtra', md[type === 'fixed' ? 'incFixed' : 'incExtra'].filter(function (x) {
-        return x.id !== id;
-      })));
-    });
-  };
+  const del = (type, id) => updateMonth(md => ({
+    ...md,
+    [type === 'fixed' ? 'incFixed' : 'incExtra']: md[type === 'fixed' ? 'incFixed' : 'incExtra'].filter(x => x.id !== id)
+  }));
   return /*#__PURE__*/React.createElement("div", {
     className: "fade-in section-grid"
   }, /*#__PURE__*/React.createElement(AccordionSection, {
@@ -2029,58 +1821,42 @@ function TabIngresos(_ref0) {
     total: totalFixed,
     color: CLR.income,
     colorBg: CLR.incomeBg,
-    onAdd: function onAdd() {
-      return openAdd('fixed');
-    },
+    onAdd: () => openAdd('fixed'),
     addLabel: "Ingreso fijo"
   }, incFixed.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
     icon: "\uD83D\uDCBC",
     text: "Sin ingresos fijos configurados"
   }) : /*#__PURE__*/React.createElement("div", {
     className: "line-items"
-  }, incFixed.map(function (i) {
-    return /*#__PURE__*/React.createElement(LineItem, {
-      key: i.id,
-      name: i.name,
-      amount: i.amount,
-      color: CLR.income,
-      onEdit: function onEdit() {
-        return openEdit('fixed', i);
-      },
-      onDelete: function onDelete() {
-        return del('fixed', i.id);
-      }
-    });
-  }))), /*#__PURE__*/React.createElement(AccordionSection, {
+  }, incFixed.map(i => /*#__PURE__*/React.createElement(LineItem, {
+    key: i.id,
+    name: i.name,
+    amount: i.amount,
+    color: CLR.income,
+    onEdit: () => openEdit('fixed', i),
+    onDelete: () => del('fixed', i.id)
+  })))), /*#__PURE__*/React.createElement(AccordionSection, {
     icon: "\uD83D\uDCA1",
     title: "Ingresos extra / extraordinarios",
     total: totalExtra,
     color: "#7F77DD",
     colorBg: "#EEEDFE",
-    onAdd: function onAdd() {
-      return openAdd('extra');
-    },
+    onAdd: () => openAdd('extra'),
     addLabel: "Ingreso extra"
   }, incExtra.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
     icon: "\uD83D\uDCA1",
     text: "Sin ingresos extra este mes"
   }) : /*#__PURE__*/React.createElement("div", {
     className: "line-items"
-  }, incExtra.map(function (i) {
-    return /*#__PURE__*/React.createElement(LineItem, {
-      key: i.id,
-      name: i.name,
-      amount: i.amount,
-      color: "#7F77DD",
-      meta: fmtDate(i.date),
-      onEdit: function onEdit() {
-        return openEdit('extra', i);
-      },
-      onDelete: function onDelete() {
-        return del('extra', i.id);
-      }
-    });
-  }))), /*#__PURE__*/React.createElement("div", {
+  }, incExtra.map(i => /*#__PURE__*/React.createElement(LineItem, {
+    key: i.id,
+    name: i.name,
+    amount: i.amount,
+    color: "#7F77DD",
+    meta: fmtDate(i.date),
+    onEdit: () => openEdit('extra', i),
+    onDelete: () => del('extra', i.id)
+  })))), /*#__PURE__*/React.createElement("div", {
     className: "card"
   }, /*#__PURE__*/React.createElement("div", {
     className: "card-body",
@@ -2103,31 +1879,23 @@ function TabIngresos(_ref0) {
       color: CLR.income
     }
   }, fmt(totalFixed + totalExtra)))), modalType && /*#__PURE__*/React.createElement(Modal, {
-    title: "".concat(editing ? 'Editar' : 'Añadir', " ingreso ").concat(modalType === 'fixed' ? 'fijo' : 'extra'),
-    onClose: function onClose() {
-      return setModalType(null);
-    }
+    title: `${editing ? 'Editar' : 'Añadir'} ingreso ${modalType === 'fixed' ? 'fijo' : 'extra'}`,
+    onClose: () => setModalType(null)
   }, /*#__PURE__*/React.createElement(Field, {
     label: "Nombre",
     value: form.name,
-    onChange: function onChange(v) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          name: v
-        });
-      });
-    },
+    onChange: v => setForm(f => ({
+      ...f,
+      name: v
+    })),
     placeholder: "Ej: Salario, Freelance, Dividendos..."
   }), /*#__PURE__*/React.createElement(Field, {
     label: "Importe (\u20AC)",
     value: form.amount,
-    onChange: function onChange(v) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          amount: v
-        });
-      });
-    },
+    onChange: v => setForm(f => ({
+      ...f,
+      amount: v
+    })),
     type: "number",
     min: "0",
     step: "0.01",
@@ -2135,21 +1903,16 @@ function TabIngresos(_ref0) {
   }), modalType === 'extra' && /*#__PURE__*/React.createElement(Field, {
     label: "Fecha",
     value: form.date,
-    onChange: function onChange(v) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          date: v
-        });
-      });
-    },
+    onChange: v => setForm(f => ({
+      ...f,
+      date: v
+    })),
     type: "date"
   }), /*#__PURE__*/React.createElement("div", {
     className: "form-actions"
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn",
-    onClick: function onClick() {
-      return setModalType(null);
-    }
+    onClick: () => setModalType(null)
   }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: handleSave
@@ -2159,42 +1922,28 @@ function TabIngresos(_ref0) {
 // ═══════════════════════════════════════════════════════════════
 //  TAB: GASTOS FIJOS
 // ═══════════════════════════════════════════════════════════════
-function TabGastosFijos(_ref1) {
-  var monthData = _ref1.monthData,
-    updateMonth = _ref1.updateMonth,
-    year = _ref1.year,
-    month = _ref1.month;
-  var _useState19 = useState(null),
-    _useState20 = _slicedToArray(_useState19, 2),
-    modal = _useState20[0],
-    setModal = _useState20[1]; // 'loan'|'ins'|'other'
-  var _useState21 = useState(null),
-    _useState22 = _slicedToArray(_useState21, 2),
-    editing = _useState22[0],
-    setEditing = _useState22[1];
-  var _useState23 = useState({
-      name: '',
-      amount: '',
-      freq: 'monthly'
-    }),
-    _useState24 = _slicedToArray(_useState23, 2),
-    form = _useState24[0],
-    setForm = _useState24[1];
-  var mortgage = Number(monthData === null || monthData === void 0 ? void 0 : monthData.mortgage) || 0;
-  var loans = (monthData === null || monthData === void 0 ? void 0 : monthData.loans) || [];
-  var insurance = (monthData === null || monthData === void 0 ? void 0 : monthData.insurance) || [];
-  var fixOthers = (monthData === null || monthData === void 0 ? void 0 : monthData.fixOthers) || [];
-  var insTotal = insurance.reduce(function (s, i) {
-    return s + insAmtForMonth(i, year, month);
-  }, 0);
-  var totalLoans = loans.reduce(function (s, l) {
-    return s + (Number(l.amount) || 0);
-  }, 0);
-  var totalOthers = fixOthers.reduce(function (s, o) {
-    return s + (Number(o.amount) || 0);
-  }, 0);
-  var grandTotal = mortgage + totalLoans + insTotal + totalOthers;
-  var openAdd = function openAdd(type) {
+function TabGastosFijos({
+  monthData,
+  updateMonth,
+  year,
+  month
+}) {
+  const [modal, setModal] = useState(null); // 'loan'|'ins'|'other'
+  const [editing, setEditing] = useState(null);
+  const [form, setForm] = useState({
+    name: '',
+    amount: '',
+    freq: 'monthly'
+  });
+  const mortgage = Number(monthData?.mortgage) || 0;
+  const loans = monthData?.loans || [];
+  const insurance = monthData?.insurance || [];
+  const fixOthers = monthData?.fixOthers || [];
+  const insTotal = insurance.reduce((s, i) => s + insAmtForMonth(i, year, month), 0);
+  const totalLoans = loans.reduce((s, l) => s + (Number(l.amount) || 0), 0);
+  const totalOthers = fixOthers.reduce((s, o) => s + (Number(o.amount) || 0), 0);
+  const grandTotal = mortgage + totalLoans + insTotal + totalOthers;
+  const openAdd = type => {
     setEditing(null);
     setForm({
       name: '',
@@ -2203,7 +1952,7 @@ function TabGastosFijos(_ref1) {
     });
     setModal(type);
   };
-  var openEdit = function openEdit(type, item) {
+  const openEdit = (type, item) => {
     setEditing(item.id);
     setForm({
       name: item.name,
@@ -2212,23 +1961,20 @@ function TabGastosFijos(_ref1) {
     });
     setModal(type);
   };
-  var handleSave = function handleSave() {
+  const handleSave = () => {
     if (!form.name || !form.amount) return;
     if (modal === 'loan') {
-      var item = {
+      const item = {
         id: editing || genId(),
         name: form.name,
         amount: Number(form.amount)
       };
-      updateMonth(function (md) {
-        return _objectSpread(_objectSpread({}, md), {}, {
-          loans: editing ? md.loans.map(function (x) {
-            return x.id === editing ? item : x;
-          }) : [].concat(_toConsumableArray(md.loans || []), [item])
-        });
-      });
+      updateMonth(md => ({
+        ...md,
+        loans: editing ? md.loans.map(x => x.id === editing ? item : x) : [...(md.loans || []), item]
+      }));
     } else if (modal === 'ins') {
-      var _item = {
+      const item = {
         id: editing || genId(),
         name: form.name,
         amount: Number(form.amount),
@@ -2236,42 +1982,28 @@ function TabGastosFijos(_ref1) {
         sy: year,
         sm: month
       };
-      updateMonth(function (md) {
-        return _objectSpread(_objectSpread({}, md), {}, {
-          insurance: editing ? md.insurance.map(function (x) {
-            return x.id === editing ? _item : x;
-          }) : [].concat(_toConsumableArray(md.insurance || []), [_item])
-        });
-      });
+      updateMonth(md => ({
+        ...md,
+        insurance: editing ? md.insurance.map(x => x.id === editing ? item : x) : [...(md.insurance || []), item]
+      }));
     } else {
-      var _item2 = {
+      const item = {
         id: editing || genId(),
         name: form.name,
         amount: Number(form.amount)
       };
-      updateMonth(function (md) {
-        return _objectSpread(_objectSpread({}, md), {}, {
-          fixOthers: editing ? md.fixOthers.map(function (x) {
-            return x.id === editing ? _item2 : x;
-          }) : [].concat(_toConsumableArray(md.fixOthers || []), [_item2])
-        });
-      });
+      updateMonth(md => ({
+        ...md,
+        fixOthers: editing ? md.fixOthers.map(x => x.id === editing ? item : x) : [...(md.fixOthers || []), item]
+      }));
     }
     setModal(null);
   };
-  var del = function del(type, id) {
-    return updateMonth(function (md) {
-      return _objectSpread(_objectSpread({}, md), {}, _defineProperty({}, type, md[type].filter(function (x) {
-        return x.id !== id;
-      })));
-    });
-  };
-  var freqLabel = function freqLabel(f) {
-    var _FREQ_OPTS$find;
-    return ((_FREQ_OPTS$find = FREQ_OPTS.find(function (o) {
-      return o.value === f;
-    })) === null || _FREQ_OPTS$find === void 0 ? void 0 : _FREQ_OPTS$find.label) || f;
-  };
+  const del = (type, id) => updateMonth(md => ({
+    ...md,
+    [type]: md[type].filter(x => x.id !== id)
+  }));
+  const freqLabel = f => FREQ_OPTS.find(o => o.value === f)?.label || f;
   return /*#__PURE__*/React.createElement("div", {
     className: "fade-in section-grid"
   }, /*#__PURE__*/React.createElement(AccordionSection, {
@@ -2298,13 +2030,10 @@ function TabGastosFijos(_ref1) {
       maxWidth: 180
     },
     value: mortgage || '',
-    onChange: function onChange(e) {
-      return updateMonth(function (md) {
-        return _objectSpread(_objectSpread({}, md), {}, {
-          mortgage: Number(e.target.value) || 0
-        });
-      });
-    }
+    onChange: e => updateMonth(md => ({
+      ...md,
+      mortgage: Number(e.target.value) || 0
+    }))
   }), /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 12,
@@ -2316,45 +2045,35 @@ function TabGastosFijos(_ref1) {
     total: totalLoans,
     color: CLR.fixed,
     colorBg: CLR.fixedBg,
-    onAdd: function onAdd() {
-      return openAdd('loan');
-    },
+    onAdd: () => openAdd('loan'),
     addLabel: "Pr\xE9stamo"
   }, loans.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
     icon: "\uD83C\uDFE6",
     text: "Sin pr\xE9stamos registrados"
   }) : /*#__PURE__*/React.createElement("div", {
     className: "line-items"
-  }, loans.map(function (l) {
-    return /*#__PURE__*/React.createElement(LineItem, {
-      key: l.id,
-      name: l.name,
-      amount: l.amount,
-      color: CLR.fixed,
-      onEdit: function onEdit() {
-        return openEdit('loan', l);
-      },
-      onDelete: function onDelete() {
-        return del('loans', l.id);
-      }
-    });
-  }))), /*#__PURE__*/React.createElement(AccordionSection, {
+  }, loans.map(l => /*#__PURE__*/React.createElement(LineItem, {
+    key: l.id,
+    name: l.name,
+    amount: l.amount,
+    color: CLR.fixed,
+    onEdit: () => openEdit('loan', l),
+    onDelete: () => del('loans', l.id)
+  })))), /*#__PURE__*/React.createElement(AccordionSection, {
     icon: "\uD83D\uDEE1\uFE0F",
     title: "Seguros",
     total: insTotal,
     color: CLR.fixed,
     colorBg: CLR.fixedBg,
-    onAdd: function onAdd() {
-      return openAdd('ins');
-    },
+    onAdd: () => openAdd('ins'),
     addLabel: "Seguro"
   }, insurance.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
     icon: "\uD83D\uDEE1\uFE0F",
     text: "Sin seguros registrados"
   }) : /*#__PURE__*/React.createElement("div", {
     className: "line-items"
-  }, insurance.map(function (i) {
-    var amt = insAmtForMonth(i, year, month);
+  }, insurance.map(i => {
+    const amt = insAmtForMonth(i, year, month);
     return /*#__PURE__*/React.createElement(LineItem, {
       key: i.id,
       name: i.name,
@@ -2365,12 +2084,8 @@ function TabGastosFijos(_ref1) {
         bg: amt > 0 ? CLR.fixedBg : 'var(--bg)',
         color: amt > 0 ? CLR.fixed : 'var(--text-muted)'
       },
-      onEdit: function onEdit() {
-        return openEdit('ins', i);
-      },
-      onDelete: function onDelete() {
-        return del('insurance', i.id);
-      }
+      onEdit: () => openEdit('ins', i),
+      onDelete: () => del('insurance', i.id)
     });
   }))), /*#__PURE__*/React.createElement(AccordionSection, {
     icon: "\uD83D\uDCCC",
@@ -2378,29 +2093,21 @@ function TabGastosFijos(_ref1) {
     total: totalOthers,
     color: CLR.fixed,
     colorBg: CLR.fixedBg,
-    onAdd: function onAdd() {
-      return openAdd('other');
-    },
+    onAdd: () => openAdd('other'),
     addLabel: "Otro fijo"
   }, fixOthers.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
     icon: "\uD83D\uDCCC",
     text: "Sin otros gastos fijos"
   }) : /*#__PURE__*/React.createElement("div", {
     className: "line-items"
-  }, fixOthers.map(function (o) {
-    return /*#__PURE__*/React.createElement(LineItem, {
-      key: o.id,
-      name: o.name,
-      amount: o.amount,
-      color: CLR.fixed,
-      onEdit: function onEdit() {
-        return openEdit('other', o);
-      },
-      onDelete: function onDelete() {
-        return del('fixOthers', o.id);
-      }
-    });
-  }))), /*#__PURE__*/React.createElement("div", {
+  }, fixOthers.map(o => /*#__PURE__*/React.createElement(LineItem, {
+    key: o.id,
+    name: o.name,
+    amount: o.amount,
+    color: CLR.fixed,
+    onEdit: () => openEdit('other', o),
+    onDelete: () => del('fixOthers', o.id)
+  })))), /*#__PURE__*/React.createElement("div", {
     className: "card"
   }, /*#__PURE__*/React.createElement("div", {
     className: "card-body",
@@ -2423,44 +2130,33 @@ function TabGastosFijos(_ref1) {
       color: CLR.fixed
     }
   }, fmt(grandTotal)))), modal && /*#__PURE__*/React.createElement(Modal, {
-    title: "".concat(editing ? 'Editar' : 'Añadir', " ").concat(modal === 'loan' ? 'préstamo' : modal === 'ins' ? 'seguro' : 'gasto fijo'),
-    onClose: function onClose() {
-      return setModal(null);
-    }
+    title: `${editing ? 'Editar' : 'Añadir'} ${modal === 'loan' ? 'préstamo' : modal === 'ins' ? 'seguro' : 'gasto fijo'}`,
+    onClose: () => setModal(null)
   }, /*#__PURE__*/React.createElement(Field, {
     label: "Nombre",
     value: form.name,
-    onChange: function onChange(v) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          name: v
-        });
-      });
-    },
+    onChange: v => setForm(f => ({
+      ...f,
+      name: v
+    })),
     placeholder: "Nombre descriptivo"
   }), /*#__PURE__*/React.createElement(Field, {
     label: "Importe (\u20AC)",
     value: form.amount,
-    onChange: function onChange(v) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          amount: v
-        });
-      });
-    },
+    onChange: v => setForm(f => ({
+      ...f,
+      amount: v
+    })),
     type: "number",
     min: "0",
     step: "0.01"
   }), modal === 'ins' && /*#__PURE__*/React.createElement(SelectField, {
     label: "Periodicidad",
     value: form.freq,
-    onChange: function onChange(v) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          freq: v
-        });
-      });
-    },
+    onChange: v => setForm(f => ({
+      ...f,
+      freq: v
+    })),
     options: FREQ_OPTS
   }), modal === 'ins' && form.freq !== 'monthly' && /*#__PURE__*/React.createElement("div", {
     style: {
@@ -2475,9 +2171,7 @@ function TabGastosFijos(_ref1) {
     className: "form-actions"
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn",
-    onClick: function onClick() {
-      return setModal(null);
-    }
+    onClick: () => setModal(null)
   }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: handleSave
@@ -2487,26 +2181,18 @@ function TabGastosFijos(_ref1) {
 // ═══════════════════════════════════════════════════════════════
 //  TAB: GASTOS VARIABLES
 // ═══════════════════════════════════════════════════════════════
-function TabGastosVariables(_ref10) {
-  var monthData = _ref10.monthData,
-    updateMonth = _ref10.updateMonth;
-  var _useState25 = useState(false),
-    _useState26 = _slicedToArray(_useState25, 2),
-    modal = _useState26[0],
-    setModal = _useState26[1];
-  var _useState27 = useState(null),
-    _useState28 = _slicedToArray(_useState27, 2),
-    editing = _useState28[0],
-    setEditing = _useState28[1];
-  var _useState29 = useState({
-      name: '',
-      amount: ''
-    }),
-    _useState30 = _slicedToArray(_useState29, 2),
-    form = _useState30[0],
-    setForm = _useState30[1];
-  var ve = (monthData === null || monthData === void 0 ? void 0 : monthData.varExp) || {};
-  var VAR_FIELDS = [{
+function TabGastosVariables({
+  monthData,
+  updateMonth
+}) {
+  const [modal, setModal] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [form, setForm] = useState({
+    name: '',
+    amount: ''
+  });
+  const ve = monthData?.varExp || {};
+  const VAR_FIELDS = [{
     key: 'electricity',
     label: '💡 Luz',
     icon: '💡'
@@ -2535,38 +2221,31 @@ function TabGastosVariables(_ref10) {
     label: '🔥 Gas',
     icon: '🔥'
   }];
-  var others = ve.others || [];
-  var standardTotal = VAR_FIELDS.reduce(function (s, f) {
-    return s + (Number(ve[f.key]) || 0);
-  }, 0);
-  var othersTotal = others.reduce(function (s, i) {
-    return s + (Number(i.amount) || 0);
-  }, 0);
-  var grandTotal = standardTotal + othersTotal;
-  var setField = function setField(key, val) {
-    return updateMonth(function (md) {
-      return _objectSpread(_objectSpread({}, md), {}, {
-        varExp: _objectSpread(_objectSpread({}, md.varExp || {}), {}, _defineProperty({}, key, Number(val) || 0))
-      });
-    });
-  };
-  var handleSave = function handleSave() {
+  const others = ve.others || [];
+  const standardTotal = VAR_FIELDS.reduce((s, f) => s + (Number(ve[f.key]) || 0), 0);
+  const othersTotal = others.reduce((s, i) => s + (Number(i.amount) || 0), 0);
+  const grandTotal = standardTotal + othersTotal;
+  const setField = (key, val) => updateMonth(md => ({
+    ...md,
+    varExp: {
+      ...(md.varExp || {}),
+      [key]: Number(val) || 0
+    }
+  }));
+  const handleSave = () => {
     if (!form.name || !form.amount) return;
-    var item = {
+    const item = {
       id: editing || genId(),
       name: form.name,
       amount: Number(form.amount)
     };
-    updateMonth(function (md) {
-      var _md$varExp, _md$varExp2;
-      return _objectSpread(_objectSpread({}, md), {}, {
-        varExp: _objectSpread(_objectSpread({}, md.varExp || {}), {}, {
-          others: editing ? (((_md$varExp = md.varExp) === null || _md$varExp === void 0 ? void 0 : _md$varExp.others) || []).map(function (x) {
-            return x.id === editing ? item : x;
-          }) : [].concat(_toConsumableArray(((_md$varExp2 = md.varExp) === null || _md$varExp2 === void 0 ? void 0 : _md$varExp2.others) || []), [item])
-        })
-      });
-    });
+    updateMonth(md => ({
+      ...md,
+      varExp: {
+        ...(md.varExp || {}),
+        others: editing ? (md.varExp?.others || []).map(x => x.id === editing ? item : x) : [...(md.varExp?.others || []), item]
+      }
+    }));
     setModal(false);
   };
   return /*#__PURE__*/React.createElement("div", {
@@ -2597,29 +2276,25 @@ function TabGastosVariables(_ref10) {
       gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
       gap: 10
     }
-  }, VAR_FIELDS.map(function (f) {
-    return /*#__PURE__*/React.createElement("div", {
-      key: f.key
-    }, /*#__PURE__*/React.createElement("label", {
-      className: "form-label"
-    }, f.label), /*#__PURE__*/React.createElement("input", {
-      className: "form-input",
-      type: "number",
-      min: "0",
-      step: "0.01",
-      placeholder: "0,00",
-      value: ve[f.key] || '',
-      onChange: function onChange(e) {
-        return setField(f.key, e.target.value);
-      }
-    }));
-  })))), /*#__PURE__*/React.createElement(AccordionSection, {
+  }, VAR_FIELDS.map(f => /*#__PURE__*/React.createElement("div", {
+    key: f.key
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "form-label"
+  }, f.label), /*#__PURE__*/React.createElement("input", {
+    className: "form-input",
+    type: "number",
+    min: "0",
+    step: "0.01",
+    placeholder: "0,00",
+    value: ve[f.key] || '',
+    onChange: e => setField(f.key, e.target.value)
+  })))))), /*#__PURE__*/React.createElement(AccordionSection, {
     icon: "\u2795",
     title: "Otros gastos variables",
     total: othersTotal,
     color: CLR.varExp,
     colorBg: CLR.varBg,
-    onAdd: function onAdd() {
+    onAdd: () => {
       setEditing(null);
       setForm({
         name: '',
@@ -2633,33 +2308,27 @@ function TabGastosVariables(_ref10) {
     text: "Sin otros gastos variables"
   }) : /*#__PURE__*/React.createElement("div", {
     className: "line-items"
-  }, others.map(function (o) {
-    return /*#__PURE__*/React.createElement(LineItem, {
-      key: o.id,
-      name: o.name,
-      amount: o.amount,
-      color: CLR.varExp,
-      onEdit: function onEdit() {
-        setEditing(o.id);
-        setForm({
-          name: o.name,
-          amount: String(o.amount)
-        });
-        setModal(true);
-      },
-      onDelete: function onDelete() {
-        return updateMonth(function (md) {
-          return _objectSpread(_objectSpread({}, md), {}, {
-            varExp: _objectSpread(_objectSpread({}, md.varExp), {}, {
-              others: md.varExp.others.filter(function (x) {
-                return x.id !== o.id;
-              })
-            })
-          });
-        });
+  }, others.map(o => /*#__PURE__*/React.createElement(LineItem, {
+    key: o.id,
+    name: o.name,
+    amount: o.amount,
+    color: CLR.varExp,
+    onEdit: () => {
+      setEditing(o.id);
+      setForm({
+        name: o.name,
+        amount: String(o.amount)
+      });
+      setModal(true);
+    },
+    onDelete: () => updateMonth(md => ({
+      ...md,
+      varExp: {
+        ...md.varExp,
+        others: md.varExp.others.filter(x => x.id !== o.id)
       }
-    });
-  }))), /*#__PURE__*/React.createElement("div", {
+    }))
+  })))), /*#__PURE__*/React.createElement("div", {
     className: "card"
   }, /*#__PURE__*/React.createElement("div", {
     className: "card-body",
@@ -2682,31 +2351,23 @@ function TabGastosVariables(_ref10) {
       color: CLR.varExp
     }
   }, fmt(grandTotal)))), modal && /*#__PURE__*/React.createElement(Modal, {
-    title: "".concat(editing ? 'Editar' : 'Añadir', " gasto variable"),
-    onClose: function onClose() {
-      return setModal(false);
-    }
+    title: `${editing ? 'Editar' : 'Añadir'} gasto variable`,
+    onClose: () => setModal(false)
   }, /*#__PURE__*/React.createElement(Field, {
     label: "Nombre",
     value: form.name,
-    onChange: function onChange(v) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          name: v
-        });
-      });
-    },
+    onChange: v => setForm(f => ({
+      ...f,
+      name: v
+    })),
     placeholder: "Ej: Parking, Gimnasio..."
   }), /*#__PURE__*/React.createElement(Field, {
     label: "Importe (\u20AC)",
     value: form.amount,
-    onChange: function onChange(v) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          amount: v
-        });
-      });
-    },
+    onChange: v => setForm(f => ({
+      ...f,
+      amount: v
+    })),
     type: "number",
     min: "0",
     step: "0.01"
@@ -2714,9 +2375,7 @@ function TabGastosVariables(_ref10) {
     className: "form-actions"
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn",
-    onClick: function onClick() {
-      return setModal(false);
-    }
+    onClick: () => setModal(false)
   }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: handleSave
@@ -2726,31 +2385,22 @@ function TabGastosVariables(_ref10) {
 // ═══════════════════════════════════════════════════════════════
 //  TAB: OCIO
 // ═══════════════════════════════════════════════════════════════
-function TabOcio(_ref11) {
-  var _SECTIONS$find;
-  var monthData = _ref11.monthData,
-    updateMonth = _ref11.updateMonth;
-  var _useState31 = useState(null),
-    _useState32 = _slicedToArray(_useState31, 2),
-    modal = _useState32[0],
-    setModal = _useState32[1]; // section key
-  var _useState33 = useState(null),
-    _useState34 = _slicedToArray(_useState33, 2),
-    editing = _useState34[0],
-    setEditing = _useState34[1];
-  var _useState35 = useState({
-      name: '',
-      amount: '',
-      date: '',
-      person: '',
-      isFixed: false,
-      isAnnual: false
-    }),
-    _useState36 = _slicedToArray(_useState35, 2),
-    form = _useState36[0],
-    setForm = _useState36[1];
-  var lei = (monthData === null || monthData === void 0 ? void 0 : monthData.leisure) || {};
-  var SECTIONS = [{
+function TabOcio({
+  monthData,
+  updateMonth
+}) {
+  const [modal, setModal] = useState(null); // section key
+  const [editing, setEditing] = useState(null);
+  const [form, setForm] = useState({
+    name: '',
+    amount: '',
+    date: '',
+    person: '',
+    isFixed: false,
+    isAnnual: false
+  });
+  const lei = monthData?.leisure || {};
+  const SECTIONS = [{
     key: 'entertainment',
     label: 'Entretenimiento',
     icon: '🎬',
@@ -2775,7 +2425,7 @@ function TabOcio(_ref11) {
     color: '#768390',
     bg: '#f1f5f9'
   }];
-  var openAdd = function openAdd(key) {
+  const openAdd = key => {
     setEditing(null);
     setForm({
       name: '',
@@ -2787,7 +2437,7 @@ function TabOcio(_ref11) {
     });
     setModal(key);
   };
-  var openEdit = function openEdit(key, item) {
+  const openEdit = (key, item) => {
     setEditing(item.id);
     setForm({
       name: item.name,
@@ -2799,9 +2449,9 @@ function TabOcio(_ref11) {
     });
     setModal(key);
   };
-  var handleSave = function handleSave() {
+  const handleSave = () => {
     if (!form.name || !form.amount) return;
-    var item = {
+    const item = {
       id: editing || genId(),
       name: form.name,
       amount: Number(form.amount),
@@ -2810,36 +2460,28 @@ function TabOcio(_ref11) {
       isFixed: form.isFixed,
       isAnnual: form.isAnnual
     };
-    updateMonth(function (md) {
-      return _objectSpread(_objectSpread({}, md), {}, {
-        leisure: _objectSpread(_objectSpread({}, md.leisure || {}), {}, _defineProperty({}, modal, editing ? (lei[modal] || []).map(function (x) {
-          return x.id === editing ? item : x;
-        }) : [].concat(_toConsumableArray(lei[modal] || []), [item])))
-      });
-    });
+    updateMonth(md => ({
+      ...md,
+      leisure: {
+        ...(md.leisure || {}),
+        [modal]: editing ? (lei[modal] || []).map(x => x.id === editing ? item : x) : [...(lei[modal] || []), item]
+      }
+    }));
     setModal(null);
   };
-  var del = function del(key, id) {
-    return updateMonth(function (md) {
-      return _objectSpread(_objectSpread({}, md), {}, {
-        leisure: _objectSpread(_objectSpread({}, md.leisure || {}), {}, _defineProperty({}, key, (lei[key] || []).filter(function (x) {
-          return x.id !== id;
-        })))
-      });
-    });
-  };
-  var totalAll = SECTIONS.reduce(function (s, sec) {
-    return s + (lei[sec.key] || []).reduce(function (ss, i) {
-      return ss + (Number(i.amount) || 0);
-    }, 0);
-  }, 0);
+  const del = (key, id) => updateMonth(md => ({
+    ...md,
+    leisure: {
+      ...(md.leisure || {}),
+      [key]: (lei[key] || []).filter(x => x.id !== id)
+    }
+  }));
+  const totalAll = SECTIONS.reduce((s, sec) => s + (lei[sec.key] || []).reduce((ss, i) => ss + (Number(i.amount) || 0), 0), 0);
   return /*#__PURE__*/React.createElement("div", {
     className: "fade-in section-grid"
-  }, SECTIONS.map(function (sec) {
-    var items = lei[sec.key] || [];
-    var total = items.reduce(function (s, i) {
-      return s + (Number(i.amount) || 0);
-    }, 0);
+  }, SECTIONS.map(sec => {
+    const items = lei[sec.key] || [];
+    const total = items.reduce((s, i) => s + (Number(i.amount) || 0), 0);
     return /*#__PURE__*/React.createElement(AccordionSection, {
       key: sec.key,
       icon: sec.icon,
@@ -2847,39 +2489,31 @@ function TabOcio(_ref11) {
       total: total,
       color: sec.color,
       colorBg: sec.bg,
-      onAdd: function onAdd() {
-        return openAdd(sec.key);
-      },
+      onAdd: () => openAdd(sec.key),
       addLabel: sec.label
     }, items.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
       icon: sec.icon,
-      text: "Sin ".concat(sec.label.toLowerCase(), " este mes")
+      text: `Sin ${sec.label.toLowerCase()} este mes`
     }) : /*#__PURE__*/React.createElement("div", {
       className: "line-items"
-    }, items.map(function (i) {
-      return /*#__PURE__*/React.createElement(LineItem, {
-        key: i.id,
-        name: i.name,
-        amount: i.amount,
-        color: sec.color,
-        meta: [fmtDate(i.date), i.person].filter(Boolean).join(' · '),
-        badge: i.isFixed ? {
-          text: 'FIJO',
-          bg: sec.bg,
-          color: sec.color
-        } : i.isAnnual ? {
-          text: 'ANUAL',
-          bg: '#FAEEDA',
-          color: '#BA7517'
-        } : null,
-        onEdit: function onEdit() {
-          return openEdit(sec.key, i);
-        },
-        onDelete: function onDelete() {
-          return del(sec.key, i.id);
-        }
-      });
-    })));
+    }, items.map(i => /*#__PURE__*/React.createElement(LineItem, {
+      key: i.id,
+      name: i.name,
+      amount: i.amount,
+      color: sec.color,
+      meta: [fmtDate(i.date), i.person].filter(Boolean).join(' · '),
+      badge: i.isFixed ? {
+        text: 'FIJO',
+        bg: sec.bg,
+        color: sec.color
+      } : i.isAnnual ? {
+        text: 'ANUAL',
+        bg: '#FAEEDA',
+        color: '#BA7517'
+      } : null,
+      onEdit: () => openEdit(sec.key, i),
+      onDelete: () => del(sec.key, i.id)
+    }))));
   }), /*#__PURE__*/React.createElement("div", {
     className: "card"
   }, /*#__PURE__*/React.createElement("div", {
@@ -2903,59 +2537,43 @@ function TabOcio(_ref11) {
       color: CLR.leisure
     }
   }, fmt(totalAll)))), modal && /*#__PURE__*/React.createElement(Modal, {
-    title: "A\xF1adir ".concat(((_SECTIONS$find = SECTIONS.find(function (s) {
-      return s.key === modal;
-    })) === null || _SECTIONS$find === void 0 ? void 0 : _SECTIONS$find.label) || ''),
-    onClose: function onClose() {
-      return setModal(null);
-    }
+    title: `Añadir ${SECTIONS.find(s => s.key === modal)?.label || ''}`,
+    onClose: () => setModal(null)
   }, /*#__PURE__*/React.createElement(Field, {
     label: "Nombre / Descripci\xF3n",
     value: form.name,
-    onChange: function onChange(v) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          name: v
-        });
-      });
-    },
+    onChange: v => setForm(f => ({
+      ...f,
+      name: v
+    })),
     placeholder: "Ej: Cine, Restaurante La Paloma..."
   }), /*#__PURE__*/React.createElement("div", {
     className: "form-row"
   }, /*#__PURE__*/React.createElement(Field, {
     label: "Importe (\u20AC)",
     value: form.amount,
-    onChange: function onChange(v) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          amount: v
-        });
-      });
-    },
+    onChange: v => setForm(f => ({
+      ...f,
+      amount: v
+    })),
     type: "number",
     min: "0",
     step: "0.01"
   }), /*#__PURE__*/React.createElement(Field, {
     label: "Fecha",
     value: form.date,
-    onChange: function onChange(v) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          date: v
-        });
-      });
-    },
+    onChange: v => setForm(f => ({
+      ...f,
+      date: v
+    })),
     type: "date"
   })), /*#__PURE__*/React.createElement(Field, {
     label: "Mano rota (\xBFqui\xE9n gasta?)",
     value: form.person,
-    onChange: function onChange(v) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          person: v
-        });
-      });
-    },
+    onChange: v => setForm(f => ({
+      ...f,
+      person: v
+    })),
     placeholder: "Nombre de la persona"
   }), /*#__PURE__*/React.createElement("div", {
     style: {
@@ -2974,14 +2592,11 @@ function TabOcio(_ref11) {
   }, /*#__PURE__*/React.createElement("input", {
     type: "checkbox",
     checked: form.isFixed,
-    onChange: function onChange(e) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          isFixed: e.target.checked,
-          isAnnual: false
-        });
-      });
-    }
+    onChange: e => setForm(f => ({
+      ...f,
+      isFixed: e.target.checked,
+      isAnnual: false
+    }))
   }), "Gasto fijo mensual"), /*#__PURE__*/React.createElement("label", {
     style: {
       display: 'flex',
@@ -2993,21 +2608,16 @@ function TabOcio(_ref11) {
   }, /*#__PURE__*/React.createElement("input", {
     type: "checkbox",
     checked: form.isAnnual,
-    onChange: function onChange(e) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          isAnnual: e.target.checked,
-          isFixed: false
-        });
-      });
-    }
+    onChange: e => setForm(f => ({
+      ...f,
+      isAnnual: e.target.checked,
+      isFixed: false
+    }))
   }), "Pago anual (solo este mes)")), /*#__PURE__*/React.createElement("div", {
     className: "form-actions"
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn",
-    onClick: function onClick() {
-      return setModal(null);
-    }
+    onClick: () => setModal(null)
   }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: handleSave
@@ -3017,38 +2627,23 @@ function TabOcio(_ref11) {
 // ═══════════════════════════════════════════════════════════════
 //  TAB: HIJOS
 // ═══════════════════════════════════════════════════════════════
-function TabHijos(_ref12) {
-  var _CHILD_CATS$find;
-  var monthData = _ref12.monthData,
-    updateMonth = _ref12.updateMonth;
-  var _useState37 = useState(false),
-    _useState38 = _slicedToArray(_useState37, 2),
-    addChildModal = _useState38[0],
-    setAddChildModal = _useState38[1];
-  var _useState39 = useState(''),
-    _useState40 = _slicedToArray(_useState39, 2),
-    childName = _useState40[0],
-    setChildName = _useState40[1];
-  var _useState41 = useState(null),
-    _useState42 = _slicedToArray(_useState41, 2),
-    modal = _useState42[0],
-    setModal = _useState42[1]; // { childId, catKey }
-  var _useState43 = useState(null),
-    _useState44 = _slicedToArray(_useState43, 2),
-    editing = _useState44[0],
-    setEditing = _useState44[1];
-  var _useState45 = useState({
-      name: '',
-      amount: '',
-      date: ''
-    }),
-    _useState46 = _slicedToArray(_useState45, 2),
-    form = _useState46[0],
-    setForm = _useState46[1];
-  var children = (monthData === null || monthData === void 0 ? void 0 : monthData.children) || [];
-  var addChild = function addChild() {
+function TabHijos({
+  monthData,
+  updateMonth
+}) {
+  const [addChildModal, setAddChildModal] = useState(false);
+  const [childName, setChildName] = useState('');
+  const [modal, setModal] = useState(null); // { childId, catKey }
+  const [editing, setEditing] = useState(null);
+  const [form, setForm] = useState({
+    name: '',
+    amount: '',
+    date: ''
+  });
+  const children = monthData?.children || [];
+  const addChild = () => {
     if (!childName.trim()) return;
-    var child = {
+    const child = {
       id: genId(),
       name: childName.trim(),
       clothing: [],
@@ -3057,24 +2652,18 @@ function TabHijos(_ref12) {
       treats: [],
       leisure: []
     };
-    updateMonth(function (md) {
-      return _objectSpread(_objectSpread({}, md), {}, {
-        children: [].concat(_toConsumableArray(md.children || []), [child])
-      });
-    });
+    updateMonth(md => ({
+      ...md,
+      children: [...(md.children || []), child]
+    }));
     setChildName('');
     setAddChildModal(false);
   };
-  var delChild = function delChild(id) {
-    return updateMonth(function (md) {
-      return _objectSpread(_objectSpread({}, md), {}, {
-        children: md.children.filter(function (c) {
-          return c.id !== id;
-        })
-      });
-    });
-  };
-  var openAdd = function openAdd(childId, catKey) {
+  const delChild = id => updateMonth(md => ({
+    ...md,
+    children: md.children.filter(c => c.id !== id)
+  }));
+  const openAdd = (childId, catKey) => {
     setEditing(null);
     setForm({
       name: '',
@@ -3082,11 +2671,11 @@ function TabHijos(_ref12) {
       date: today.toISOString().split('T')[0]
     });
     setModal({
-      childId: childId,
-      catKey: catKey
+      childId,
+      catKey
     });
   };
-  var openEdit = function openEdit(childId, catKey, item) {
+  const openEdit = (childId, catKey, item) => {
     setEditing(item.id);
     setForm({
       name: item.name,
@@ -3094,47 +2683,35 @@ function TabHijos(_ref12) {
       date: item.date || ''
     });
     setModal({
-      childId: childId,
-      catKey: catKey
+      childId,
+      catKey
     });
   };
-  var handleSave = function handleSave() {
+  const handleSave = () => {
     if (!form.name || !form.amount) return;
-    var item = {
+    const item = {
       id: editing || genId(),
       name: form.name,
       amount: Number(form.amount),
       date: form.date
     };
-    updateMonth(function (md) {
-      return _objectSpread(_objectSpread({}, md), {}, {
-        children: md.children.map(function (c) {
-          return c.id === modal.childId ? _objectSpread(_objectSpread({}, c), {}, _defineProperty({}, modal.catKey, editing ? c[modal.catKey].map(function (x) {
-            return x.id === editing ? item : x;
-          }) : [].concat(_toConsumableArray(c[modal.catKey] || []), [item]))) : c;
-        })
-      });
-    });
+    updateMonth(md => ({
+      ...md,
+      children: md.children.map(c => c.id === modal.childId ? {
+        ...c,
+        [modal.catKey]: editing ? c[modal.catKey].map(x => x.id === editing ? item : x) : [...(c[modal.catKey] || []), item]
+      } : c)
+    }));
     setModal(null);
   };
-  var delItem = function delItem(childId, catKey, itemId) {
-    return updateMonth(function (md) {
-      return _objectSpread(_objectSpread({}, md), {}, {
-        children: md.children.map(function (c) {
-          return c.id === childId ? _objectSpread(_objectSpread({}, c), {}, _defineProperty({}, catKey, c[catKey].filter(function (x) {
-            return x.id !== itemId;
-          }))) : c;
-        })
-      });
-    });
-  };
-  var childTotal = function childTotal(child) {
-    return CHILD_CATS.reduce(function (s, cat) {
-      return s + (child[cat.key] || []).reduce(function (ss, i) {
-        return ss + (Number(i.amount) || 0);
-      }, 0);
-    }, 0);
-  };
+  const delItem = (childId, catKey, itemId) => updateMonth(md => ({
+    ...md,
+    children: md.children.map(c => c.id === childId ? {
+      ...c,
+      [catKey]: c[catKey].filter(x => x.id !== itemId)
+    } : c)
+  }));
+  const childTotal = child => CHILD_CATS.reduce((s, cat) => s + (child[cat.key] || []).reduce((ss, i) => ss + (Number(i.amount) || 0), 0), 0);
   return /*#__PURE__*/React.createElement("div", {
     className: "fade-in"
   }, children.length === 0 ? /*#__PURE__*/React.createElement("div", {
@@ -3167,91 +2744,71 @@ function TabHijos(_ref12) {
     }
   }, "A\xF1ade hijos para registrar sus gastos"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
-    onClick: function onClick() {
-      return setAddChildModal(true);
-    }
+    onClick: () => setAddChildModal(true)
   }, "+ A\xF1adir hijo/a"))) : /*#__PURE__*/React.createElement("div", {
     className: "section-grid"
-  }, children.map(function (child) {
-    return /*#__PURE__*/React.createElement("div", {
-      key: child.id,
-      className: "card"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "card-header"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "card-header-left"
-    }, /*#__PURE__*/React.createElement("span", {
-      style: {
-        fontSize: 20
-      }
-    }, "\uD83D\uDC76"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-      className: "card-title"
-    }, child.name), /*#__PURE__*/React.createElement("div", {
-      className: "card-subtitle"
-    }, "Total: ", fmt(childTotal(child))))), /*#__PURE__*/React.createElement("button", {
-      className: "btn btn-sm",
-      style: {
-        color: 'var(--red)',
-        borderColor: 'var(--red)'
-      },
-      onClick: function onClick() {
-        return delChild(child.id);
-      }
-    }, "Eliminar")), /*#__PURE__*/React.createElement("div", {
-      className: "card-body"
-    }, CHILD_CATS.map(function (cat) {
-      var items = child[cat.key] || [];
-      var total = items.reduce(function (s, i) {
-        return s + (Number(i.amount) || 0);
-      }, 0);
-      return /*#__PURE__*/React.createElement(AccordionSection, {
-        key: cat.key,
-        icon: cat.icon,
-        title: cat.label,
-        total: total,
-        color: CLR.child,
-        colorBg: CLR.childBg,
-        defaultOpen: false,
-        onAdd: function onAdd() {
-          return openAdd(child.id, cat.key);
-        },
-        addLabel: "Gasto"
-      }, items.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
-        icon: cat.icon,
-        text: "Sin gastos de ".concat(cat.label.toLowerCase())
-      }) : /*#__PURE__*/React.createElement("div", {
-        className: "line-items"
-      }, items.map(function (i) {
-        return /*#__PURE__*/React.createElement(LineItem, {
-          key: i.id,
-          name: i.name,
-          amount: i.amount,
-          color: CLR.child,
-          meta: fmtDate(i.date),
-          onEdit: function onEdit() {
-            return openEdit(child.id, cat.key, i);
-          },
-          onDelete: function onDelete() {
-            return delItem(child.id, cat.key, i.id);
-          }
-        });
-      })));
-    })));
-  }), /*#__PURE__*/React.createElement("button", {
+  }, children.map(child => /*#__PURE__*/React.createElement("div", {
+    key: child.id,
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-header"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-header-left"
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 20
+    }
+  }, "\uD83D\uDC76"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "card-title"
+  }, child.name), /*#__PURE__*/React.createElement("div", {
+    className: "card-subtitle"
+  }, "Total: ", fmt(childTotal(child))))), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-sm",
+    style: {
+      color: 'var(--red)',
+      borderColor: 'var(--red)'
+    },
+    onClick: () => delChild(child.id)
+  }, "Eliminar")), /*#__PURE__*/React.createElement("div", {
+    className: "card-body"
+  }, CHILD_CATS.map(cat => {
+    const items = child[cat.key] || [];
+    const total = items.reduce((s, i) => s + (Number(i.amount) || 0), 0);
+    return /*#__PURE__*/React.createElement(AccordionSection, {
+      key: cat.key,
+      icon: cat.icon,
+      title: cat.label,
+      total: total,
+      color: CLR.child,
+      colorBg: CLR.childBg,
+      defaultOpen: false,
+      onAdd: () => openAdd(child.id, cat.key),
+      addLabel: "Gasto"
+    }, items.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
+      icon: cat.icon,
+      text: `Sin gastos de ${cat.label.toLowerCase()}`
+    }) : /*#__PURE__*/React.createElement("div", {
+      className: "line-items"
+    }, items.map(i => /*#__PURE__*/React.createElement(LineItem, {
+      key: i.id,
+      name: i.name,
+      amount: i.amount,
+      color: CLR.child,
+      meta: fmtDate(i.date),
+      onEdit: () => openEdit(child.id, cat.key, i),
+      onDelete: () => delItem(child.id, cat.key, i.id)
+    }))));
+  })))), /*#__PURE__*/React.createElement("button", {
     className: "btn-add",
     style: {
       width: '100%',
       padding: '12px',
       justifyContent: 'center'
     },
-    onClick: function onClick() {
-      return setAddChildModal(true);
-    }
+    onClick: () => setAddChildModal(true)
   }, "+ A\xF1adir otro hijo/a")), addChildModal && /*#__PURE__*/React.createElement(Modal, {
     title: "A\xF1adir hijo/a",
-    onClose: function onClose() {
-      return setAddChildModal(false);
-    }
+    onClose: () => setAddChildModal(false)
   }, /*#__PURE__*/React.createElement(Field, {
     label: "Nombre del hijo/a",
     value: childName,
@@ -3261,63 +2818,46 @@ function TabHijos(_ref12) {
     className: "form-actions"
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn",
-    onClick: function onClick() {
-      return setAddChildModal(false);
-    }
+    onClick: () => setAddChildModal(false)
   }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: addChild
   }, "\u2713 A\xF1adir"))), modal && /*#__PURE__*/React.createElement(Modal, {
-    title: "A\xF1adir gasto \u2014 ".concat((_CHILD_CATS$find = CHILD_CATS.find(function (c) {
-      return c.key === modal.catKey;
-    })) === null || _CHILD_CATS$find === void 0 ? void 0 : _CHILD_CATS$find.label),
-    onClose: function onClose() {
-      return setModal(null);
-    }
+    title: `Añadir gasto — ${CHILD_CATS.find(c => c.key === modal.catKey)?.label}`,
+    onClose: () => setModal(null)
   }, /*#__PURE__*/React.createElement(Field, {
     label: "Descripci\xF3n",
     value: form.name,
-    onChange: function onChange(v) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          name: v
-        });
-      });
-    },
+    onChange: v => setForm(f => ({
+      ...f,
+      name: v
+    })),
     placeholder: "Descripci\xF3n del gasto"
   }), /*#__PURE__*/React.createElement("div", {
     className: "form-row"
   }, /*#__PURE__*/React.createElement(Field, {
     label: "Importe (\u20AC)",
     value: form.amount,
-    onChange: function onChange(v) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          amount: v
-        });
-      });
-    },
+    onChange: v => setForm(f => ({
+      ...f,
+      amount: v
+    })),
     type: "number",
     min: "0",
     step: "0.01"
   }), /*#__PURE__*/React.createElement(Field, {
     label: "Fecha",
     value: form.date,
-    onChange: function onChange(v) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          date: v
-        });
-      });
-    },
+    onChange: v => setForm(f => ({
+      ...f,
+      date: v
+    })),
     type: "date"
   })), /*#__PURE__*/React.createElement("div", {
     className: "form-actions"
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn",
-    onClick: function onClick() {
-      return setModal(null);
-    }
+    onClick: () => setModal(null)
   }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: handleSave
@@ -3327,28 +2867,19 @@ function TabHijos(_ref12) {
 // ═══════════════════════════════════════════════════════════════
 //  TAB: OTROS GASTOS
 // ═══════════════════════════════════════════════════════════════
-function TabOtrosGastos(_ref13) {
-  var _SECS$find;
-  var monthData = _ref13.monthData,
-    updateMonth = _ref13.updateMonth;
-  var _useState47 = useState(null),
-    _useState48 = _slicedToArray(_useState47, 2),
-    modal = _useState48[0],
-    setModal = _useState48[1];
-  var _useState49 = useState(null),
-    _useState50 = _slicedToArray(_useState49, 2),
-    editing = _useState50[0],
-    setEditing = _useState50[1];
-  var _useState51 = useState({
-      name: '',
-      amount: '',
-      date: ''
-    }),
-    _useState52 = _slicedToArray(_useState51, 2),
-    form = _useState52[0],
-    setForm = _useState52[1];
-  var oe = (monthData === null || monthData === void 0 ? void 0 : monthData.otherExp) || {};
-  var SECS = [{
+function TabOtrosGastos({
+  monthData,
+  updateMonth
+}) {
+  const [modal, setModal] = useState(null);
+  const [editing, setEditing] = useState(null);
+  const [form, setForm] = useState({
+    name: '',
+    amount: '',
+    date: ''
+  });
+  const oe = monthData?.otherExp || {};
+  const SECS = [{
     key: 'gifts',
     label: 'Regalos',
     icon: '🎁',
@@ -3367,7 +2898,7 @@ function TabOtrosGastos(_ref13) {
     color: CLR.other,
     bg: CLR.otherBg
   }];
-  var openAdd = function openAdd(key) {
+  const openAdd = key => {
     setEditing(null);
     setForm({
       name: '',
@@ -3376,7 +2907,7 @@ function TabOtrosGastos(_ref13) {
     });
     setModal(key);
   };
-  var openEdit = function openEdit(key, item) {
+  const openEdit = (key, item) => {
     setEditing(item.id);
     setForm({
       name: item.name,
@@ -3385,44 +2916,36 @@ function TabOtrosGastos(_ref13) {
     });
     setModal(key);
   };
-  var handleSave = function handleSave() {
+  const handleSave = () => {
     if (!form.name || !form.amount) return;
-    var item = {
+    const item = {
       id: editing || genId(),
       name: form.name,
       amount: Number(form.amount),
       date: form.date
     };
-    updateMonth(function (md) {
-      return _objectSpread(_objectSpread({}, md), {}, {
-        otherExp: _objectSpread(_objectSpread({}, md.otherExp || {}), {}, _defineProperty({}, modal, editing ? (oe[modal] || []).map(function (x) {
-          return x.id === editing ? item : x;
-        }) : [].concat(_toConsumableArray(oe[modal] || []), [item])))
-      });
-    });
+    updateMonth(md => ({
+      ...md,
+      otherExp: {
+        ...(md.otherExp || {}),
+        [modal]: editing ? (oe[modal] || []).map(x => x.id === editing ? item : x) : [...(oe[modal] || []), item]
+      }
+    }));
     setModal(null);
   };
-  var del = function del(key, id) {
-    return updateMonth(function (md) {
-      return _objectSpread(_objectSpread({}, md), {}, {
-        otherExp: _objectSpread(_objectSpread({}, md.otherExp), {}, _defineProperty({}, key, (oe[key] || []).filter(function (x) {
-          return x.id !== id;
-        })))
-      });
-    });
-  };
-  var grandTotal = SECS.reduce(function (s, sec) {
-    return s + (oe[sec.key] || []).reduce(function (ss, i) {
-      return ss + (Number(i.amount) || 0);
-    }, 0);
-  }, 0);
+  const del = (key, id) => updateMonth(md => ({
+    ...md,
+    otherExp: {
+      ...md.otherExp,
+      [key]: (oe[key] || []).filter(x => x.id !== id)
+    }
+  }));
+  const grandTotal = SECS.reduce((s, sec) => s + (oe[sec.key] || []).reduce((ss, i) => ss + (Number(i.amount) || 0), 0), 0);
   return /*#__PURE__*/React.createElement("div", {
     className: "fade-in section-grid"
-  }, SECS.map(function (sec) {
-    var items = oe[sec.key] || [];
-    var total = items.reduce(function (s, i) {
-      return s + (Number(i.amount) || 0);
-    }, 0);
+  }, SECS.map(sec => {
+    const items = oe[sec.key] || [];
+    const total = items.reduce((s, i) => s + (Number(i.amount) || 0), 0);
     return /*#__PURE__*/React.createElement(AccordionSection, {
       key: sec.key,
       icon: sec.icon,
@@ -3430,30 +2953,22 @@ function TabOtrosGastos(_ref13) {
       total: total,
       color: sec.color,
       colorBg: sec.bg,
-      onAdd: function onAdd() {
-        return openAdd(sec.key);
-      },
+      onAdd: () => openAdd(sec.key),
       addLabel: sec.label
     }, items.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
       icon: sec.icon,
-      text: "Sin ".concat(sec.label.toLowerCase(), " este mes")
+      text: `Sin ${sec.label.toLowerCase()} este mes`
     }) : /*#__PURE__*/React.createElement("div", {
       className: "line-items"
-    }, items.map(function (i) {
-      return /*#__PURE__*/React.createElement(LineItem, {
-        key: i.id,
-        name: i.name,
-        amount: i.amount,
-        color: sec.color,
-        meta: fmtDate(i.date),
-        onEdit: function onEdit() {
-          return openEdit(sec.key, i);
-        },
-        onDelete: function onDelete() {
-          return del(sec.key, i.id);
-        }
-      });
-    })));
+    }, items.map(i => /*#__PURE__*/React.createElement(LineItem, {
+      key: i.id,
+      name: i.name,
+      amount: i.amount,
+      color: sec.color,
+      meta: fmtDate(i.date),
+      onEdit: () => openEdit(sec.key, i),
+      onDelete: () => del(sec.key, i.id)
+    }))));
   }), /*#__PURE__*/React.createElement("div", {
     className: "card"
   }, /*#__PURE__*/React.createElement("div", {
@@ -3477,56 +2992,41 @@ function TabOtrosGastos(_ref13) {
       color: CLR.other
     }
   }, fmt(grandTotal)))), modal && /*#__PURE__*/React.createElement(Modal, {
-    title: "A\xF1adir ".concat(((_SECS$find = SECS.find(function (s) {
-      return s.key === modal;
-    })) === null || _SECS$find === void 0 ? void 0 : _SECS$find.label) || ''),
-    onClose: function onClose() {
-      return setModal(null);
-    }
+    title: `Añadir ${SECS.find(s => s.key === modal)?.label || ''}`,
+    onClose: () => setModal(null)
   }, /*#__PURE__*/React.createElement(Field, {
     label: "Descripci\xF3n",
     value: form.name,
-    onChange: function onChange(v) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          name: v
-        });
-      });
-    },
+    onChange: v => setForm(f => ({
+      ...f,
+      name: v
+    })),
     placeholder: "Descripci\xF3n del gasto"
   }), /*#__PURE__*/React.createElement("div", {
     className: "form-row"
   }, /*#__PURE__*/React.createElement(Field, {
     label: "Importe (\u20AC)",
     value: form.amount,
-    onChange: function onChange(v) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          amount: v
-        });
-      });
-    },
+    onChange: v => setForm(f => ({
+      ...f,
+      amount: v
+    })),
     type: "number",
     min: "0",
     step: "0.01"
   }), /*#__PURE__*/React.createElement(Field, {
     label: "Fecha",
     value: form.date,
-    onChange: function onChange(v) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          date: v
-        });
-      });
-    },
+    onChange: v => setForm(f => ({
+      ...f,
+      date: v
+    })),
     type: "date"
   })), /*#__PURE__*/React.createElement("div", {
     className: "form-actions"
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn",
-    onClick: function onClick() {
-      return setModal(null);
-    }
+    onClick: () => setModal(null)
   }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: handleSave
@@ -3536,26 +3036,18 @@ function TabOtrosGastos(_ref13) {
 // ═══════════════════════════════════════════════════════════════
 //  TAB: AHORRO E INVERSIÓN
 // ═══════════════════════════════════════════════════════════════
-function TabAhorro(_ref14) {
-  var monthData = _ref14.monthData,
-    updateMonth = _ref14.updateMonth;
-  var _useState53 = useState(false),
-    _useState54 = _slicedToArray(_useState53, 2),
-    modal = _useState54[0],
-    setModal = _useState54[1];
-  var _useState55 = useState(null),
-    _useState56 = _slicedToArray(_useState55, 2),
-    editing = _useState56[0],
-    setEditing = _useState56[1];
-  var _useState57 = useState({
-      name: '',
-      amount: ''
-    }),
-    _useState58 = _slicedToArray(_useState57, 2),
-    form = _useState58[0],
-    setForm = _useState58[1];
-  var sv = (monthData === null || monthData === void 0 ? void 0 : monthData.savings) || {};
-  var STD_FIELDS = [{
+function TabAhorro({
+  monthData,
+  updateMonth
+}) {
+  const [modal, setModal] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const [form, setForm] = useState({
+    name: '',
+    amount: ''
+  });
+  const sv = monthData?.savings || {};
+  const STD_FIELDS = [{
     key: 'vacation',
     label: '🏖️ Ahorro vacaciones',
     color: '#185FA5'
@@ -3572,38 +3064,31 @@ function TabAhorro(_ref14) {
     label: '📈 Inversión',
     color: '#7F77DD'
   }];
-  var others = sv.others || [];
-  var stdTotal = STD_FIELDS.reduce(function (s, f) {
-    return s + (Number(sv[f.key]) || 0);
-  }, 0);
-  var othersTotal = others.reduce(function (s, i) {
-    return s + (Number(i.amount) || 0);
-  }, 0);
-  var grandTotal = stdTotal + othersTotal;
-  var setField = function setField(key, val) {
-    return updateMonth(function (md) {
-      return _objectSpread(_objectSpread({}, md), {}, {
-        savings: _objectSpread(_objectSpread({}, md.savings || {}), {}, _defineProperty({}, key, Number(val) || 0))
-      });
-    });
-  };
-  var handleSave = function handleSave() {
+  const others = sv.others || [];
+  const stdTotal = STD_FIELDS.reduce((s, f) => s + (Number(sv[f.key]) || 0), 0);
+  const othersTotal = others.reduce((s, i) => s + (Number(i.amount) || 0), 0);
+  const grandTotal = stdTotal + othersTotal;
+  const setField = (key, val) => updateMonth(md => ({
+    ...md,
+    savings: {
+      ...(md.savings || {}),
+      [key]: Number(val) || 0
+    }
+  }));
+  const handleSave = () => {
     if (!form.name || !form.amount) return;
-    var item = {
+    const item = {
       id: editing || genId(),
       name: form.name,
       amount: Number(form.amount)
     };
-    updateMonth(function (md) {
-      var _md$savings, _md$savings2;
-      return _objectSpread(_objectSpread({}, md), {}, {
-        savings: _objectSpread(_objectSpread({}, md.savings || {}), {}, {
-          others: editing ? (((_md$savings = md.savings) === null || _md$savings === void 0 ? void 0 : _md$savings.others) || []).map(function (x) {
-            return x.id === editing ? item : x;
-          }) : [].concat(_toConsumableArray(((_md$savings2 = md.savings) === null || _md$savings2 === void 0 ? void 0 : _md$savings2.others) || []), [item])
-        })
-      });
-    });
+    updateMonth(md => ({
+      ...md,
+      savings: {
+        ...(md.savings || {}),
+        others: editing ? (md.savings?.others || []).map(x => x.id === editing ? item : x) : [...(md.savings?.others || []), item]
+      }
+    }));
     setModal(false);
   };
   return /*#__PURE__*/React.createElement("div", {
@@ -3634,29 +3119,25 @@ function TabAhorro(_ref14) {
       gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
       gap: 10
     }
-  }, STD_FIELDS.map(function (f) {
-    return /*#__PURE__*/React.createElement("div", {
-      key: f.key
-    }, /*#__PURE__*/React.createElement("label", {
-      className: "form-label"
-    }, f.label), /*#__PURE__*/React.createElement("input", {
-      className: "form-input",
-      type: "number",
-      min: "0",
-      step: "0.01",
-      placeholder: "0,00",
-      value: sv[f.key] || '',
-      onChange: function onChange(e) {
-        return setField(f.key, e.target.value);
-      }
-    }));
-  })))), /*#__PURE__*/React.createElement(AccordionSection, {
+  }, STD_FIELDS.map(f => /*#__PURE__*/React.createElement("div", {
+    key: f.key
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "form-label"
+  }, f.label), /*#__PURE__*/React.createElement("input", {
+    className: "form-input",
+    type: "number",
+    min: "0",
+    step: "0.01",
+    placeholder: "0,00",
+    value: sv[f.key] || '',
+    onChange: e => setField(f.key, e.target.value)
+  })))))), /*#__PURE__*/React.createElement(AccordionSection, {
     icon: "\u2795",
     title: "Otros ahorros / objetivos",
     total: othersTotal,
     color: CLR.savings,
     colorBg: CLR.savBg,
-    onAdd: function onAdd() {
+    onAdd: () => {
       setEditing(null);
       setForm({
         name: '',
@@ -3670,33 +3151,27 @@ function TabAhorro(_ref14) {
     text: "Sin otros objetivos de ahorro"
   }) : /*#__PURE__*/React.createElement("div", {
     className: "line-items"
-  }, others.map(function (o) {
-    return /*#__PURE__*/React.createElement(LineItem, {
-      key: o.id,
-      name: o.name,
-      amount: o.amount,
-      color: CLR.savings,
-      onEdit: function onEdit() {
-        setEditing(o.id);
-        setForm({
-          name: o.name,
-          amount: String(o.amount)
-        });
-        setModal(true);
-      },
-      onDelete: function onDelete() {
-        return updateMonth(function (md) {
-          return _objectSpread(_objectSpread({}, md), {}, {
-            savings: _objectSpread(_objectSpread({}, md.savings), {}, {
-              others: md.savings.others.filter(function (x) {
-                return x.id !== o.id;
-              })
-            })
-          });
-        });
+  }, others.map(o => /*#__PURE__*/React.createElement(LineItem, {
+    key: o.id,
+    name: o.name,
+    amount: o.amount,
+    color: CLR.savings,
+    onEdit: () => {
+      setEditing(o.id);
+      setForm({
+        name: o.name,
+        amount: String(o.amount)
+      });
+      setModal(true);
+    },
+    onDelete: () => updateMonth(md => ({
+      ...md,
+      savings: {
+        ...md.savings,
+        others: md.savings.others.filter(x => x.id !== o.id)
       }
-    });
-  }))), /*#__PURE__*/React.createElement("div", {
+    }))
+  })))), /*#__PURE__*/React.createElement("div", {
     className: "card"
   }, /*#__PURE__*/React.createElement("div", {
     className: "card-body",
@@ -3719,31 +3194,23 @@ function TabAhorro(_ref14) {
       color: CLR.savings
     }
   }, fmt(grandTotal)))), modal && /*#__PURE__*/React.createElement(Modal, {
-    title: "".concat(editing ? 'Editar' : 'Añadir', " objetivo de ahorro"),
-    onClose: function onClose() {
-      return setModal(false);
-    }
+    title: `${editing ? 'Editar' : 'Añadir'} objetivo de ahorro`,
+    onClose: () => setModal(false)
   }, /*#__PURE__*/React.createElement(Field, {
     label: "Nombre del objetivo",
     value: form.name,
-    onChange: function onChange(v) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          name: v
-        });
-      });
-    },
+    onChange: v => setForm(f => ({
+      ...f,
+      name: v
+    })),
     placeholder: "Ej: Ahorro coche, Viaje Jap\xF3n..."
   }), /*#__PURE__*/React.createElement(Field, {
     label: "Importe mensual (\u20AC)",
     value: form.amount,
-    onChange: function onChange(v) {
-      return setForm(function (f) {
-        return _objectSpread(_objectSpread({}, f), {}, {
-          amount: v
-        });
-      });
-    },
+    onChange: v => setForm(f => ({
+      ...f,
+      amount: v
+    })),
     type: "number",
     min: "0",
     step: "0.01"
@@ -3751,9 +3218,7 @@ function TabAhorro(_ref14) {
     className: "form-actions"
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn",
-    onClick: function onClick() {
-      return setModal(false);
-    }
+    onClick: () => setModal(false)
   }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: handleSave
@@ -3763,33 +3228,29 @@ function TabAhorro(_ref14) {
 // ═══════════════════════════════════════════════════════════════
 //  TAB: GRÁFICOS
 // ═══════════════════════════════════════════════════════════════
-function TabGraficos(_ref15) {
-  var allMonthsData = _ref15.allMonthsData,
-    year = _ref15.year,
-    month = _ref15.month;
-  var _useState59 = useState(month),
-    _useState60 = _slicedToArray(_useState59, 2),
-    selMonth = _useState60[0],
-    setSelMonth = _useState60[1];
-  var selMd = allMonthsData["".concat(year, "-").concat(selMonth)];
-  var selTotals = computeTotals(selMd, year, selMonth);
-  var annualData = useMemo(function () {
-    return MONTHS_S.map(function (name, i) {
-      var m = i + 1;
-      var md = allMonthsData["".concat(year, "-").concat(m)];
-      var t = computeTotals(md, year, m);
-      return {
-        name: name,
-        ingresos: t.income,
-        'G. Fijos': t.fixed,
-        'G. Variables': t.varExp,
-        Ocio: t.leisure,
-        Ahorro: t.savings,
-        total: t.total
-      };
-    });
-  }, [allMonthsData, year]);
-  var monthBreakdown = [{
+function TabGraficos({
+  allMonthsData,
+  year,
+  month
+}) {
+  const [selMonth, setSelMonth] = useState(month);
+  const selMd = allMonthsData[`${year}-${selMonth}`];
+  const selTotals = computeTotals(selMd, year, selMonth);
+  const annualData = useMemo(() => MONTHS_S.map((name, i) => {
+    const m = i + 1;
+    const md = allMonthsData[`${year}-${m}`];
+    const t = computeTotals(md, year, m);
+    return {
+      name,
+      ingresos: t.income,
+      'G. Fijos': t.fixed,
+      'G. Variables': t.varExp,
+      Ocio: t.leisure,
+      Ahorro: t.savings,
+      total: t.total
+    };
+  }), [allMonthsData, year]);
+  const monthBreakdown = [{
     name: 'G. Fijos',
     value: selTotals.fixed,
     fill: CLR.fixed
@@ -3813,19 +3274,17 @@ function TabGraficos(_ref15) {
     name: 'Ahorro',
     value: selTotals.savings,
     fill: CLR.savings
-  }].filter(function (x) {
-    return x.value > 0;
-  });
-  var barData = [{
+  }].filter(x => x.value > 0);
+  const barData = [{
     name: 'Ingresos',
     value: selTotals.income,
     fill: CLR.income
-  }].concat(_toConsumableArray(monthBreakdown), [{
+  }, ...monthBreakdown, {
     name: 'SALDO',
     value: selTotals.balance,
     fill: selTotals.balance >= 0 ? CLR.income : CLR.fixed
-  }]);
-  var TT_STYLE = {
+  }];
+  const TT_STYLE = {
     background: 'var(--bg-card)',
     border: '1px solid var(--border)',
     borderRadius: 8,
@@ -3851,15 +3310,11 @@ function TabGraficos(_ref15) {
       width: 160
     },
     value: selMonth,
-    onChange: function onChange(e) {
-      return setSelMonth(Number(e.target.value));
-    }
-  }, MONTHS.map(function (m, i) {
-    return /*#__PURE__*/React.createElement("option", {
-      key: i,
-      value: i + 1
-    }, m);
-  }))), /*#__PURE__*/React.createElement("div", {
+    onChange: e => setSelMonth(Number(e.target.value))
+  }, MONTHS.map((m, i) => /*#__PURE__*/React.createElement("option", {
+    key: i,
+    value: i + 1
+  }, m)))), /*#__PURE__*/React.createElement("div", {
     className: "card chart-full"
   }, /*#__PURE__*/React.createElement("div", {
     className: "card-body"
@@ -3887,9 +3342,7 @@ function TabGraficos(_ref15) {
     },
     axisLine: false,
     tickLine: false,
-    tickFormatter: function tickFormatter(v) {
-      return v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v;
-    }
+    tickFormatter: v => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v
   }), /*#__PURE__*/React.createElement(YAxis, {
     type: "category",
     dataKey: "name",
@@ -3901,19 +3354,15 @@ function TabGraficos(_ref15) {
     tickLine: false,
     width: 80
   }), /*#__PURE__*/React.createElement(Tooltip, {
-    formatter: function formatter(v) {
-      return fmt(v);
-    },
+    formatter: v => fmt(v),
     contentStyle: TT_STYLE
   }), /*#__PURE__*/React.createElement(Bar, {
     dataKey: "value",
     radius: [0, 4, 4, 0]
-  }, barData.map(function (d, i) {
-    return /*#__PURE__*/React.createElement(Cell, {
-      key: i,
-      fill: d.fill
-    });
-  })))))), /*#__PURE__*/React.createElement("div", {
+  }, barData.map((d, i) => /*#__PURE__*/React.createElement(Cell, {
+    key: i,
+    fill: d.fill
+  }))))))), /*#__PURE__*/React.createElement("div", {
     className: "card chart-full"
   }, /*#__PURE__*/React.createElement("div", {
     className: "card-body"
@@ -3945,13 +3394,9 @@ function TabGraficos(_ref15) {
     },
     axisLine: false,
     tickLine: false,
-    tickFormatter: function tickFormatter(v) {
-      return v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v;
-    }
+    tickFormatter: v => v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v
   }), /*#__PURE__*/React.createElement(Tooltip, {
-    formatter: function formatter(v) {
-      return fmt(v);
-    },
+    formatter: v => fmt(v),
     contentStyle: TT_STYLE
   }), /*#__PURE__*/React.createElement(Legend, {
     wrapperStyle: {
@@ -3991,41 +3436,34 @@ function TabGraficos(_ref15) {
     outerRadius: 85,
     strokeWidth: 0,
     paddingAngle: 2,
-    label: function label(_ref16) {
-      var name = _ref16.name,
-        percent = _ref16.percent;
-      return "".concat(name, " ").concat(Math.round(percent * 100), "%");
-    },
+    label: ({
+      name,
+      percent
+    }) => `${name} ${Math.round(percent * 100)}%`,
     labelLine: {
       stroke: 'var(--border)',
       strokeWidth: 1
     }
-  }, monthBreakdown.map(function (d, i) {
-    return /*#__PURE__*/React.createElement(Cell, {
-      key: i,
-      fill: d.fill
-    });
-  })), /*#__PURE__*/React.createElement(Tooltip, {
-    formatter: function formatter(v) {
-      return fmt(v);
-    },
+  }, monthBreakdown.map((d, i) => /*#__PURE__*/React.createElement(Cell, {
+    key: i,
+    fill: d.fill
+  }))), /*#__PURE__*/React.createElement(Tooltip, {
+    formatter: v => fmt(v),
     contentStyle: TT_STYLE
   }))), /*#__PURE__*/React.createElement("div", {
     className: "chart-legend",
     style: {
       justifyContent: 'center'
     }
-  }, monthBreakdown.map(function (d, i) {
-    return /*#__PURE__*/React.createElement("div", {
-      key: i,
-      className: "legend-item"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "legend-dot",
-      style: {
-        background: d.fill
-      }
-    }), /*#__PURE__*/React.createElement("span", null, d.name, ": ", fmt(d.value)));
-  }))) : /*#__PURE__*/React.createElement(EmptyState, {
+  }, monthBreakdown.map((d, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: "legend-item"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "legend-dot",
+    style: {
+      background: d.fill
+    }
+  }), /*#__PURE__*/React.createElement("span", null, d.name, ": ", fmt(d.value)))))) : /*#__PURE__*/React.createElement(EmptyState, {
     icon: "\uD83D\uDCCA",
     text: "Sin datos de gastos para este mes"
   }))), /*#__PURE__*/React.createElement("div", {
@@ -4042,34 +3480,26 @@ function TabGraficos(_ref15) {
     className: "amount-col"
   }, "Gastos"), /*#__PURE__*/React.createElement("th", {
     className: "amount-col"
-  }, "Saldo"))), /*#__PURE__*/React.createElement("tbody", null, annualData.filter(function (d) {
-    return d.ingresos > 0 || d.total > 0;
-  }).map(function (d, i) {
-    return /*#__PURE__*/React.createElement("tr", {
-      key: i
-    }, /*#__PURE__*/React.createElement("td", null, d.name), /*#__PURE__*/React.createElement("td", {
-      className: "amount-col",
-      style: {
-        color: CLR.income
-      }
-    }, fmt(d.ingresos)), /*#__PURE__*/React.createElement("td", {
-      className: "amount-col",
-      style: {
-        color: CLR.fixed
-      }
-    }, fmt(d.total)), /*#__PURE__*/React.createElement("td", {
-      className: "amount-col",
-      style: {
-        color: d.ingresos - d.total >= 0 ? CLR.income : CLR.fixed
-      }
-    }, fmt(d.ingresos - d.total)));
-  }), function () {
-    var totInc = annualData.reduce(function (s, d) {
-      return s + d.ingresos;
-    }, 0);
-    var totGas = annualData.reduce(function (s, d) {
-      return s + d.total;
-    }, 0);
+  }, "Saldo"))), /*#__PURE__*/React.createElement("tbody", null, annualData.filter(d => d.ingresos > 0 || d.total > 0).map((d, i) => /*#__PURE__*/React.createElement("tr", {
+    key: i
+  }, /*#__PURE__*/React.createElement("td", null, d.name), /*#__PURE__*/React.createElement("td", {
+    className: "amount-col",
+    style: {
+      color: CLR.income
+    }
+  }, fmt(d.ingresos)), /*#__PURE__*/React.createElement("td", {
+    className: "amount-col",
+    style: {
+      color: CLR.fixed
+    }
+  }, fmt(d.total)), /*#__PURE__*/React.createElement("td", {
+    className: "amount-col",
+    style: {
+      color: d.ingresos - d.total >= 0 ? CLR.income : CLR.fixed
+    }
+  }, fmt(d.ingresos - d.total)))), (() => {
+    const totInc = annualData.reduce((s, d) => s + d.ingresos, 0);
+    const totGas = annualData.reduce((s, d) => s + d.total, 0);
     return /*#__PURE__*/React.createElement("tr", {
       className: "total-row"
     }, /*#__PURE__*/React.createElement("td", null, "TOTAL"), /*#__PURE__*/React.createElement("td", {
@@ -4088,103 +3518,87 @@ function TabGraficos(_ref15) {
         color: totInc - totGas >= 0 ? CLR.income : CLR.fixed
       }
     }, fmt(totInc - totGas)));
-  }()))))));
+  })()))))));
 }
 
 // ═══════════════════════════════════════════════════════════════
 //  TAB: AJUSTES
 // ═══════════════════════════════════════════════════════════════
-function TabAjustes(_ref17) {
-  var store = _ref17.store,
-    setStore = _ref17.setStore;
-  var settings = store.settings,
-    users = store.users;
-  var _useState61 = useState(false),
-    _useState62 = _slicedToArray(_useState61, 2),
-    addUserModal = _useState62[0],
-    setAddUserModal = _useState62[1];
-  var _useState63 = useState(''),
-    _useState64 = _slicedToArray(_useState63, 2),
-    newUserName = _useState64[0],
-    setNewUserName = _useState64[1];
-  var _useState65 = useState(THEME_COLORS[0]),
-    _useState66 = _slicedToArray(_useState65, 2),
-    newUserColor = _useState66[0],
-    setNewUserColor = _useState66[1];
-  var updSetting = function updSetting(key, val) {
-    return setStore(function (s) {
-      return _objectSpread(_objectSpread({}, s), {}, {
-        settings: _objectSpread(_objectSpread({}, s.settings), {}, _defineProperty({}, key, val))
-      });
-    });
-  };
-  var exportData = function exportData() {
-    var json = JSON.stringify(store, null, 2);
-    var blob = new Blob([json], {
+function TabAjustes({
+  store,
+  setStore
+}) {
+  const {
+    settings,
+    users
+  } = store;
+  const [addUserModal, setAddUserModal] = useState(false);
+  const [newUserName, setNewUserName] = useState('');
+  const [newUserColor, setNewUserColor] = useState(THEME_COLORS[0]);
+  const updSetting = (key, val) => setStore(s => ({
+    ...s,
+    settings: {
+      ...s.settings,
+      [key]: val
+    }
+  }));
+  const exportData = () => {
+    const json = JSON.stringify(store, null, 2);
+    const blob = new Blob([json], {
       type: 'application/json'
     });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
     a.href = url;
-    a.download = "CFH_backup_".concat(new Date().toISOString().slice(0, 10), ".json");
+    a.download = `CFH_backup_${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
-  var importData = function importData(e) {
-    var file = e.target.files[0];
+  const importData = e => {
+    const file = e.target.files[0];
     if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function (ev) {
+    const reader = new FileReader();
+    reader.onload = ev => {
       try {
-        var data = JSON.parse(ev.target.result);
+        const data = JSON.parse(ev.target.result);
         if (data.users && data.data) {
           setStore(data);
           alert('✅ Datos importados correctamente');
         } else alert('❌ Archivo no válido');
-      } catch (_unused2) {
+      } catch {
         alert('❌ Error al leer el archivo');
       }
     };
     reader.readAsText(file);
   };
-  var addUser = function addUser() {
+  const addUser = () => {
     if (!newUserName.trim()) return;
-    var newUser = {
+    const newUser = {
       id: genId(),
       name: newUserName.trim(),
       color: newUserColor
     };
-    setStore(function (s) {
-      return _objectSpread(_objectSpread({}, s), {}, {
-        users: [].concat(_toConsumableArray(s.users), [newUser])
-      });
-    });
+    setStore(s => ({
+      ...s,
+      users: [...s.users, newUser]
+    }));
     setNewUserName('');
     setAddUserModal(false);
   };
-  var delUser = function delUser(id) {
+  const delUser = id => {
     if (users.length <= 1) return alert('Debe haber al menos un usuario.');
-    setStore(function (s) {
-      return _objectSpread(_objectSpread({}, s), {}, {
-        users: s.users.filter(function (u) {
-          return u.id !== id;
-        }),
-        currentUser: s.currentUser === id ? s.users[0].id : s.currentUser,
-        data: Object.fromEntries(Object.entries(s.data).filter(function (_ref18) {
-          var _ref19 = _slicedToArray(_ref18, 1),
-            k = _ref19[0];
-          return k !== id;
-        }))
-      });
-    });
+    setStore(s => ({
+      ...s,
+      users: s.users.filter(u => u.id !== id),
+      currentUser: s.currentUser === id ? s.users[0].id : s.currentUser,
+      data: Object.fromEntries(Object.entries(s.data).filter(([k]) => k !== id))
+    }));
   };
-  var handlePhotoUpload = function handlePhotoUpload(e) {
-    var file = e.target.files[0];
+  const handlePhotoUpload = e => {
+    const file = e.target.files[0];
     if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function (ev) {
-      return updSetting('familyPhoto', ev.target.result);
-    };
+    const reader = new FileReader();
+    reader.onload = ev => updSetting('familyPhoto', ev.target.result);
     reader.readAsDataURL(file);
   };
   return /*#__PURE__*/React.createElement("div", {
@@ -4223,9 +3637,7 @@ function TabAjustes(_ref17) {
       cursor: 'pointer',
       border: '2px dashed var(--border)'
     },
-    onClick: function onClick() {
-      return document.getElementById('photo-upload').click();
-    }
+    onClick: () => document.getElementById('photo-upload').click()
   }, settings.familyPhoto ? /*#__PURE__*/React.createElement("img", {
     src: settings.familyPhoto,
     alt: "Familia",
@@ -4247,9 +3659,7 @@ function TabAjustes(_ref17) {
   }, /*#__PURE__*/React.createElement("input", {
     className: "form-input",
     value: settings.familyName,
-    onChange: function onChange(e) {
-      return updSetting('familyName', e.target.value);
-    },
+    onChange: e => updSetting('familyName', e.target.value),
     placeholder: "Familia..."
   }))), /*#__PURE__*/React.createElement("input", {
     id: "photo-upload",
@@ -4280,32 +3690,24 @@ function TabAjustes(_ref17) {
       display: 'flex',
       gap: 8
     }
-  }, ['light', 'dark'].map(function (t) {
-    return /*#__PURE__*/React.createElement("button", {
-      key: t,
-      className: "btn ".concat(settings.theme === t ? 'btn-primary' : ''),
-      onClick: function onClick() {
-        return updSetting('theme', t);
-      }
-    }, t === 'light' ? '☀️ Claro' : '🌙 Oscuro');
-  }))), /*#__PURE__*/React.createElement("div", {
+  }, ['light', 'dark'].map(t => /*#__PURE__*/React.createElement("button", {
+    key: t,
+    className: `btn ${settings.theme === t ? 'btn-primary' : ''}`,
+    onClick: () => updSetting('theme', t)
+  }, t === 'light' ? '☀️ Claro' : '🌙 Oscuro')))), /*#__PURE__*/React.createElement("div", {
     className: "form-field"
   }, /*#__PURE__*/React.createElement("div", {
     className: "form-label"
   }, "Color principal"), /*#__PURE__*/React.createElement("div", {
     className: "color-swatches"
-  }, THEME_COLORS.map(function (c) {
-    return /*#__PURE__*/React.createElement("div", {
-      key: c,
-      className: "color-swatch ".concat(settings.primaryColor === c ? 'selected' : ''),
-      style: {
-        background: c
-      },
-      onClick: function onClick() {
-        return updSetting('primaryColor', c);
-      }
-    });
-  }))))), /*#__PURE__*/React.createElement("div", {
+  }, THEME_COLORS.map(c => /*#__PURE__*/React.createElement("div", {
+    key: c,
+    className: `color-swatch ${settings.primaryColor === c ? 'selected' : ''}`,
+    style: {
+      background: c
+    },
+    onClick: () => updSetting('primaryColor', c)
+  })))))), /*#__PURE__*/React.createElement("div", {
     className: "card"
   }, /*#__PURE__*/React.createElement("div", {
     className: "card-header"
@@ -4317,48 +3719,42 @@ function TabAjustes(_ref17) {
     className: "card-title"
   }, "Usuarios")), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-sm",
-    onClick: function onClick() {
-      return setAddUserModal(true);
-    }
+    onClick: () => setAddUserModal(true)
   }, "+ A\xF1adir")), /*#__PURE__*/React.createElement("div", {
     className: "card-body"
-  }, users.map(function (u) {
-    return /*#__PURE__*/React.createElement("div", {
-      key: u.id,
-      className: "line-item"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "line-item-left"
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        width: 28,
-        height: 28,
-        borderRadius: '50%',
-        background: u.color,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: 'white',
-        fontSize: 11,
-        fontWeight: 600
-      }
-    }, u.name.slice(0, 2).toUpperCase()), /*#__PURE__*/React.createElement("span", {
-      className: "line-item-name"
-    }, u.name), u.id === store.currentUser && /*#__PURE__*/React.createElement("span", {
-      className: "badge",
-      style: {
-        background: CLR.incomeBg,
-        color: CLR.income,
-        fontSize: 10
-      }
-    }, "Activo")), /*#__PURE__*/React.createElement("div", {
-      className: "line-item-right"
-    }, /*#__PURE__*/React.createElement("button", {
-      className: "icon-btn danger",
-      onClick: function onClick() {
-        return delUser(u.id);
-      }
-    }, "\uD83D\uDDD1\uFE0F")));
-  }))), /*#__PURE__*/React.createElement("div", {
+  }, users.map(u => /*#__PURE__*/React.createElement("div", {
+    key: u.id,
+    className: "line-item"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "line-item-left"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 28,
+      height: 28,
+      borderRadius: '50%',
+      background: u.color,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: 'white',
+      fontSize: 11,
+      fontWeight: 600
+    }
+  }, u.name.slice(0, 2).toUpperCase()), /*#__PURE__*/React.createElement("span", {
+    className: "line-item-name"
+  }, u.name), u.id === store.currentUser && /*#__PURE__*/React.createElement("span", {
+    className: "badge",
+    style: {
+      background: CLR.incomeBg,
+      color: CLR.income,
+      fontSize: 10
+    }
+  }, "Activo")), /*#__PURE__*/React.createElement("div", {
+    className: "line-item-right"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "icon-btn danger",
+    onClick: () => delUser(u.id)
+  }, "\uD83D\uDDD1\uFE0F")))))), /*#__PURE__*/React.createElement("div", {
     className: "card"
   }, /*#__PURE__*/React.createElement("div", {
     className: "card-header"
@@ -4399,9 +3795,7 @@ function TabAjustes(_ref17) {
     onChange: importData
   })))))), addUserModal && /*#__PURE__*/React.createElement(Modal, {
     title: "A\xF1adir usuario",
-    onClose: function onClose() {
-      return setAddUserModal(false);
-    }
+    onClose: () => setAddUserModal(false)
   }, /*#__PURE__*/React.createElement(Field, {
     label: "Nombre del usuario",
     value: newUserName,
@@ -4413,24 +3807,18 @@ function TabAjustes(_ref17) {
     className: "form-label"
   }, "Color"), /*#__PURE__*/React.createElement("div", {
     className: "color-swatches"
-  }, THEME_COLORS.map(function (c) {
-    return /*#__PURE__*/React.createElement("div", {
-      key: c,
-      className: "color-swatch ".concat(newUserColor === c ? 'selected' : ''),
-      style: {
-        background: c
-      },
-      onClick: function onClick() {
-        return setNewUserColor(c);
-      }
-    });
-  }))), /*#__PURE__*/React.createElement("div", {
+  }, THEME_COLORS.map(c => /*#__PURE__*/React.createElement("div", {
+    key: c,
+    className: `color-swatch ${newUserColor === c ? 'selected' : ''}`,
+    style: {
+      background: c
+    },
+    onClick: () => setNewUserColor(c)
+  })))), /*#__PURE__*/React.createElement("div", {
     className: "form-actions"
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn",
-    onClick: function onClick() {
-      return setAddUserModal(false);
-    }
+    onClick: () => setAddUserModal(false)
   }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: addUser
@@ -4441,70 +3829,55 @@ function TabAjustes(_ref17) {
 //  MAIN APP
 // ═══════════════════════════════════════════════════════════════
 function App() {
-  var _PAGE_TITLES$tab, _PAGE_TITLES$tab2;
-  var _useState67 = useState(function () {
-      return loadStore() || DEFAULT_STORE;
-    }),
-    _useState68 = _slicedToArray(_useState67, 2),
-    store = _useState68[0],
-    setStore = _useState68[1];
-  var _useState69 = useState('resumen'),
-    _useState70 = _slicedToArray(_useState69, 2),
-    tab = _useState70[0],
-    setTab = _useState70[1];
-  var _useState71 = useState(false),
-    _useState72 = _slicedToArray(_useState71, 2),
-    showSetup = _useState72[0],
-    setShowSetup = _useState72[1];
-  var fileInputRef = useRef(null);
-  var _useState73 = useState(null),
-    _useState74 = _slicedToArray(_useState73, 2),
-    deferredPrompt = _useState74[0],
-    setDeferredPrompt = _useState74[1];
-  useEffect(function () {
+  const [store, setStore] = useState(() => loadStore() || DEFAULT_STORE);
+  const [tab, setTab] = useState('resumen');
+  const [showSetup, setShowSetup] = useState(false);
+  const fileInputRef = useRef(null);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  useEffect(() => {
     if (window.deferredInstallPrompt) setDeferredPrompt(window.deferredInstallPrompt);
-    var handler = function handler(e) {
+    const handler = e => {
       e.preventDefault();
       setDeferredPrompt(e);
       window.deferredInstallPrompt = e;
     };
-    var pwaReady = function pwaReady() {
+    const pwaReady = () => {
       if (window.deferredInstallPrompt) setDeferredPrompt(window.deferredInstallPrompt);
     };
     window.addEventListener('beforeinstallprompt', handler);
     window.addEventListener('pwa-listo', pwaReady);
-    window.addEventListener('appinstalled', function () {
+    window.addEventListener('appinstalled', () => {
       setDeferredPrompt(null);
       window.deferredInstallPrompt = null;
     });
-    return function () {
+    return () => {
       window.removeEventListener('beforeinstallprompt', handler);
       window.removeEventListener('pwa-listo', pwaReady);
     };
   }, []);
-  var installApp = function installApp() {
+  const installApp = () => {
     if (!deferredPrompt) return;
     deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(function () {
+    deferredPrompt.userChoice.then(() => {
       setDeferredPrompt(null);
       window.deferredInstallPrompt = null;
     });
   };
-  var settings = store.settings,
-    users = store.users,
-    currentUser = store.currentUser,
-    selectedYear = store.selectedYear,
-    selectedMonth = store.selectedMonth,
-    data = store.data;
-  var userData = data[currentUser] || {};
-  var monthKey = "".concat(selectedYear, "-").concat(selectedMonth);
-  var monthData = userData[monthKey];
-  var totals = useMemo(function () {
-    return computeTotals(monthData, selectedYear, selectedMonth);
-  }, [monthData, selectedYear, selectedMonth]);
+  const {
+    settings,
+    users,
+    currentUser,
+    selectedYear,
+    selectedMonth,
+    data
+  } = store;
+  const userData = data[currentUser] || {};
+  const monthKey = `${selectedYear}-${selectedMonth}`;
+  const monthData = userData[monthKey];
+  const totals = useMemo(() => computeTotals(monthData, selectedYear, selectedMonth), [monthData, selectedYear, selectedMonth]);
 
   // Apply theme
-  useEffect(function () {
+  useEffect(() => {
     document.documentElement.setAttribute('data-theme', settings.theme);
     document.documentElement.style.setProperty('--teal', settings.primaryColor);
     document.documentElement.style.setProperty('--teal-dark', settings.primaryColor);
@@ -4512,74 +3885,86 @@ function App() {
   }, [settings.theme, settings.primaryColor]);
 
   // Save to localStorage
-  useEffect(function () {
+  useEffect(() => {
     localStorage.setItem(STORE_KEY, JSON.stringify(store));
   }, [store]);
 
   // Initialize month
-  useEffect(function () {
+  useEffect(() => {
     if (!monthData) {
-      var prev = Object.keys(userData).sort().filter(function (k) {
-        return k < monthKey;
-      }).pop();
-      var prevMd = prev ? userData[prev] : null;
-      var newMd = buildEmptyMonth(prevMd);
-      setStore(function (s) {
-        return _objectSpread(_objectSpread({}, s), {}, {
-          data: _objectSpread(_objectSpread({}, s.data), {}, _defineProperty({}, s.currentUser, _objectSpread(_objectSpread({}, userData), {}, _defineProperty({}, monthKey, newMd))))
-        });
-      });
+      const prev = Object.keys(userData).sort().filter(k => k < monthKey).pop();
+      const prevMd = prev ? userData[prev] : null;
+      const newMd = buildEmptyMonth(prevMd);
+      setStore(s => ({
+        ...s,
+        data: {
+          ...s.data,
+          [s.currentUser]: {
+            ...userData,
+            [monthKey]: newMd
+          }
+        }
+      }));
       setShowSetup(true);
     } else if (!monthData.initialized && !showSetup) {
       setShowSetup(true);
     }
   }, [monthKey, currentUser]);
-  var updateMonth = useCallback(function (updater) {
-    setStore(function (s) {
-      var ud = s.data[s.currentUser] || {};
-      var key = "".concat(s.selectedYear, "-").concat(s.selectedMonth);
-      return _objectSpread(_objectSpread({}, s), {}, {
-        data: _objectSpread(_objectSpread({}, s.data), {}, _defineProperty({}, s.currentUser, _objectSpread(_objectSpread({}, ud), {}, _defineProperty({}, key, updater(ud[key] || {})))))
-      });
+  const updateMonth = useCallback(updater => {
+    setStore(s => {
+      const ud = s.data[s.currentUser] || {};
+      const key = `${s.selectedYear}-${s.selectedMonth}`;
+      return {
+        ...s,
+        data: {
+          ...s.data,
+          [s.currentUser]: {
+            ...ud,
+            [key]: updater(ud[key] || {})
+          }
+        }
+      };
     });
   }, []);
-  var handleSetupSave = function handleSetupSave(fixedData) {
-    updateMonth(function (md) {
-      return _objectSpread(_objectSpread(_objectSpread({}, md), fixedData), {}, {
-        initialized: true
-      });
-    });
+  const handleSetupSave = fixedData => {
+    updateMonth(md => ({
+      ...md,
+      ...fixedData,
+      initialized: true
+    }));
     setShowSetup(false);
   };
-  var prevMonth = function prevMonth() {
-    setStore(function (s) {
-      var m = s.selectedMonth - 1,
+  const prevMonth = () => {
+    setStore(s => {
+      let m = s.selectedMonth - 1,
         y = s.selectedYear;
       if (m < 1) {
         m = 12;
         y--;
       }
-      return _objectSpread(_objectSpread({}, s), {}, {
+      return {
+        ...s,
         selectedYear: y,
         selectedMonth: m
-      });
+      };
     });
   };
-  var nextMonth = function nextMonth() {
-    setStore(function (s) {
-      var m = s.selectedMonth + 1,
+  const nextMonth = () => {
+    setStore(s => {
+      let m = s.selectedMonth + 1,
         y = s.selectedYear;
       if (m > 12) {
         m = 1;
         y++;
       }
-      return _objectSpread(_objectSpread({}, s), {}, {
+      return {
+        ...s,
         selectedYear: y,
         selectedMonth: m
-      });
+      };
     });
   };
-  var NAV = [{
+  const NAV = [{
     id: 'resumen',
     label: 'Resumen',
     icon: '🏠',
@@ -4630,10 +4015,8 @@ function App() {
     icon: '⚙️',
     group: 'Configuración'
   }];
-  var groups = _toConsumableArray(new Set(NAV.map(function (n) {
-    return n.group;
-  })));
-  var PAGE_TITLES = {
+  const groups = [...new Set(NAV.map(n => n.group))];
+  const PAGE_TITLES = {
     resumen: {
       title: 'Resumen',
       sub: 'Vista general del mes'
@@ -4675,9 +4058,7 @@ function App() {
       sub: 'Configuración de la app'
     }
   };
-  var currentUser_obj = users.find(function (u) {
-    return u.id === currentUser;
-  }) || users[0];
+  const currentUser_obj = users.find(u => u.id === currentUser) || users[0];
   return /*#__PURE__*/React.createElement("div", {
     className: "app-layout"
   }, /*#__PURE__*/React.createElement("aside", {
@@ -4698,13 +4079,10 @@ function App() {
     className: "year-nav"
   }, /*#__PURE__*/React.createElement("button", {
     className: "month-nav-btn",
-    onClick: function onClick() {
-      return setStore(function (s) {
-        return _objectSpread(_objectSpread({}, s), {}, {
-          selectedYear: s.selectedYear - 1
-        });
-      });
-    }
+    onClick: () => setStore(s => ({
+      ...s,
+      selectedYear: s.selectedYear - 1
+    }))
   }, "\u2039"), /*#__PURE__*/React.createElement("span", {
     style: {
       fontSize: 12,
@@ -4713,13 +4091,10 @@ function App() {
     }
   }, selectedYear), /*#__PURE__*/React.createElement("button", {
     className: "month-nav-btn",
-    onClick: function onClick() {
-      return setStore(function (s) {
-        return _objectSpread(_objectSpread({}, s), {}, {
-          selectedYear: s.selectedYear + 1
-        });
-      });
-    }
+    onClick: () => setStore(s => ({
+      ...s,
+      selectedYear: s.selectedYear + 1
+    }))
   }, "\u203A")), /*#__PURE__*/React.createElement("div", {
     className: "month-nav",
     style: {
@@ -4738,28 +4113,20 @@ function App() {
   }, /*#__PURE__*/React.createElement("div", {
     className: "balance-label"
   }, "Saldo del mes"), /*#__PURE__*/React.createElement("div", {
-    className: "balance-value ".concat(totals.balance >= 0 ? 'balance-positive' : 'balance-negative')
+    className: `balance-value ${totals.balance >= 0 ? 'balance-positive' : 'balance-negative'}`
   }, fmt(totals.balance))), /*#__PURE__*/React.createElement("nav", {
     className: "sidebar-nav"
-  }, groups.map(function (group) {
-    return /*#__PURE__*/React.createElement("div", {
-      key: group
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "nav-group-label"
-    }, group), NAV.filter(function (n) {
-      return n.group === group;
-    }).map(function (n) {
-      return /*#__PURE__*/React.createElement("button", {
-        key: n.id,
-        className: "nav-item ".concat(tab === n.id ? 'active' : ''),
-        onClick: function onClick() {
-          return setTab(n.id);
-        }
-      }, /*#__PURE__*/React.createElement("span", {
-        className: "nav-item-icon"
-      }, n.icon), /*#__PURE__*/React.createElement("span", null, n.label));
-    }));
-  })), users.length > 1 && /*#__PURE__*/React.createElement("div", {
+  }, groups.map(group => /*#__PURE__*/React.createElement("div", {
+    key: group
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "nav-group-label"
+  }, group), NAV.filter(n => n.group === group).map(n => /*#__PURE__*/React.createElement("button", {
+    key: n.id,
+    className: `nav-item ${tab === n.id ? 'active' : ''}`,
+    onClick: () => setTab(n.id)
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "nav-item-icon"
+  }, n.icon), /*#__PURE__*/React.createElement("span", null, n.label)))))), users.length > 1 && /*#__PURE__*/React.createElement("div", {
     style: {
       padding: '12px 16px',
       borderTop: '1px solid rgba(255,255,255,0.07)'
@@ -4773,60 +4140,53 @@ function App() {
       gap: 4,
       marginTop: 6
     }
-  }, users.map(function (u) {
-    return /*#__PURE__*/React.createElement("button", {
-      key: u.id,
-      className: "nav-item ".concat(currentUser === u.id ? 'active' : ''),
-      onClick: function onClick() {
-        return setStore(function (s) {
-          return _objectSpread(_objectSpread({}, s), {}, {
-            currentUser: u.id
-          });
-        });
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        width: 18,
-        height: 18,
-        borderRadius: '50%',
-        background: u.color,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: 'white',
-        fontSize: 9,
-        fontWeight: 700
-      }
-    }, u.name.slice(0, 2).toUpperCase()), /*#__PURE__*/React.createElement("span", null, u.name));
-  })))), /*#__PURE__*/React.createElement("div", {
+  }, users.map(u => /*#__PURE__*/React.createElement("button", {
+    key: u.id,
+    className: `nav-item ${currentUser === u.id ? 'active' : ''}`,
+    onClick: () => setStore(s => ({
+      ...s,
+      currentUser: u.id
+    }))
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 18,
+      height: 18,
+      borderRadius: '50%',
+      background: u.color,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: 'white',
+      fontSize: 9,
+      fontWeight: 700
+    }
+  }, u.name.slice(0, 2).toUpperCase()), /*#__PURE__*/React.createElement("span", null, u.name)))))), /*#__PURE__*/React.createElement("div", {
     className: "main-content"
   }, /*#__PURE__*/React.createElement("header", {
     className: "main-header"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "header-title"
-  }, (_PAGE_TITLES$tab = PAGE_TITLES[tab]) === null || _PAGE_TITLES$tab === void 0 ? void 0 : _PAGE_TITLES$tab.title), /*#__PURE__*/React.createElement("div", {
+  }, PAGE_TITLES[tab]?.title), /*#__PURE__*/React.createElement("div", {
     className: "header-subtitle"
-  }, MONTHS[selectedMonth - 1], " ", selectedYear, " \xB7 ", (_PAGE_TITLES$tab2 = PAGE_TITLES[tab]) === null || _PAGE_TITLES$tab2 === void 0 ? void 0 : _PAGE_TITLES$tab2.sub)), /*#__PURE__*/React.createElement("div", {
+  }, MONTHS[selectedMonth - 1], " ", selectedYear, " \xB7 ", PAGE_TITLES[tab]?.sub)), /*#__PURE__*/React.createElement("div", {
     className: "header-actions"
   }, deferredPrompt && /*#__PURE__*/React.createElement("button", {
     className: "header-btn primary",
     onClick: installApp
-  }, "\uD83D\uDCF2 Instalar CFH"), !(monthData !== null && monthData !== void 0 && monthData.initialized) && /*#__PURE__*/React.createElement("button", {
+  }, "\uD83D\uDCF2 Instalar CFH"), !monthData?.initialized && /*#__PURE__*/React.createElement("button", {
     className: "header-btn",
-    onClick: function onClick() {
-      return setShowSetup(true);
-    }
+    onClick: () => setShowSetup(true)
   }, "\u2699\uFE0F Configurar mes"), /*#__PURE__*/React.createElement("button", {
     className: "header-btn",
-    onClick: function onClick() {
-      var json = JSON.stringify(store, null, 2);
-      var blob = new Blob([json], {
+    onClick: () => {
+      const json = JSON.stringify(store, null, 2);
+      const blob = new Blob([json], {
         type: 'application/json'
       });
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
       a.href = url;
-      a.download = "CFH_backup_".concat(new Date().toISOString().slice(0, 10), ".json");
+      a.download = `CFH_backup_${new Date().toISOString().slice(0, 10)}.json`;
       a.click();
       URL.revokeObjectURL(url);
     }
@@ -4870,34 +4230,37 @@ function App() {
     setStore: setStore
   })), /*#__PURE__*/React.createElement("nav", {
     className: "mobile-nav"
-  }, NAV.map(function (n) {
-    return /*#__PURE__*/React.createElement("button", {
-      key: n.id,
-      className: "mobile-nav-item ".concat(tab === n.id ? 'active' : ''),
-      onClick: function onClick() {
-        return setTab(n.id);
-      }
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "mobile-nav-icon"
-    }, n.icon), /*#__PURE__*/React.createElement("span", {
-      className: "mobile-nav-label"
-    }, n.label));
-  }))), showSetup && /*#__PURE__*/React.createElement(SetupModal, {
+  }, NAV.map(n => /*#__PURE__*/React.createElement("button", {
+    key: n.id,
+    className: `mobile-nav-item ${tab === n.id ? 'active' : ''}`,
+    onClick: () => setTab(n.id)
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "mobile-nav-icon"
+  }, n.icon), /*#__PURE__*/React.createElement("span", {
+    className: "mobile-nav-label"
+  }, n.label))))), showSetup && /*#__PURE__*/React.createElement(SetupModal, {
     month: selectedMonth,
     year: selectedYear,
     monthData: monthData,
     onSave: handleSetupSave,
-    onSkip: function onSkip() {
-      updateMonth(function (md) {
-        return _objectSpread(_objectSpread({}, md), {}, {
-          initialized: true
-        });
-      });
+    onSkip: () => {
+      updateMonth(md => ({
+        ...md,
+        initialized: true
+      }));
       setShowSetup(false);
     }
   }));
 }
-    ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+
+    document.getElementById('loading-msg').textContent = 'Arrancando app...';
+    try {
+      ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+    } catch(e) {
+      document.getElementById('root').innerHTML =
+        '<div style="padding:20px;font-family:monospace;font-size:12px;color:red;background:#fff;margin:20px;border-radius:8px;border:1px solid red">' +
+        '<strong>Error al renderizar:</strong><br>' + e.message + '</div>';
+    }
   </script>
 </body>
 </html>
