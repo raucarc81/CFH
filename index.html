@@ -12,7 +12,7 @@
   <link rel="icon" href="icon-192.png" />
   <link rel="manifest" href="manifest.json" />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <title>CFH</title>
+  <title>CFH – Control Financiero Hogar</title>
   <style>
 /* ═══════════════════════════════════════════════
    CFH – Control Financiero Hogar
@@ -701,29 +701,15 @@ body {
   </style>
 </head>
 <body>
-  <div id="root">
-    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;font-family:Outfit,sans-serif;gap:12px;color:#64748b">
-      <div style="font-size:32px">🏠</div>
-      <div style="font-size:16px;font-weight:500">CFH</div>
-      <div style="font-size:13px" id="loading-msg">Iniciando...</div>
-    </div>
-  </div>
+  <div id="root"></div>
 
   <script>
-    // PWA install capture (before React loads)
     window.deferredInstallPrompt = null;
     window.addEventListener('beforeinstallprompt', function(e) {
       e.preventDefault();
       window.deferredInstallPrompt = e;
       window.dispatchEvent(new CustomEvent('pwa-listo'));
     });
-    // Error handler - shows errors on screen instead of blank
-    window.addEventListener('error', function(e) {
-      document.getElementById('root').innerHTML =
-        '<div style="padding:20px;font-family:monospace;font-size:12px;color:red;background:#fff;margin:20px;border-radius:8px;border:1px solid red">' +
-        '<strong>Error al cargar:</strong><br>' + e.message + '<br><small>' + (e.filename||'') + ':' + e.lineno + '</small></div>';
-    });
-    // Service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(function(){});
     }
@@ -731,30 +717,15 @@ body {
 
   <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js" crossorigin></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js" crossorigin></script>
 
   <script>
-    // Make React hooks and Recharts components available as globals
-    var useState = React.useState;
-    var useEffect = React.useEffect;
-    var useMemo = React.useMemo;
+    var useState    = React.useState;
+    var useEffect   = React.useEffect;
+    var useMemo     = React.useMemo;
     var useCallback = React.useCallback;
-    var useRef = React.useRef;
-    var BarChart = Recharts.BarChart;
-    var Bar = Recharts.Bar;
-    var PieChart = Recharts.PieChart;
-    var Pie = Recharts.Pie;
-    var Cell = Recharts.Cell;
-    var XAxis = Recharts.XAxis;
-    var YAxis = Recharts.YAxis;
-    var Tooltip = Recharts.Tooltip;
-    var ResponsiveContainer = Recharts.ResponsiveContainer;
-    var CartesianGrid = Recharts.CartesianGrid;
-    var Legend = Recharts.Legend;
-
-    document.getElementById('loading-msg').textContent = 'Cargando componentes...';
+    var useRef      = React.useRef;
   </script>
-
   <script>
 const MONTHS = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 const MONTHS_S = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
@@ -1455,6 +1426,210 @@ function SetupModal({
 // ═══════════════════════════════════════════════════════════════
 //  TAB: RESUMEN (Dashboard)
 // ═══════════════════════════════════════════════════════════════
+// ═══ CHART COMPONENTS (Chart.js) ══════════════════════════════
+
+function ChartBar({
+  data,
+  height = 220
+}) {
+  const ref = useRef(null);
+  const inst = useRef(null);
+  useEffect(() => {
+    if (!ref.current || !data) return;
+    if (inst.current) inst.current.destroy();
+    inst.current = new Chart(ref.current, {
+      type: 'bar',
+      data: {
+        labels: data.map(d => d.name),
+        datasets: [{
+          label: 'Ingresos',
+          data: data.map(d => d.ingresos),
+          backgroundColor: '#1D9E75',
+          borderRadius: 4
+        }, {
+          label: 'Gastos',
+          data: data.map(d => d.gastos),
+          backgroundColor: '#D85A30',
+          borderRadius: 4
+        }, {
+          label: 'Ahorro',
+          data: data.map(d => d.ahorro),
+          backgroundColor: '#3B6D11',
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: {
+              font: {
+                size: 11
+              },
+              color: '#64748b'
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              color: '#64748b',
+              font: {
+                size: 11
+              }
+            }
+          },
+          y: {
+            grid: {
+              color: '#e2e8f0'
+            },
+            ticks: {
+              color: '#64748b',
+              font: {
+                size: 11
+              },
+              callback: v => v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v
+            }
+          }
+        }
+      }
+    });
+    return () => {
+      if (inst.current) inst.current.destroy();
+    };
+  }, [data]);
+  return React.createElement('div', {
+    style: {
+      height
+    }
+  }, React.createElement('canvas', {
+    ref
+  }));
+}
+function ChartPie({
+  data
+}) {
+  const ref = useRef(null);
+  const inst = useRef(null);
+  useEffect(() => {
+    if (!ref.current || !data || !data.length) return;
+    if (inst.current) inst.current.destroy();
+    inst.current = new Chart(ref.current, {
+      type: 'doughnut',
+      data: {
+        labels: data.map(d => d.name),
+        datasets: [{
+          data: data.map(d => d.value),
+          backgroundColor: data.map(d => d.color),
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              font: {
+                size: 11
+              },
+              color: '#64748b',
+              boxWidth: 12,
+              padding: 8
+            }
+          }
+        }
+      }
+    });
+    return () => {
+      if (inst.current) inst.current.destroy();
+    };
+  }, [data]);
+  return React.createElement('div', {
+    style: {
+      height: 220
+    }
+  }, React.createElement('canvas', {
+    ref
+  }));
+}
+function ChartBarH({
+  data
+}) {
+  const ref = useRef(null);
+  const inst = useRef(null);
+  useEffect(() => {
+    if (!ref.current || !data) return;
+    if (inst.current) inst.current.destroy();
+    inst.current = new Chart(ref.current, {
+      type: 'bar',
+      data: {
+        labels: data.map(d => d.name),
+        datasets: [{
+          data: data.map(d => d.value),
+          backgroundColor: data.map(d => d.fill),
+          borderRadius: 4,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: ctx => ' ' + fmt(ctx.raw)
+            }
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              color: '#e2e8f0'
+            },
+            ticks: {
+              color: '#64748b',
+              font: {
+                size: 11
+              },
+              callback: v => v >= 1000 ? (v / 1000).toFixed(1) + 'k€' : v + '€'
+            }
+          },
+          y: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              color: '#334155',
+              font: {
+                size: 12
+              }
+            }
+          }
+        }
+      }
+    });
+    return () => {
+      if (inst.current) inst.current.destroy();
+    };
+  }, [data]);
+  return React.createElement('div', {
+    style: {
+      height: Math.max(180, data.length * 38)
+    }
+  }, React.createElement('canvas', {
+    ref
+  }));
+}
 function TabResumen({
   monthData,
   totals,
@@ -1464,11 +1639,10 @@ function TabResumen({
 }) {
   const t = totals;
   const savingsRate = t.income > 0 ? Math.round((t.income - t.total) / t.income * 100) : 0;
-  const annualSummary = useMemo(() => {
+  const annualData = useMemo(() => {
     return MONTHS_S.map((name, i) => {
       const m = i + 1;
-      const key = `${year}-${m}`;
-      const md = allMonthsData[key];
+      const md = allMonthsData[`${year}-${m}`];
       const mt = computeTotals(md, year, m);
       return {
         name,
@@ -1503,35 +1677,35 @@ function TabResumen({
     value: t.savings,
     color: CLR.savings
   }].filter(x => x.value > 0);
-  return /*#__PURE__*/React.createElement("div", {
-    className: "fade-in"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "kpi-grid"
-  }, /*#__PURE__*/React.createElement(KpiCard, {
-    label: "Ingresos del mes",
+  return React.createElement('div', {
+    className: 'fade-in'
+  }, React.createElement('div', {
+    className: 'kpi-grid'
+  }, React.createElement(KpiCard, {
+    label: 'Ingresos del mes',
     value: fmt(t.income),
     color: CLR.income,
-    sub: `${MONTHS[month - 1]} ${year}`,
+    sub: MONTHS[month - 1] + ' ' + year,
     badge: {
       text: 'ENTRADAS',
       bg: CLR.incomeBg,
       color: CLR.income
     }
-  }), /*#__PURE__*/React.createElement(KpiCard, {
-    label: "Gastos totales",
+  }), React.createElement(KpiCard, {
+    label: 'Gastos totales',
     value: fmt(t.total),
     color: CLR.fixed,
-    sub: `Fijos: ${fmt(t.fixed)}`,
+    sub: 'Fijos: ' + fmt(t.fixed),
     badge: {
       text: 'SALIDAS',
       bg: CLR.fixedBg,
       color: CLR.fixed
     }
-  }), /*#__PURE__*/React.createElement(KpiCard, {
-    label: "Ahorro / Saldo",
+  }), React.createElement(KpiCard, {
+    label: 'Ahorro / Saldo',
     value: fmt(t.balance),
     color: t.balance >= 0 ? CLR.income : CLR.fixed,
-    sub: `Tasa ahorro: ${savingsRate}%`,
+    sub: 'Tasa ahorro: ' + savingsRate + '%',
     badge: t.balance >= 0 ? {
       text: '✓ POSITIVO',
       bg: CLR.incomeBg,
@@ -1541,155 +1715,76 @@ function TabResumen({
       bg: CLR.fixedBg,
       color: CLR.fixed
     }
-  }), /*#__PURE__*/React.createElement(KpiCard, {
-    label: "Ahorro / Inversi\xF3n",
+  }), React.createElement(KpiCard, {
+    label: 'Ahorro / Inversión',
     value: fmt(t.savings),
     color: CLR.savings,
-    sub: "Asignado este mes",
+    sub: 'Asignado este mes',
     badge: {
       text: 'AHORRO',
       bg: CLR.savBg,
       color: CLR.savings
     }
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "chart-grid"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "card-body"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "chart-title"
-  }, "Evoluci\xF3n anual ", year), /*#__PURE__*/React.createElement(ResponsiveContainer, {
-    width: "100%",
+  })), React.createElement('div', {
+    className: 'chart-grid'
+  }, React.createElement('div', {
+    className: 'card'
+  }, React.createElement('div', {
+    className: 'card-body'
+  }, React.createElement('div', {
+    className: 'chart-title'
+  }, 'Evolución anual ' + year), React.createElement(ChartBar, {
+    data: annualData,
     height: 220
-  }, /*#__PURE__*/React.createElement(BarChart, {
-    data: annualSummary,
-    barGap: 2
-  }, /*#__PURE__*/React.createElement(CartesianGrid, {
-    strokeDasharray: "3 3",
-    stroke: "var(--border)",
-    vertical: false
-  }), /*#__PURE__*/React.createElement(XAxis, {
-    dataKey: "name",
-    tick: {
-      fill: 'var(--text-muted)',
-      fontSize: 11
-    },
-    axisLine: false,
-    tickLine: false
-  }), /*#__PURE__*/React.createElement(YAxis, {
-    tick: {
-      fill: 'var(--text-muted)',
-      fontSize: 11
-    },
-    axisLine: false,
-    tickLine: false,
-    tickFormatter: v => v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v
-  }), /*#__PURE__*/React.createElement(Tooltip, {
-    formatter: v => fmt(v),
-    contentStyle: {
-      background: 'var(--bg-card)',
-      border: '1px solid var(--border)',
-      borderRadius: 8,
-      fontSize: 12
-    }
-  }), /*#__PURE__*/React.createElement(Legend, {
-    wrapperStyle: {
-      fontSize: 12
-    }
-  }), /*#__PURE__*/React.createElement(Bar, {
-    dataKey: "ingresos",
-    name: "Ingresos",
-    fill: CLR.income,
-    radius: [3, 3, 0, 0]
-  }), /*#__PURE__*/React.createElement(Bar, {
-    dataKey: "gastos",
-    name: "Gastos",
-    fill: CLR.fixed,
-    radius: [3, 3, 0, 0]
-  }), /*#__PURE__*/React.createElement(Bar, {
-    dataKey: "ahorro",
-    name: "Ahorro",
-    fill: CLR.savings,
-    radius: [3, 3, 0, 0]
-  }))))), /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "card-body"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "chart-title"
-  }, "Distribuci\xF3n gastos \u2014 ", MONTHS_S[month - 1]), expBreakdown.length > 0 ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(ResponsiveContainer, {
-    width: "100%",
-    height: 160
-  }, /*#__PURE__*/React.createElement(PieChart, null, /*#__PURE__*/React.createElement(Pie, {
-    data: expBreakdown,
-    dataKey: "value",
-    innerRadius: 45,
-    outerRadius: 70,
-    strokeWidth: 0,
-    paddingAngle: 2
-  }, expBreakdown.map((e, i) => /*#__PURE__*/React.createElement(Cell, {
-    key: i,
-    fill: e.color
-  }))), /*#__PURE__*/React.createElement(Tooltip, {
-    formatter: v => fmt(v),
-    contentStyle: {
-      background: 'var(--bg-card)',
-      border: '1px solid var(--border)',
-      borderRadius: 8,
-      fontSize: 12
-    }
-  }))), /*#__PURE__*/React.createElement("div", {
-    className: "chart-legend"
-  }, expBreakdown.map((e, i) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    className: "legend-item"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "legend-dot",
-    style: {
-      background: e.color
-    }
-  }), /*#__PURE__*/React.createElement("span", null, e.name, ": ", fmt(e.value)))))) : /*#__PURE__*/React.createElement(EmptyState, {
-    icon: "\uD83D\uDCCA",
-    text: "Sin datos de gastos este mes"
-  })))), /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "card-header"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "card-header-left"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "card-icon"
-  }, "\uD83D\uDCCB"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "card-title"
-  }, "Resumen del mes \u2014 ", MONTHS[month - 1], " ", year), /*#__PURE__*/React.createElement("div", {
-    className: "card-subtitle"
-  }, "Desglose completo de ingresos y gastos")))), /*#__PURE__*/React.createElement("div", {
-    className: "card-body"
-  }, /*#__PURE__*/React.createElement("table", {
-    className: "summary-table"
-  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "Categor\xEDa"), /*#__PURE__*/React.createElement("th", {
-    className: "amount-col"
-  }, "Importe"), /*#__PURE__*/React.createElement("th", {
-    className: "amount-col"
-  }, "% s/ ingresos"))), /*#__PURE__*/React.createElement("tbody", null, /*#__PURE__*/React.createElement("tr", {
+  }))), React.createElement('div', {
+    className: 'card'
+  }, React.createElement('div', {
+    className: 'card-body'
+  }, React.createElement('div', {
+    className: 'chart-title'
+  }, 'Distribución gastos — ' + MONTHS_S[month - 1]), expBreakdown.length > 0 ? React.createElement(ChartPie, {
+    data: expBreakdown
+  }) : React.createElement(EmptyState, {
+    icon: '📊',
+    text: 'Sin datos de gastos este mes'
+  })))), React.createElement('div', {
+    className: 'card'
+  }, React.createElement('div', {
+    className: 'card-header'
+  }, React.createElement('div', {
+    className: 'card-header-left'
+  }, React.createElement('span', {
+    className: 'card-icon'
+  }, '📋'), React.createElement('div', null, React.createElement('div', {
+    className: 'card-title'
+  }, 'Resumen del mes — ' + MONTHS[month - 1] + ' ' + year), React.createElement('div', {
+    className: 'card-subtitle'
+  }, 'Desglose completo')))), React.createElement('div', {
+    className: 'card-body'
+  }, React.createElement('table', {
+    className: 'summary-table'
+  }, React.createElement('thead', null, React.createElement('tr', null, React.createElement('th', null, 'Categoría'), React.createElement('th', {
+    className: 'amount-col'
+  }, 'Importe'), React.createElement('th', {
+    className: 'amount-col'
+  }, '% s/ ingresos'))), React.createElement('tbody', null, React.createElement('tr', {
     style: {
       background: CLR.incomeBg
     }
-  }, /*#__PURE__*/React.createElement("td", {
+  }, React.createElement('td', {
     style: {
       color: CLR.income,
       fontWeight: 500
     }
-  }, "\uD83D\uDCB0 Ingresos totales"), /*#__PURE__*/React.createElement("td", {
-    className: "amount-col",
+  }, '💰 Ingresos totales'), React.createElement('td', {
+    className: 'amount-col',
     style: {
       color: CLR.income,
       fontWeight: 600
     }
-  }, fmt(t.income)), /*#__PURE__*/React.createElement("td", {
-    className: "amount-col"
-  }, "100%")), [{
+  }, fmt(t.income)), React.createElement('td', {
+    className: 'amount-col'
+  }, '100%')), [{
     label: '🔒 Gastos fijos',
     val: t.fixed,
     color: CLR.fixed
@@ -1713,47 +1808,43 @@ function TabResumen({
     label: '🎯 Ahorro e inversión',
     val: t.savings,
     color: CLR.savings
-  }].map((row, i) => /*#__PURE__*/React.createElement("tr", {
+  }].map((row, i) => React.createElement('tr', {
     key: i
-  }, /*#__PURE__*/React.createElement("td", {
+  }, React.createElement('td', {
     style: {
       color: row.color
     }
-  }, row.label), /*#__PURE__*/React.createElement("td", {
-    className: "amount-col"
-  }, fmt(row.val)), /*#__PURE__*/React.createElement("td", {
-    className: "amount-col"
-  }, t.income > 0 ? Math.round(row.val / t.income * 100) : 0, "%"))), /*#__PURE__*/React.createElement("tr", {
-    className: "total-row"
-  }, /*#__PURE__*/React.createElement("td", null, "\uD83D\uDCB8 Total gastos"), /*#__PURE__*/React.createElement("td", {
-    className: "amount-col"
-  }, fmt(t.total)), /*#__PURE__*/React.createElement("td", {
-    className: "amount-col"
-  }, t.income > 0 ? Math.round(t.total / t.income * 100) : 0, "%")), /*#__PURE__*/React.createElement("tr", {
-    className: "total-row",
+  }, row.label), React.createElement('td', {
+    className: 'amount-col'
+  }, fmt(row.val)), React.createElement('td', {
+    className: 'amount-col'
+  }, (t.income > 0 ? Math.round(row.val / t.income * 100) : 0) + '%'))), React.createElement('tr', {
+    className: 'total-row'
+  }, React.createElement('td', null, '💸 Total gastos'), React.createElement('td', {
+    className: 'amount-col'
+  }, fmt(t.total)), React.createElement('td', {
+    className: 'amount-col'
+  }, (t.income > 0 ? Math.round(t.total / t.income * 100) : 0) + '%')), React.createElement('tr', {
+    className: 'total-row',
     style: {
       background: t.balance >= 0 ? CLR.incomeBg : CLR.fixedBg
     }
-  }, /*#__PURE__*/React.createElement("td", {
+  }, React.createElement('td', {
     style: {
       color: t.balance >= 0 ? CLR.income : CLR.fixed
     }
-  }, t.balance >= 0 ? '✅' : '❌', " Saldo neto"), /*#__PURE__*/React.createElement("td", {
-    className: "amount-col",
+  }, (t.balance >= 0 ? '✅' : '❌') + ' Saldo neto'), React.createElement('td', {
+    className: 'amount-col',
     style: {
       color: t.balance >= 0 ? CLR.income : CLR.fixed
     }
-  }, fmt(t.balance)), /*#__PURE__*/React.createElement("td", {
-    className: "amount-col",
+  }, fmt(t.balance)), React.createElement('td', {
+    className: 'amount-col',
     style: {
       color: t.balance >= 0 ? CLR.income : CLR.fixed
     }
-  }, savingsRate, "%")))))));
+  }, savingsRate + '%')))))));
 }
-
-// ═══════════════════════════════════════════════════════════════
-//  TAB: INGRESOS
-// ═══════════════════════════════════════════════════════════════
 function TabIngresos({
   monthData,
   updateMonth
@@ -3243,14 +3334,15 @@ function TabGraficos({
     return {
       name,
       ingresos: t.income,
-      'G. Fijos': t.fixed,
-      'G. Variables': t.varExp,
-      Ocio: t.leisure,
-      Ahorro: t.savings,
-      total: t.total
+      gastos: t.total,
+      ahorro: t.balance
     };
   }), [allMonthsData, year]);
   const monthBreakdown = [{
+    name: 'Ingresos',
+    value: selTotals.income,
+    fill: CLR.income
+  }, {
     name: 'G. Fijos',
     value: selTotals.fixed,
     fill: CLR.fixed
@@ -3274,256 +3366,141 @@ function TabGraficos({
     name: 'Ahorro',
     value: selTotals.savings,
     fill: CLR.savings
-  }].filter(x => x.value > 0);
-  const barData = [{
-    name: 'Ingresos',
-    value: selTotals.income,
-    fill: CLR.income
-  }, ...monthBreakdown, {
+  }, {
     name: 'SALDO',
     value: selTotals.balance,
     fill: selTotals.balance >= 0 ? CLR.income : CLR.fixed
-  }];
-  const TT_STYLE = {
-    background: 'var(--bg-card)',
-    border: '1px solid var(--border)',
-    borderRadius: 8,
-    fontSize: 12
-  };
-  return /*#__PURE__*/React.createElement("div", {
-    className: "fade-in"
-  }, /*#__PURE__*/React.createElement("div", {
+  }].filter(x => x.value !== 0);
+  const pieData = [{
+    name: 'G. Fijos',
+    value: selTotals.fixed,
+    color: CLR.fixed
+  }, {
+    name: 'G. Variables',
+    value: selTotals.varExp,
+    color: CLR.varExp
+  }, {
+    name: 'Ocio',
+    value: selTotals.leisure,
+    color: CLR.leisure
+  }, {
+    name: 'Hijos',
+    value: selTotals.children,
+    color: CLR.child
+  }, {
+    name: 'Otros',
+    value: selTotals.other,
+    color: CLR.other
+  }, {
+    name: 'Ahorro',
+    value: selTotals.savings,
+    color: CLR.savings
+  }].filter(x => x.value > 0);
+  return React.createElement('div', {
+    className: 'fade-in'
+  }, React.createElement('div', {
     style: {
       display: 'flex',
       alignItems: 'center',
       gap: 10,
       marginBottom: 20
     }
-  }, /*#__PURE__*/React.createElement("span", {
+  }, React.createElement('span', {
     style: {
       fontSize: 13,
       color: 'var(--text-muted)'
     }
-  }, "Mes detallado:"), /*#__PURE__*/React.createElement("select", {
-    className: "form-input",
+  }, 'Mes detallado:'), React.createElement('select', {
+    className: 'form-input',
     style: {
       width: 160
     },
     value: selMonth,
     onChange: e => setSelMonth(Number(e.target.value))
-  }, MONTHS.map((m, i) => /*#__PURE__*/React.createElement("option", {
+  }, MONTHS.map((m, i) => React.createElement('option', {
     key: i,
     value: i + 1
-  }, m)))), /*#__PURE__*/React.createElement("div", {
-    className: "card chart-full"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "card-body"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "chart-title"
-  }, "\uD83D\uDCCA Ingresos vs. Gastos \u2014 ", MONTHS[selMonth - 1], " ", year), /*#__PURE__*/React.createElement(ResponsiveContainer, {
-    width: "100%",
-    height: 280
-  }, /*#__PURE__*/React.createElement(BarChart, {
-    data: barData,
-    layout: "vertical",
-    margin: {
-      left: 80,
-      right: 20
-    }
-  }, /*#__PURE__*/React.createElement(CartesianGrid, {
-    strokeDasharray: "3 3",
-    horizontal: false,
-    stroke: "var(--border)"
-  }), /*#__PURE__*/React.createElement(XAxis, {
-    type: "number",
-    tick: {
-      fill: 'var(--text-muted)',
-      fontSize: 11
-    },
-    axisLine: false,
-    tickLine: false,
-    tickFormatter: v => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v
-  }), /*#__PURE__*/React.createElement(YAxis, {
-    type: "category",
-    dataKey: "name",
-    tick: {
-      fill: 'var(--text)',
-      fontSize: 12
-    },
-    axisLine: false,
-    tickLine: false,
-    width: 80
-  }), /*#__PURE__*/React.createElement(Tooltip, {
-    formatter: v => fmt(v),
-    contentStyle: TT_STYLE
-  }), /*#__PURE__*/React.createElement(Bar, {
-    dataKey: "value",
-    radius: [0, 4, 4, 0]
-  }, barData.map((d, i) => /*#__PURE__*/React.createElement(Cell, {
-    key: i,
-    fill: d.fill
-  }))))))), /*#__PURE__*/React.createElement("div", {
-    className: "card chart-full"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "card-body"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "chart-title"
-  }, "\uD83D\uDCC8 Evoluci\xF3n anual \u2014 ", year), /*#__PURE__*/React.createElement(ResponsiveContainer, {
-    width: "100%",
-    height: 280
-  }, /*#__PURE__*/React.createElement(BarChart, {
+  }, m)))), React.createElement('div', {
+    className: 'card chart-full'
+  }, React.createElement('div', {
+    className: 'card-body'
+  }, React.createElement('div', {
+    className: 'chart-title'
+  }, '📊 Ingresos vs. Gastos — ' + MONTHS[selMonth - 1] + ' ' + year), monthBreakdown.length > 0 ? React.createElement(ChartBarH, {
+    data: monthBreakdown
+  }) : React.createElement(EmptyState, {
+    icon: '📊',
+    text: 'Sin datos'
+  }))), React.createElement('div', {
+    className: 'card chart-full'
+  }, React.createElement('div', {
+    className: 'card-body'
+  }, React.createElement('div', {
+    className: 'chart-title'
+  }, '📈 Evolución anual — ' + year), React.createElement(ChartBar, {
     data: annualData,
-    barGap: 2,
-    barCategoryGap: "25%"
-  }, /*#__PURE__*/React.createElement(CartesianGrid, {
-    strokeDasharray: "3 3",
-    stroke: "var(--border)",
-    vertical: false
-  }), /*#__PURE__*/React.createElement(XAxis, {
-    dataKey: "name",
-    tick: {
-      fill: 'var(--text-muted)',
-      fontSize: 11
-    },
-    axisLine: false,
-    tickLine: false
-  }), /*#__PURE__*/React.createElement(YAxis, {
-    tick: {
-      fill: 'var(--text-muted)',
-      fontSize: 11
-    },
-    axisLine: false,
-    tickLine: false,
-    tickFormatter: v => v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v
-  }), /*#__PURE__*/React.createElement(Tooltip, {
-    formatter: v => fmt(v),
-    contentStyle: TT_STYLE
-  }), /*#__PURE__*/React.createElement(Legend, {
-    wrapperStyle: {
-      fontSize: 12
-    }
-  }), /*#__PURE__*/React.createElement(Bar, {
-    dataKey: "ingresos",
-    name: "Ingresos",
-    fill: CLR.income,
-    radius: [3, 3, 0, 0]
-  }), /*#__PURE__*/React.createElement(Bar, {
-    dataKey: "total",
-    name: "Gastos totales",
-    fill: CLR.fixed,
-    radius: [3, 3, 0, 0]
-  }), /*#__PURE__*/React.createElement(Bar, {
-    dataKey: "Ahorro",
-    name: "Ahorro",
-    fill: CLR.savings,
-    radius: [3, 3, 0, 0]
-  }))))), /*#__PURE__*/React.createElement("div", {
-    className: "chart-grid"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "card-body"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "chart-title"
-  }, "\uD83E\uDD67 Distribuci\xF3n gastos \u2014 ", MONTHS[selMonth - 1]), monthBreakdown.length > 0 ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(ResponsiveContainer, {
-    width: "100%",
-    height: 220
-  }, /*#__PURE__*/React.createElement(PieChart, null, /*#__PURE__*/React.createElement(Pie, {
-    data: monthBreakdown,
-    dataKey: "value",
-    cx: "50%",
-    cy: "50%",
-    outerRadius: 85,
-    strokeWidth: 0,
-    paddingAngle: 2,
-    label: ({
-      name,
-      percent
-    }) => `${name} ${Math.round(percent * 100)}%`,
-    labelLine: {
-      stroke: 'var(--border)',
-      strokeWidth: 1
-    }
-  }, monthBreakdown.map((d, i) => /*#__PURE__*/React.createElement(Cell, {
-    key: i,
-    fill: d.fill
-  }))), /*#__PURE__*/React.createElement(Tooltip, {
-    formatter: v => fmt(v),
-    contentStyle: TT_STYLE
-  }))), /*#__PURE__*/React.createElement("div", {
-    className: "chart-legend",
-    style: {
-      justifyContent: 'center'
-    }
-  }, monthBreakdown.map((d, i) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    className: "legend-item"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "legend-dot",
-    style: {
-      background: d.fill
-    }
-  }), /*#__PURE__*/React.createElement("span", null, d.name, ": ", fmt(d.value)))))) : /*#__PURE__*/React.createElement(EmptyState, {
-    icon: "\uD83D\uDCCA",
-    text: "Sin datos de gastos para este mes"
-  }))), /*#__PURE__*/React.createElement("div", {
-    className: "card"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "card-body"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "chart-title"
-  }, "\uD83D\uDCCB Resumen acumulado ", year), /*#__PURE__*/React.createElement("table", {
-    className: "summary-table"
-  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "Mes"), /*#__PURE__*/React.createElement("th", {
-    className: "amount-col"
-  }, "Ingresos"), /*#__PURE__*/React.createElement("th", {
-    className: "amount-col"
-  }, "Gastos"), /*#__PURE__*/React.createElement("th", {
-    className: "amount-col"
-  }, "Saldo"))), /*#__PURE__*/React.createElement("tbody", null, annualData.filter(d => d.ingresos > 0 || d.total > 0).map((d, i) => /*#__PURE__*/React.createElement("tr", {
+    height: 280
+  }))), React.createElement('div', {
+    className: 'chart-grid'
+  }, React.createElement('div', {
+    className: 'card'
+  }, React.createElement('div', {
+    className: 'card-body'
+  }, React.createElement('div', {
+    className: 'chart-title'
+  }, '🥧 Distribución — ' + MONTHS[selMonth - 1]), pieData.length > 0 ? React.createElement(ChartPie, {
+    data: pieData
+  }) : React.createElement(EmptyState, {
+    icon: '📊',
+    text: 'Sin datos de gastos'
+  }))), React.createElement('div', {
+    className: 'card'
+  }, React.createElement('div', {
+    className: 'card-body'
+  }, React.createElement('div', {
+    className: 'chart-title'
+  }, '📋 Resumen acumulado ' + year), React.createElement('table', {
+    className: 'summary-table'
+  }, React.createElement('thead', null, React.createElement('tr', null, React.createElement('th', null, 'Mes'), React.createElement('th', {
+    className: 'amount-col'
+  }, 'Ingresos'), React.createElement('th', {
+    className: 'amount-col'
+  }, 'Gastos'), React.createElement('th', {
+    className: 'amount-col'
+  }, 'Saldo'))), React.createElement('tbody', null, annualData.filter(d => d.ingresos > 0 || d.gastos > 0).map((d, i) => React.createElement('tr', {
     key: i
-  }, /*#__PURE__*/React.createElement("td", null, d.name), /*#__PURE__*/React.createElement("td", {
-    className: "amount-col",
+  }, React.createElement('td', null, d.name), React.createElement('td', {
+    className: 'amount-col',
     style: {
       color: CLR.income
     }
-  }, fmt(d.ingresos)), /*#__PURE__*/React.createElement("td", {
-    className: "amount-col",
+  }, fmt(d.ingresos)), React.createElement('td', {
+    className: 'amount-col',
     style: {
       color: CLR.fixed
     }
-  }, fmt(d.total)), /*#__PURE__*/React.createElement("td", {
-    className: "amount-col",
+  }, fmt(d.gastos)), React.createElement('td', {
+    className: 'amount-col',
     style: {
-      color: d.ingresos - d.total >= 0 ? CLR.income : CLR.fixed
+      color: d.ingresos - d.gastos >= 0 ? CLR.income : CLR.fixed
     }
-  }, fmt(d.ingresos - d.total)))), (() => {
-    const totInc = annualData.reduce((s, d) => s + d.ingresos, 0);
-    const totGas = annualData.reduce((s, d) => s + d.total, 0);
-    return /*#__PURE__*/React.createElement("tr", {
-      className: "total-row"
-    }, /*#__PURE__*/React.createElement("td", null, "TOTAL"), /*#__PURE__*/React.createElement("td", {
-      className: "amount-col",
-      style: {
-        color: CLR.income
-      }
-    }, fmt(totInc)), /*#__PURE__*/React.createElement("td", {
-      className: "amount-col",
-      style: {
-        color: CLR.fixed
-      }
-    }, fmt(totGas)), /*#__PURE__*/React.createElement("td", {
-      className: "amount-col",
-      style: {
-        color: totInc - totGas >= 0 ? CLR.income : CLR.fixed
-      }
-    }, fmt(totInc - totGas)));
-  })()))))));
+  }, fmt(d.ingresos - d.gastos)))), React.createElement('tr', {
+    className: 'total-row',
+    key: 'total'
+  }, React.createElement('td', null, 'TOTAL'), React.createElement('td', {
+    className: 'amount-col',
+    style: {
+      color: CLR.income
+    }
+  }, fmt(annualData.reduce((s, d) => s + d.ingresos, 0))), React.createElement('td', {
+    className: 'amount-col',
+    style: {
+      color: CLR.fixed
+    }
+  }, fmt(annualData.reduce((s, d) => s + d.gastos, 0))), React.createElement('td', {
+    className: 'amount-col'
+  }, fmt(annualData.reduce((s, d) => s + d.ingresos - d.gastos, 0))))))))));
 }
-
-// ═══════════════════════════════════════════════════════════════
-//  TAB: AJUSTES
-// ═══════════════════════════════════════════════════════════════
 function TabAjustes({
   store,
   setStore
@@ -4252,15 +4229,7 @@ function App() {
     }
   }));
 }
-
-    document.getElementById('loading-msg').textContent = 'Arrancando app...';
-    try {
-      ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
-    } catch(e) {
-      document.getElementById('root').innerHTML =
-        '<div style="padding:20px;font-family:monospace;font-size:12px;color:red;background:#fff;margin:20px;border-radius:8px;border:1px solid red">' +
-        '<strong>Error al renderizar:</strong><br>' + e.message + '</div>';
-    }
+    ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
   </script>
 </body>
 </html>
