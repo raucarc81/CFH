@@ -3140,4 +3140,1751 @@ function TabHijos(_ref12) {
       fontSize: 40,
       marginBottom: 12
     }
-  }, "\uD83D\uDC76"), /*#__PURE__*/React.crea
+  }, "\uD83D\uDC76"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 15,
+      fontWeight: 500,
+      marginBottom: 8
+    }
+  }, "Sin hijos configurados"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 13,
+      color: 'var(--text-muted)',
+      marginBottom: 20
+    }
+  }, "A\xF1ade hijos para registrar sus gastos"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: function onClick() {
+      return setAddChildModal(true);
+    }
+  }, "+ A\xF1adir hijo/a"))) : /*#__PURE__*/React.createElement("div", {
+    className: "section-grid"
+  }, children.map(function (child) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: child.id,
+      className: "card"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "card-header"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "card-header-left"
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        fontSize: 20
+      }
+    }, "\uD83D\uDC76"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+      className: "card-title"
+    }, child.name), /*#__PURE__*/React.createElement("div", {
+      className: "card-subtitle"
+    }, "Total: ", fmt(childTotal(child))))), /*#__PURE__*/React.createElement("button", {
+      className: "btn btn-sm",
+      style: {
+        color: 'var(--red)',
+        borderColor: 'var(--red)'
+      },
+      onClick: function onClick() {
+        return delChild(child.id);
+      }
+    }, "Eliminar")), /*#__PURE__*/React.createElement("div", {
+      className: "card-body"
+    }, CHILD_CATS.map(function (cat) {
+      var items = child[cat.key] || [];
+      var total = items.reduce(function (s, i) {
+        return s + (Number(i.amount) || 0);
+      }, 0);
+      return /*#__PURE__*/React.createElement(AccordionSection, {
+        key: cat.key,
+        icon: cat.icon,
+        title: cat.label,
+        total: total,
+        color: CLR.child,
+        colorBg: CLR.childBg,
+        defaultOpen: false,
+        onAdd: function onAdd() {
+          return openAdd(child.id, cat.key);
+        },
+        addLabel: "Gasto"
+      }, items.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
+        icon: cat.icon,
+        text: "Sin gastos de ".concat(cat.label.toLowerCase())
+      }) : /*#__PURE__*/React.createElement("div", {
+        className: "line-items"
+      }, items.map(function (i) {
+        return /*#__PURE__*/React.createElement(LineItem, {
+          key: i.id,
+          name: i.name,
+          amount: i.amount,
+          color: CLR.child,
+          meta: fmtDate(i.date),
+          onEdit: function onEdit() {
+            return openEdit(child.id, cat.key, i);
+          },
+          onDelete: function onDelete() {
+            return delItem(child.id, cat.key, i.id);
+          }
+        });
+      })));
+    })));
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "btn-add",
+    style: {
+      width: '100%',
+      padding: '12px',
+      justifyContent: 'center'
+    },
+    onClick: function onClick() {
+      return setAddChildModal(true);
+    }
+  }, "+ A\xF1adir otro hijo/a")), addChildModal && /*#__PURE__*/React.createElement(Modal, {
+    title: "A\xF1adir hijo/a",
+    onClose: function onClose() {
+      return setAddChildModal(false);
+    }
+  }, /*#__PURE__*/React.createElement(Field, {
+    label: "Nombre del hijo/a",
+    value: childName,
+    onChange: setChildName,
+    placeholder: "Ej: Carlos, Mar\xEDa..."
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "form-actions"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn",
+    onClick: function onClick() {
+      return setAddChildModal(false);
+    }
+  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: addChild
+  }, "\u2713 A\xF1adir"))), modal && /*#__PURE__*/React.createElement(Modal, {
+    title: "A\xF1adir gasto \u2014 ".concat((_CHILD_CATS$find = CHILD_CATS.find(function (c) {
+      return c.key === modal.catKey;
+    })) === null || _CHILD_CATS$find === void 0 ? void 0 : _CHILD_CATS$find.label),
+    onClose: function onClose() {
+      return setModal(null);
+    }
+  }, /*#__PURE__*/React.createElement(Field, {
+    label: "Descripci\xF3n",
+    value: form.name,
+    onChange: function onChange(v) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          name: v
+        });
+      });
+    },
+    placeholder: "Descripci\xF3n del gasto"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "form-row"
+  }, /*#__PURE__*/React.createElement(Field, {
+    label: "Importe (\u20AC)",
+    value: form.amount,
+    onChange: function onChange(v) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          amount: v
+        });
+      });
+    },
+    type: "number",
+    min: "0",
+    step: "0.01"
+  }), /*#__PURE__*/React.createElement(Field, {
+    label: "Fecha",
+    value: form.date,
+    onChange: function onChange(v) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          date: v
+        });
+      });
+    },
+    type: "date"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "form-actions"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn",
+    onClick: function onClick() {
+      return setModal(null);
+    }
+  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: handleSave
+  }, "\u2713 Guardar"))));
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: OTROS GASTOS
+// ═══════════════════════════════════════════════════════════════
+function TabOtrosGastos(_ref13) {
+  var _SECS$find;
+  var monthData = _ref13.monthData,
+    updateMonth = _ref13.updateMonth;
+  var _useState47 = useState(null),
+    _useState48 = _slicedToArray(_useState47, 2),
+    modal = _useState48[0],
+    setModal = _useState48[1];
+  var _useState49 = useState(null),
+    _useState50 = _slicedToArray(_useState49, 2),
+    editing = _useState50[0],
+    setEditing = _useState50[1];
+  var _useState51 = useState({
+      name: '',
+      amount: '',
+      date: ''
+    }),
+    _useState52 = _slicedToArray(_useState51, 2),
+    form = _useState52[0],
+    setForm = _useState52[1];
+  var oe = (monthData === null || monthData === void 0 ? void 0 : monthData.otherExp) || {};
+  var SECS = [{
+    key: 'gifts',
+    label: 'Regalos',
+    icon: '🎁',
+    color: '#D85A30',
+    bg: '#FAECE7'
+  }, {
+    key: 'events',
+    label: 'Eventos',
+    icon: '🎉',
+    color: '#7F77DD',
+    bg: '#EEEDFE'
+  }, {
+    key: 'others',
+    label: 'Otros',
+    icon: '📦',
+    color: CLR.other,
+    bg: CLR.otherBg
+  }];
+  var openAdd = function openAdd(key) {
+    setEditing(null);
+    setForm({
+      name: '',
+      amount: '',
+      date: today.toISOString().split('T')[0]
+    });
+    setModal(key);
+  };
+  var openEdit = function openEdit(key, item) {
+    setEditing(item.id);
+    setForm({
+      name: item.name,
+      amount: String(item.amount),
+      date: item.date || ''
+    });
+    setModal(key);
+  };
+  var handleSave = function handleSave() {
+    if (!form.name || !form.amount) return;
+    var item = {
+      id: editing || genId(),
+      name: form.name,
+      amount: Number(form.amount),
+      date: form.date
+    };
+    updateMonth(function (md) {
+      return _objectSpread(_objectSpread({}, md), {}, {
+        otherExp: _objectSpread(_objectSpread({}, md.otherExp || {}), {}, _defineProperty({}, modal, editing ? (oe[modal] || []).map(function (x) {
+          return x.id === editing ? item : x;
+        }) : [].concat(_toConsumableArray(oe[modal] || []), [item])))
+      });
+    });
+    setModal(null);
+  };
+  var del = function del(key, id) {
+    return updateMonth(function (md) {
+      return _objectSpread(_objectSpread({}, md), {}, {
+        otherExp: _objectSpread(_objectSpread({}, md.otherExp), {}, _defineProperty({}, key, (oe[key] || []).filter(function (x) {
+          return x.id !== id;
+        })))
+      });
+    });
+  };
+  var grandTotal = SECS.reduce(function (s, sec) {
+    return s + (oe[sec.key] || []).reduce(function (ss, i) {
+      return ss + (Number(i.amount) || 0);
+    }, 0);
+  }, 0);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "fade-in section-grid"
+  }, SECS.map(function (sec) {
+    var items = oe[sec.key] || [];
+    var total = items.reduce(function (s, i) {
+      return s + (Number(i.amount) || 0);
+    }, 0);
+    return /*#__PURE__*/React.createElement(AccordionSection, {
+      key: sec.key,
+      icon: sec.icon,
+      title: sec.label,
+      total: total,
+      color: sec.color,
+      colorBg: sec.bg,
+      onAdd: function onAdd() {
+        return openAdd(sec.key);
+      },
+      addLabel: sec.label
+    }, items.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
+      icon: sec.icon,
+      text: "Sin ".concat(sec.label.toLowerCase(), " este mes")
+    }) : /*#__PURE__*/React.createElement("div", {
+      className: "line-items"
+    }, items.map(function (i) {
+      return /*#__PURE__*/React.createElement(LineItem, {
+        key: i.id,
+        name: i.name,
+        amount: i.amount,
+        color: sec.color,
+        meta: fmtDate(i.date),
+        onEdit: function onEdit() {
+          return openEdit(sec.key, i);
+        },
+        onDelete: function onDelete() {
+          return del(sec.key, i.id);
+        }
+      });
+    })));
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-body",
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 600,
+      color: 'var(--text-muted)',
+      fontSize: 13
+    }
+  }, "TOTAL OTROS GASTOS"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: 'var(--font-mono)',
+      fontSize: 20,
+      fontWeight: 600,
+      color: CLR.other
+    }
+  }, fmt(grandTotal)))), modal && /*#__PURE__*/React.createElement(Modal, {
+    title: "A\xF1adir ".concat(((_SECS$find = SECS.find(function (s) {
+      return s.key === modal;
+    })) === null || _SECS$find === void 0 ? void 0 : _SECS$find.label) || ''),
+    onClose: function onClose() {
+      return setModal(null);
+    }
+  }, /*#__PURE__*/React.createElement(Field, {
+    label: "Descripci\xF3n",
+    value: form.name,
+    onChange: function onChange(v) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          name: v
+        });
+      });
+    },
+    placeholder: "Descripci\xF3n del gasto"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "form-row"
+  }, /*#__PURE__*/React.createElement(Field, {
+    label: "Importe (\u20AC)",
+    value: form.amount,
+    onChange: function onChange(v) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          amount: v
+        });
+      });
+    },
+    type: "number",
+    min: "0",
+    step: "0.01"
+  }), /*#__PURE__*/React.createElement(Field, {
+    label: "Fecha",
+    value: form.date,
+    onChange: function onChange(v) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          date: v
+        });
+      });
+    },
+    type: "date"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "form-actions"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn",
+    onClick: function onClick() {
+      return setModal(null);
+    }
+  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: handleSave
+  }, "\u2713 Guardar"))));
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: AHORRO E INVERSIÓN
+// ═══════════════════════════════════════════════════════════════
+function TabAhorro(_ref14) {
+  var monthData = _ref14.monthData,
+    updateMonth = _ref14.updateMonth;
+  var _useState53 = useState(false),
+    _useState54 = _slicedToArray(_useState53, 2),
+    modal = _useState54[0],
+    setModal = _useState54[1];
+  var _useState55 = useState(null),
+    _useState56 = _slicedToArray(_useState55, 2),
+    editing = _useState56[0],
+    setEditing = _useState56[1];
+  var _useState57 = useState({
+      name: '',
+      amount: ''
+    }),
+    _useState58 = _slicedToArray(_useState57, 2),
+    form = _useState58[0],
+    setForm = _useState58[1];
+  var sv = (monthData === null || monthData === void 0 ? void 0 : monthData.savings) || {};
+  var STD_FIELDS = [{
+    key: 'vacation',
+    label: '🏖️ Ahorro vacaciones',
+    color: '#185FA5'
+  }, {
+    key: 'home',
+    label: '🏠 Ahorro hogar',
+    color: '#1D9E75'
+  }, {
+    key: 'emergency',
+    label: '🛟 Fondo de emergencia',
+    color: '#D85A30'
+  }, {
+    key: 'investment',
+    label: '📈 Inversión',
+    color: '#7F77DD'
+  }];
+  var others = sv.others || [];
+  var stdTotal = STD_FIELDS.reduce(function (s, f) {
+    return s + (Number(sv[f.key]) || 0);
+  }, 0);
+  var othersTotal = others.reduce(function (s, i) {
+    return s + (Number(i.amount) || 0);
+  }, 0);
+  var grandTotal = stdTotal + othersTotal;
+  var setField = function setField(key, val) {
+    return updateMonth(function (md) {
+      return _objectSpread(_objectSpread({}, md), {}, {
+        savings: _objectSpread(_objectSpread({}, md.savings || {}), {}, _defineProperty({}, key, Number(val) || 0))
+      });
+    });
+  };
+  var handleSave = function handleSave() {
+    if (!form.name || !form.amount) return;
+    var item = {
+      id: editing || genId(),
+      name: form.name,
+      amount: Number(form.amount)
+    };
+    updateMonth(function (md) {
+      var _md$savings, _md$savings2;
+      return _objectSpread(_objectSpread({}, md), {}, {
+        savings: _objectSpread(_objectSpread({}, md.savings || {}), {}, {
+          others: editing ? (((_md$savings = md.savings) === null || _md$savings === void 0 ? void 0 : _md$savings.others) || []).map(function (x) {
+            return x.id === editing ? item : x;
+          }) : [].concat(_toConsumableArray(((_md$savings2 = md.savings) === null || _md$savings2 === void 0 ? void 0 : _md$savings2.others) || []), [item])
+        })
+      });
+    });
+    setModal(false);
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "fade-in"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card",
+    style: {
+      marginBottom: 14
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-header"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-header-left"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "card-icon"
+  }, "\uD83C\uDFAF"), /*#__PURE__*/React.createElement("div", {
+    className: "card-title"
+  }, "Ahorro e inversi\xF3n mensual")), /*#__PURE__*/React.createElement("span", {
+    className: "card-total",
+    style: {
+      color: CLR.savings
+    }
+  }, fmt(stdTotal))), /*#__PURE__*/React.createElement("div", {
+    className: "card-body"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+      gap: 10
+    }
+  }, STD_FIELDS.map(function (f) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: f.key
+    }, /*#__PURE__*/React.createElement("label", {
+      className: "form-label"
+    }, f.label), /*#__PURE__*/React.createElement("input", {
+      className: "form-input",
+      type: "number",
+      min: "0",
+      step: "0.01",
+      placeholder: "0,00",
+      value: sv[f.key] || '',
+      onChange: function onChange(e) {
+        return setField(f.key, e.target.value);
+      }
+    }));
+  })))), /*#__PURE__*/React.createElement(AccordionSection, {
+    icon: "\u2795",
+    title: "Otros ahorros / objetivos",
+    total: othersTotal,
+    color: CLR.savings,
+    colorBg: CLR.savBg,
+    onAdd: function onAdd() {
+      setEditing(null);
+      setForm({
+        name: '',
+        amount: ''
+      });
+      setModal(true);
+    },
+    addLabel: "Objetivo"
+  }, others.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
+    icon: "\uD83C\uDFAF",
+    text: "Sin otros objetivos de ahorro"
+  }) : /*#__PURE__*/React.createElement("div", {
+    className: "line-items"
+  }, others.map(function (o) {
+    return /*#__PURE__*/React.createElement(LineItem, {
+      key: o.id,
+      name: o.name,
+      amount: o.amount,
+      color: CLR.savings,
+      onEdit: function onEdit() {
+        setEditing(o.id);
+        setForm({
+          name: o.name,
+          amount: String(o.amount)
+        });
+        setModal(true);
+      },
+      onDelete: function onDelete() {
+        return updateMonth(function (md) {
+          return _objectSpread(_objectSpread({}, md), {}, {
+            savings: _objectSpread(_objectSpread({}, md.savings), {}, {
+              others: md.savings.others.filter(function (x) {
+                return x.id !== o.id;
+              })
+            })
+          });
+        });
+      }
+    });
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-body",
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 600,
+      color: 'var(--text-muted)',
+      fontSize: 13
+    }
+  }, "TOTAL AHORRO E INVERSI\xD3N"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: 'var(--font-mono)',
+      fontSize: 20,
+      fontWeight: 600,
+      color: CLR.savings
+    }
+  }, fmt(grandTotal)))), modal && /*#__PURE__*/React.createElement(Modal, {
+    title: "".concat(editing ? 'Editar' : 'Añadir', " objetivo de ahorro"),
+    onClose: function onClose() {
+      return setModal(false);
+    }
+  }, /*#__PURE__*/React.createElement(Field, {
+    label: "Nombre del objetivo",
+    value: form.name,
+    onChange: function onChange(v) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          name: v
+        });
+      });
+    },
+    placeholder: "Ej: Ahorro coche, Viaje Jap\xF3n..."
+  }), /*#__PURE__*/React.createElement(Field, {
+    label: "Importe mensual (\u20AC)",
+    value: form.amount,
+    onChange: function onChange(v) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          amount: v
+        });
+      });
+    },
+    type: "number",
+    min: "0",
+    step: "0.01"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "form-actions"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn",
+    onClick: function onClick() {
+      return setModal(false);
+    }
+  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: handleSave
+  }, "\u2713 Guardar"))));
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: GRÁFICOS
+// ═══════════════════════════════════════════════════════════════
+function TabGraficos(_ref15) {
+  var allMonthsData = _ref15.allMonthsData,
+    year = _ref15.year,
+    month = _ref15.month;
+  var _useState59 = useState(month),
+    _useState60 = _slicedToArray(_useState59, 2),
+    selMonth = _useState60[0],
+    setSelMonth = _useState60[1];
+  var selMd = allMonthsData["".concat(year, "-").concat(selMonth)];
+  var selTotals = computeTotals(selMd, year, selMonth);
+  var annualData = useMemo(function () {
+    return MONTHS_S.map(function (name, i) {
+      var m = i + 1;
+      var md = allMonthsData["".concat(year, "-").concat(m)];
+      var t = computeTotals(md, year, m);
+      return {
+        name: name,
+        ingresos: t.income,
+        'G. Fijos': t.fixed,
+        'G. Variables': t.varExp,
+        Ocio: t.leisure,
+        Ahorro: t.savings,
+        total: t.total
+      };
+    });
+  }, [allMonthsData, year]);
+  var monthBreakdown = [{
+    name: 'G. Fijos',
+    value: selTotals.fixed,
+    fill: CLR.fixed
+  }, {
+    name: 'G. Variables',
+    value: selTotals.varExp,
+    fill: CLR.varExp
+  }, {
+    name: 'Ocio',
+    value: selTotals.leisure,
+    fill: CLR.leisure
+  }, {
+    name: 'Hijos',
+    value: selTotals.children,
+    fill: CLR.child
+  }, {
+    name: 'Otros',
+    value: selTotals.other,
+    fill: CLR.other
+  }, {
+    name: 'Ahorro',
+    value: selTotals.savings,
+    fill: CLR.savings
+  }].filter(function (x) {
+    return x.value > 0;
+  });
+  var barData = [{
+    name: 'Ingresos',
+    value: selTotals.income,
+    fill: CLR.income
+  }].concat(_toConsumableArray(monthBreakdown), [{
+    name: 'SALDO',
+    value: selTotals.balance,
+    fill: selTotals.balance >= 0 ? CLR.income : CLR.fixed
+  }]);
+  var TT_STYLE = {
+    background: 'var(--bg-card)',
+    border: '1px solid var(--border)',
+    borderRadius: 8,
+    fontSize: 12
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "fade-in"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 10,
+      marginBottom: 20
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 13,
+      color: 'var(--text-muted)'
+    }
+  }, "Mes detallado:"), /*#__PURE__*/React.createElement("select", {
+    className: "form-input",
+    style: {
+      width: 160
+    },
+    value: selMonth,
+    onChange: function onChange(e) {
+      return setSelMonth(Number(e.target.value));
+    }
+  }, MONTHS.map(function (m, i) {
+    return /*#__PURE__*/React.createElement("option", {
+      key: i,
+      value: i + 1
+    }, m);
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "card chart-full"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-body"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "chart-title"
+  }, "\uD83D\uDCCA Ingresos vs. Gastos \u2014 ", MONTHS[selMonth - 1], " ", year), /*#__PURE__*/React.createElement(ResponsiveContainer, {
+    width: "100%",
+    height: 280
+  }, /*#__PURE__*/React.createElement(BarChart, {
+    data: barData,
+    layout: "vertical",
+    margin: {
+      left: 80,
+      right: 20
+    }
+  }, /*#__PURE__*/React.createElement(CartesianGrid, {
+    strokeDasharray: "3 3",
+    horizontal: false,
+    stroke: "var(--border)"
+  }), /*#__PURE__*/React.createElement(XAxis, {
+    type: "number",
+    tick: {
+      fill: 'var(--text-muted)',
+      fontSize: 11
+    },
+    axisLine: false,
+    tickLine: false,
+    tickFormatter: function tickFormatter(v) {
+      return v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v;
+    }
+  }), /*#__PURE__*/React.createElement(YAxis, {
+    type: "category",
+    dataKey: "name",
+    tick: {
+      fill: 'var(--text)',
+      fontSize: 12
+    },
+    axisLine: false,
+    tickLine: false,
+    width: 80
+  }), /*#__PURE__*/React.createElement(Tooltip, {
+    formatter: function formatter(v) {
+      return fmt(v);
+    },
+    contentStyle: TT_STYLE
+  }), /*#__PURE__*/React.createElement(Bar, {
+    dataKey: "value",
+    radius: [0, 4, 4, 0]
+  }, barData.map(function (d, i) {
+    return /*#__PURE__*/React.createElement(Cell, {
+      key: i,
+      fill: d.fill
+    });
+  })))))), /*#__PURE__*/React.createElement("div", {
+    className: "card chart-full"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-body"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "chart-title"
+  }, "\uD83D\uDCC8 Evoluci\xF3n anual \u2014 ", year), /*#__PURE__*/React.createElement(ResponsiveContainer, {
+    width: "100%",
+    height: 280
+  }, /*#__PURE__*/React.createElement(BarChart, {
+    data: annualData,
+    barGap: 2,
+    barCategoryGap: "25%"
+  }, /*#__PURE__*/React.createElement(CartesianGrid, {
+    strokeDasharray: "3 3",
+    stroke: "var(--border)",
+    vertical: false
+  }), /*#__PURE__*/React.createElement(XAxis, {
+    dataKey: "name",
+    tick: {
+      fill: 'var(--text-muted)',
+      fontSize: 11
+    },
+    axisLine: false,
+    tickLine: false
+  }), /*#__PURE__*/React.createElement(YAxis, {
+    tick: {
+      fill: 'var(--text-muted)',
+      fontSize: 11
+    },
+    axisLine: false,
+    tickLine: false,
+    tickFormatter: function tickFormatter(v) {
+      return v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v;
+    }
+  }), /*#__PURE__*/React.createElement(Tooltip, {
+    formatter: function formatter(v) {
+      return fmt(v);
+    },
+    contentStyle: TT_STYLE
+  }), /*#__PURE__*/React.createElement(Legend, {
+    wrapperStyle: {
+      fontSize: 12
+    }
+  }), /*#__PURE__*/React.createElement(Bar, {
+    dataKey: "ingresos",
+    name: "Ingresos",
+    fill: CLR.income,
+    radius: [3, 3, 0, 0]
+  }), /*#__PURE__*/React.createElement(Bar, {
+    dataKey: "total",
+    name: "Gastos totales",
+    fill: CLR.fixed,
+    radius: [3, 3, 0, 0]
+  }), /*#__PURE__*/React.createElement(Bar, {
+    dataKey: "Ahorro",
+    name: "Ahorro",
+    fill: CLR.savings,
+    radius: [3, 3, 0, 0]
+  }))))), /*#__PURE__*/React.createElement("div", {
+    className: "chart-grid"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-body"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "chart-title"
+  }, "\uD83E\uDD67 Distribuci\xF3n gastos \u2014 ", MONTHS[selMonth - 1]), monthBreakdown.length > 0 ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(ResponsiveContainer, {
+    width: "100%",
+    height: 220
+  }, /*#__PURE__*/React.createElement(PieChart, null, /*#__PURE__*/React.createElement(Pie, {
+    data: monthBreakdown,
+    dataKey: "value",
+    cx: "50%",
+    cy: "50%",
+    outerRadius: 85,
+    strokeWidth: 0,
+    paddingAngle: 2,
+    label: function label(_ref16) {
+      var name = _ref16.name,
+        percent = _ref16.percent;
+      return "".concat(name, " ").concat(Math.round(percent * 100), "%");
+    },
+    labelLine: {
+      stroke: 'var(--border)',
+      strokeWidth: 1
+    }
+  }, monthBreakdown.map(function (d, i) {
+    return /*#__PURE__*/React.createElement(Cell, {
+      key: i,
+      fill: d.fill
+    });
+  })), /*#__PURE__*/React.createElement(Tooltip, {
+    formatter: function formatter(v) {
+      return fmt(v);
+    },
+    contentStyle: TT_STYLE
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "chart-legend",
+    style: {
+      justifyContent: 'center'
+    }
+  }, monthBreakdown.map(function (d, i) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: i,
+      className: "legend-item"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "legend-dot",
+      style: {
+        background: d.fill
+      }
+    }), /*#__PURE__*/React.createElement("span", null, d.name, ": ", fmt(d.value)));
+  }))) : /*#__PURE__*/React.createElement(EmptyState, {
+    icon: "\uD83D\uDCCA",
+    text: "Sin datos de gastos para este mes"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-body"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "chart-title"
+  }, "\uD83D\uDCCB Resumen acumulado ", year), /*#__PURE__*/React.createElement("table", {
+    className: "summary-table"
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "Mes"), /*#__PURE__*/React.createElement("th", {
+    className: "amount-col"
+  }, "Ingresos"), /*#__PURE__*/React.createElement("th", {
+    className: "amount-col"
+  }, "Gastos"), /*#__PURE__*/React.createElement("th", {
+    className: "amount-col"
+  }, "Saldo"))), /*#__PURE__*/React.createElement("tbody", null, annualData.filter(function (d) {
+    return d.ingresos > 0 || d.total > 0;
+  }).map(function (d, i) {
+    return /*#__PURE__*/React.createElement("tr", {
+      key: i
+    }, /*#__PURE__*/React.createElement("td", null, d.name), /*#__PURE__*/React.createElement("td", {
+      className: "amount-col",
+      style: {
+        color: CLR.income
+      }
+    }, fmt(d.ingresos)), /*#__PURE__*/React.createElement("td", {
+      className: "amount-col",
+      style: {
+        color: CLR.fixed
+      }
+    }, fmt(d.total)), /*#__PURE__*/React.createElement("td", {
+      className: "amount-col",
+      style: {
+        color: d.ingresos - d.total >= 0 ? CLR.income : CLR.fixed
+      }
+    }, fmt(d.ingresos - d.total)));
+  }), function () {
+    var totInc = annualData.reduce(function (s, d) {
+      return s + d.ingresos;
+    }, 0);
+    var totGas = annualData.reduce(function (s, d) {
+      return s + d.total;
+    }, 0);
+    return /*#__PURE__*/React.createElement("tr", {
+      className: "total-row"
+    }, /*#__PURE__*/React.createElement("td", null, "TOTAL"), /*#__PURE__*/React.createElement("td", {
+      className: "amount-col",
+      style: {
+        color: CLR.income
+      }
+    }, fmt(totInc)), /*#__PURE__*/React.createElement("td", {
+      className: "amount-col",
+      style: {
+        color: CLR.fixed
+      }
+    }, fmt(totGas)), /*#__PURE__*/React.createElement("td", {
+      className: "amount-col",
+      style: {
+        color: totInc - totGas >= 0 ? CLR.income : CLR.fixed
+      }
+    }, fmt(totInc - totGas)));
+  }()))))));
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TAB: AJUSTES
+// ═══════════════════════════════════════════════════════════════
+function TabAjustes(_ref17) {
+  var store = _ref17.store,
+    setStore = _ref17.setStore;
+  var settings = store.settings,
+    users = store.users;
+  var _useState61 = useState(false),
+    _useState62 = _slicedToArray(_useState61, 2),
+    addUserModal = _useState62[0],
+    setAddUserModal = _useState62[1];
+  var _useState63 = useState(''),
+    _useState64 = _slicedToArray(_useState63, 2),
+    newUserName = _useState64[0],
+    setNewUserName = _useState64[1];
+  var _useState65 = useState(THEME_COLORS[0]),
+    _useState66 = _slicedToArray(_useState65, 2),
+    newUserColor = _useState66[0],
+    setNewUserColor = _useState66[1];
+  var updSetting = function updSetting(key, val) {
+    return setStore(function (s) {
+      return _objectSpread(_objectSpread({}, s), {}, {
+        settings: _objectSpread(_objectSpread({}, s.settings), {}, _defineProperty({}, key, val))
+      });
+    });
+  };
+  var exportData = function exportData() {
+    var json = JSON.stringify(store, null, 2);
+    var blob = new Blob([json], {
+      type: 'application/json'
+    });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = "CFH_backup_".concat(new Date().toISOString().slice(0, 10), ".json");
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  var importData = function importData(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function (ev) {
+      try {
+        var data = JSON.parse(ev.target.result);
+        if (data.users && data.data) {
+          setStore(data);
+          alert('✅ Datos importados correctamente');
+        } else alert('❌ Archivo no válido');
+      } catch (_unused2) {
+        alert('❌ Error al leer el archivo');
+      }
+    };
+    reader.readAsText(file);
+  };
+  var addUser = function addUser() {
+    if (!newUserName.trim()) return;
+    var newUser = {
+      id: genId(),
+      name: newUserName.trim(),
+      color: newUserColor
+    };
+    setStore(function (s) {
+      return _objectSpread(_objectSpread({}, s), {}, {
+        users: [].concat(_toConsumableArray(s.users), [newUser])
+      });
+    });
+    setNewUserName('');
+    setAddUserModal(false);
+  };
+  var delUser = function delUser(id) {
+    if (users.length <= 1) return alert('Debe haber al menos un usuario.');
+    setStore(function (s) {
+      return _objectSpread(_objectSpread({}, s), {}, {
+        users: s.users.filter(function (u) {
+          return u.id !== id;
+        }),
+        currentUser: s.currentUser === id ? s.users[0].id : s.currentUser,
+        data: Object.fromEntries(Object.entries(s.data).filter(function (_ref18) {
+          var _ref19 = _slicedToArray(_ref18, 1),
+            k = _ref19[0];
+          return k !== id;
+        }))
+      });
+    });
+  };
+  var handlePhotoUpload = function handlePhotoUpload(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function (ev) {
+      return updSetting('familyPhoto', ev.target.result);
+    };
+    reader.readAsDataURL(file);
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "fade-in"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "settings-grid"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-header"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-header-left"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "card-icon"
+  }, "\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67\u200D\uD83D\uDC66"), /*#__PURE__*/React.createElement("div", {
+    className: "card-title"
+  }, "Familia"))), /*#__PURE__*/React.createElement("div", {
+    className: "card-body"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 14,
+      marginBottom: 16
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 56,
+      height: 56,
+      borderRadius: '50%',
+      background: settings.primaryColor,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'hidden',
+      cursor: 'pointer',
+      border: '2px dashed var(--border)'
+    },
+    onClick: function onClick() {
+      return document.getElementById('photo-upload').click();
+    }
+  }, settings.familyPhoto ? /*#__PURE__*/React.createElement("img", {
+    src: settings.familyPhoto,
+    alt: "Familia",
+    style: {
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover'
+    }
+  }) : /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 22
+    }
+  }, "\uD83C\uDFE0")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1
+    }
+  }, /*#__PURE__*/React.createElement(Field, {
+    label: "Nombre de la familia"
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "form-input",
+    value: settings.familyName,
+    onChange: function onChange(e) {
+      return updSetting('familyName', e.target.value);
+    },
+    placeholder: "Familia..."
+  }))), /*#__PURE__*/React.createElement("input", {
+    id: "photo-upload",
+    type: "file",
+    accept: "image/*",
+    style: {
+      display: 'none'
+    },
+    onChange: handlePhotoUpload
+  })))), /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-header"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-header-left"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "card-icon"
+  }, "\uD83C\uDFA8"), /*#__PURE__*/React.createElement("div", {
+    className: "card-title"
+  }, "Apariencia"))), /*#__PURE__*/React.createElement("div", {
+    className: "card-body"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "form-field"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "form-label"
+  }, "Tema"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 8
+    }
+  }, ['light', 'dark'].map(function (t) {
+    return /*#__PURE__*/React.createElement("button", {
+      key: t,
+      className: "btn ".concat(settings.theme === t ? 'btn-primary' : ''),
+      onClick: function onClick() {
+        return updSetting('theme', t);
+      }
+    }, t === 'light' ? '☀️ Claro' : '🌙 Oscuro');
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "form-field"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "form-label"
+  }, "Color principal"), /*#__PURE__*/React.createElement("div", {
+    className: "color-swatches"
+  }, THEME_COLORS.map(function (c) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: c,
+      className: "color-swatch ".concat(settings.primaryColor === c ? 'selected' : ''),
+      style: {
+        background: c
+      },
+      onClick: function onClick() {
+        return updSetting('primaryColor', c);
+      }
+    });
+  }))))), /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-header"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-header-left"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "card-icon"
+  }, "\uD83D\uDC65"), /*#__PURE__*/React.createElement("div", {
+    className: "card-title"
+  }, "Usuarios")), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-sm",
+    onClick: function onClick() {
+      return setAddUserModal(true);
+    }
+  }, "+ A\xF1adir")), /*#__PURE__*/React.createElement("div", {
+    className: "card-body"
+  }, users.map(function (u) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: u.id,
+      className: "line-item"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "line-item-left"
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        width: 28,
+        height: 28,
+        borderRadius: '50%',
+        background: u.color,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'white',
+        fontSize: 11,
+        fontWeight: 600
+      }
+    }, u.name.slice(0, 2).toUpperCase()), /*#__PURE__*/React.createElement("span", {
+      className: "line-item-name"
+    }, u.name), u.id === store.currentUser && /*#__PURE__*/React.createElement("span", {
+      className: "badge",
+      style: {
+        background: CLR.incomeBg,
+        color: CLR.income,
+        fontSize: 10
+      }
+    }, "Activo")), /*#__PURE__*/React.createElement("div", {
+      className: "line-item-right"
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "icon-btn danger",
+      onClick: function onClick() {
+        return delUser(u.id);
+      }
+    }, "\uD83D\uDDD1\uFE0F")));
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-header"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-header-left"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "card-icon"
+  }, "\uD83D\uDCBE"), /*#__PURE__*/React.createElement("div", {
+    className: "card-title"
+  }, "Copia de seguridad"))), /*#__PURE__*/React.createElement("div", {
+    className: "card-body"
+  }, /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 13,
+      color: 'var(--text-muted)',
+      marginBottom: 16
+    }
+  }, "Exporta todos tus datos en un archivo JSON. Importa un backup previo para restaurar."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 10,
+      flexWrap: 'wrap'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: exportData
+  }, "\u2B07\uFE0F Exportar backup"), /*#__PURE__*/React.createElement("label", {
+    className: "btn",
+    style: {
+      cursor: 'pointer'
+    }
+  }, "\u2B06\uFE0F Importar backup", /*#__PURE__*/React.createElement("input", {
+    type: "file",
+    accept: ".json",
+    style: {
+      display: 'none'
+    },
+    onChange: importData
+  })))))), addUserModal && /*#__PURE__*/React.createElement(Modal, {
+    title: "A\xF1adir usuario",
+    onClose: function onClose() {
+      return setAddUserModal(false);
+    }
+  }, /*#__PURE__*/React.createElement(Field, {
+    label: "Nombre del usuario",
+    value: newUserName,
+    onChange: setNewUserName,
+    placeholder: "Ej: Mar\xEDa, Pap\xE1..."
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "form-field"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "form-label"
+  }, "Color"), /*#__PURE__*/React.createElement("div", {
+    className: "color-swatches"
+  }, THEME_COLORS.map(function (c) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: c,
+      className: "color-swatch ".concat(newUserColor === c ? 'selected' : ''),
+      style: {
+        background: c
+      },
+      onClick: function onClick() {
+        return setNewUserColor(c);
+      }
+    });
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "form-actions"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn",
+    onClick: function onClick() {
+      return setAddUserModal(false);
+    }
+  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: addUser
+  }, "\u2713 A\xF1adir"))));
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  MAIN APP
+// ═══════════════════════════════════════════════════════════════
+function App() {
+  var _PAGE_TITLES$tab, _PAGE_TITLES$tab2;
+  var _useState67 = useState(function () {
+      return loadStore() || DEFAULT_STORE;
+    }),
+    _useState68 = _slicedToArray(_useState67, 2),
+    store = _useState68[0],
+    setStore = _useState68[1];
+  var _useState69 = useState('resumen'),
+    _useState70 = _slicedToArray(_useState69, 2),
+    tab = _useState70[0],
+    setTab = _useState70[1];
+  var _useState71 = useState(false),
+    _useState72 = _slicedToArray(_useState71, 2),
+    showSetup = _useState72[0],
+    setShowSetup = _useState72[1];
+  var fileInputRef = useRef(null);
+  var _useState73 = useState(null),
+    _useState74 = _slicedToArray(_useState73, 2),
+    deferredPrompt = _useState74[0],
+    setDeferredPrompt = _useState74[1];
+  useEffect(function () {
+    if (window.deferredInstallPrompt) setDeferredPrompt(window.deferredInstallPrompt);
+    var handler = function handler(e) {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      window.deferredInstallPrompt = e;
+    };
+    var pwaReady = function pwaReady() {
+      if (window.deferredInstallPrompt) setDeferredPrompt(window.deferredInstallPrompt);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    window.addEventListener('pwa-listo', pwaReady);
+    window.addEventListener('appinstalled', function () {
+      setDeferredPrompt(null);
+      window.deferredInstallPrompt = null;
+    });
+    return function () {
+      window.removeEventListener('beforeinstallprompt', handler);
+      window.removeEventListener('pwa-listo', pwaReady);
+    };
+  }, []);
+  var installApp = function installApp() {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function () {
+      setDeferredPrompt(null);
+      window.deferredInstallPrompt = null;
+    });
+  };
+  var settings = store.settings,
+    users = store.users,
+    currentUser = store.currentUser,
+    selectedYear = store.selectedYear,
+    selectedMonth = store.selectedMonth,
+    data = store.data;
+  var userData = data[currentUser] || {};
+  var monthKey = "".concat(selectedYear, "-").concat(selectedMonth);
+  var monthData = userData[monthKey];
+  var totals = useMemo(function () {
+    return computeTotals(monthData, selectedYear, selectedMonth);
+  }, [monthData, selectedYear, selectedMonth]);
+
+  // Apply theme
+  useEffect(function () {
+    document.documentElement.setAttribute('data-theme', settings.theme);
+    document.documentElement.style.setProperty('--teal', settings.primaryColor);
+    document.documentElement.style.setProperty('--teal-dark', settings.primaryColor);
+    document.documentElement.style.setProperty('--bg-sidebar-active', settings.primaryColor);
+  }, [settings.theme, settings.primaryColor]);
+
+  // Save to localStorage
+  useEffect(function () {
+    localStorage.setItem(STORE_KEY, JSON.stringify(store));
+  }, [store]);
+
+  // Initialize month
+  useEffect(function () {
+    if (!monthData) {
+      var prev = Object.keys(userData).sort().filter(function (k) {
+        return k < monthKey;
+      }).pop();
+      var prevMd = prev ? userData[prev] : null;
+      var newMd = buildEmptyMonth(prevMd);
+      setStore(function (s) {
+        return _objectSpread(_objectSpread({}, s), {}, {
+          data: _objectSpread(_objectSpread({}, s.data), {}, _defineProperty({}, s.currentUser, _objectSpread(_objectSpread({}, userData), {}, _defineProperty({}, monthKey, newMd))))
+        });
+      });
+      setShowSetup(true);
+    } else if (!monthData.initialized && !showSetup) {
+      setShowSetup(true);
+    }
+  }, [monthKey, currentUser]);
+  var updateMonth = useCallback(function (updater) {
+    setStore(function (s) {
+      var ud = s.data[s.currentUser] || {};
+      var key = "".concat(s.selectedYear, "-").concat(s.selectedMonth);
+      return _objectSpread(_objectSpread({}, s), {}, {
+        data: _objectSpread(_objectSpread({}, s.data), {}, _defineProperty({}, s.currentUser, _objectSpread(_objectSpread({}, ud), {}, _defineProperty({}, key, updater(ud[key] || {})))))
+      });
+    });
+  }, []);
+  var handleSetupSave = function handleSetupSave(fixedData) {
+    updateMonth(function (md) {
+      return _objectSpread(_objectSpread(_objectSpread({}, md), fixedData), {}, {
+        initialized: true
+      });
+    });
+    setShowSetup(false);
+  };
+  var prevMonth = function prevMonth() {
+    setStore(function (s) {
+      var m = s.selectedMonth - 1,
+        y = s.selectedYear;
+      if (m < 1) {
+        m = 12;
+        y--;
+      }
+      return _objectSpread(_objectSpread({}, s), {}, {
+        selectedYear: y,
+        selectedMonth: m
+      });
+    });
+  };
+  var nextMonth = function nextMonth() {
+    setStore(function (s) {
+      var m = s.selectedMonth + 1,
+        y = s.selectedYear;
+      if (m > 12) {
+        m = 1;
+        y++;
+      }
+      return _objectSpread(_objectSpread({}, s), {}, {
+        selectedYear: y,
+        selectedMonth: m
+      });
+    });
+  };
+  var NAV = [{
+    id: 'resumen',
+    label: 'Resumen',
+    icon: '🏠',
+    group: 'Principal'
+  }, {
+    id: 'ingresos',
+    label: 'Ingresos',
+    icon: '💰',
+    group: 'Finanzas'
+  }, {
+    id: 'fijos',
+    label: 'G. Fijos',
+    icon: '🔒',
+    group: 'Finanzas'
+  }, {
+    id: 'variables',
+    label: 'G. Variables',
+    icon: '📊',
+    group: 'Finanzas'
+  }, {
+    id: 'ocio',
+    label: 'Ocio',
+    icon: '🎭',
+    group: 'Finanzas'
+  }, {
+    id: 'hijos',
+    label: 'Hijos',
+    icon: '👶',
+    group: 'Finanzas'
+  }, {
+    id: 'otros',
+    label: 'Otros Gastos',
+    icon: '📦',
+    group: 'Finanzas'
+  }, {
+    id: 'ahorro',
+    label: 'Ahorro',
+    icon: '🎯',
+    group: 'Finanzas'
+  }, {
+    id: 'graficos',
+    label: 'Gráficos',
+    icon: '📈',
+    group: 'Análisis'
+  }, {
+    id: 'ajustes',
+    label: 'Ajustes',
+    icon: '⚙️',
+    group: 'Configuración'
+  }];
+  var groups = _toConsumableArray(new Set(NAV.map(function (n) {
+    return n.group;
+  })));
+  var PAGE_TITLES = {
+    resumen: {
+      title: 'Resumen',
+      sub: 'Vista general del mes'
+    },
+    ingresos: {
+      title: 'Ingresos',
+      sub: 'Nóminas y extras'
+    },
+    fijos: {
+      title: 'Gastos Fijos',
+      sub: 'Hipoteca, préstamos, seguros'
+    },
+    variables: {
+      title: 'Gastos Variables',
+      sub: 'Luz, agua, supermercado...'
+    },
+    ocio: {
+      title: 'Ocio',
+      sub: 'Entretenimiento y restauración'
+    },
+    hijos: {
+      title: 'Hijos',
+      sub: 'Gastos por hijo/a'
+    },
+    otros: {
+      title: 'Otros Gastos',
+      sub: 'Regalos y eventos'
+    },
+    ahorro: {
+      title: 'Ahorro e Inversión',
+      sub: 'Fondos y objetivos'
+    },
+    graficos: {
+      title: 'Gráficos',
+      sub: 'Visualización de datos'
+    },
+    ajustes: {
+      title: 'Ajustes',
+      sub: 'Configuración de la app'
+    }
+  };
+  var currentUser_obj = users.find(function (u) {
+    return u.id === currentUser;
+  }) || users[0];
+  return /*#__PURE__*/React.createElement("div", {
+    className: "app-layout"
+  }, /*#__PURE__*/React.createElement("aside", {
+    className: "sidebar"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sidebar-brand"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sidebar-brand-logo"
+  }, "CFH"), /*#__PURE__*/React.createElement("div", {
+    className: "sidebar-brand-name"
+  }, "Control Financiero", /*#__PURE__*/React.createElement("br", null), "Hogar"), settings.familyName && /*#__PURE__*/React.createElement("div", {
+    className: "sidebar-brand-family"
+  }, settings.familyName)), /*#__PURE__*/React.createElement("div", {
+    className: "sidebar-month-selector"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sidebar-month-label"
+  }, "Per\xEDodo activo"), /*#__PURE__*/React.createElement("div", {
+    className: "year-nav"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "month-nav-btn",
+    onClick: function onClick() {
+      return setStore(function (s) {
+        return _objectSpread(_objectSpread({}, s), {}, {
+          selectedYear: s.selectedYear - 1
+        });
+      });
+    }
+  }, "\u2039"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12,
+      color: '#e2e8f0',
+      fontWeight: 500
+    }
+  }, selectedYear), /*#__PURE__*/React.createElement("button", {
+    className: "month-nav-btn",
+    onClick: function onClick() {
+      return setStore(function (s) {
+        return _objectSpread(_objectSpread({}, s), {}, {
+          selectedYear: s.selectedYear + 1
+        });
+      });
+    }
+  }, "\u203A")), /*#__PURE__*/React.createElement("div", {
+    className: "month-nav",
+    style: {
+      marginTop: 4
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "month-nav-btn",
+    onClick: prevMonth
+  }, "\u2039"), /*#__PURE__*/React.createElement("span", {
+    className: "month-nav-current"
+  }, MONTHS[selectedMonth - 1]), /*#__PURE__*/React.createElement("button", {
+    className: "month-nav-btn",
+    onClick: nextMonth
+  }, "\u203A"))), /*#__PURE__*/React.createElement("div", {
+    className: "sidebar-balance"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "balance-label"
+  }, "Saldo del mes"), /*#__PURE__*/React.createElement("div", {
+    className: "balance-value ".concat(totals.balance >= 0 ? 'balance-positive' : 'balance-negative')
+  }, fmt(totals.balance))), /*#__PURE__*/React.createElement("nav", {
+    className: "sidebar-nav"
+  }, groups.map(function (group) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: group
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "nav-group-label"
+    }, group), NAV.filter(function (n) {
+      return n.group === group;
+    }).map(function (n) {
+      return /*#__PURE__*/React.createElement("button", {
+        key: n.id,
+        className: "nav-item ".concat(tab === n.id ? 'active' : ''),
+        onClick: function onClick() {
+          return setTab(n.id);
+        }
+      }, /*#__PURE__*/React.createElement("span", {
+        className: "nav-item-icon"
+      }, n.icon), /*#__PURE__*/React.createElement("span", null, n.label));
+    }));
+  })), users.length > 1 && /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: '12px 16px',
+      borderTop: '1px solid rgba(255,255,255,0.07)'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sidebar-month-label"
+  }, "Usuario"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 4,
+      marginTop: 6
+    }
+  }, users.map(function (u) {
+    return /*#__PURE__*/React.createElement("button", {
+      key: u.id,
+      className: "nav-item ".concat(currentUser === u.id ? 'active' : ''),
+      onClick: function onClick() {
+        return setStore(function (s) {
+          return _objectSpread(_objectSpread({}, s), {}, {
+            currentUser: u.id
+          });
+        });
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        width: 18,
+        height: 18,
+        borderRadius: '50%',
+        background: u.color,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'white',
+        fontSize: 9,
+        fontWeight: 700
+      }
+    }, u.name.slice(0, 2).toUpperCase()), /*#__PURE__*/React.createElement("span", null, u.name));
+  })))), /*#__PURE__*/React.createElement("div", {
+    className: "main-content"
+  }, /*#__PURE__*/React.createElement("header", {
+    className: "main-header"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "header-title"
+  }, (_PAGE_TITLES$tab = PAGE_TITLES[tab]) === null || _PAGE_TITLES$tab === void 0 ? void 0 : _PAGE_TITLES$tab.title), /*#__PURE__*/React.createElement("div", {
+    className: "header-subtitle"
+  }, MONTHS[selectedMonth - 1], " ", selectedYear, " \xB7 ", (_PAGE_TITLES$tab2 = PAGE_TITLES[tab]) === null || _PAGE_TITLES$tab2 === void 0 ? void 0 : _PAGE_TITLES$tab2.sub)), /*#__PURE__*/React.createElement("div", {
+    className: "header-actions"
+  }, deferredPrompt && /*#__PURE__*/React.createElement("button", {
+    className: "header-btn primary",
+    onClick: installApp
+  }, "\uD83D\uDCF2 Instalar CFH"), !(monthData !== null && monthData !== void 0 && monthData.initialized) && /*#__PURE__*/React.createElement("button", {
+    className: "header-btn",
+    onClick: function onClick() {
+      return setShowSetup(true);
+    }
+  }, "\u2699\uFE0F Configurar mes"), /*#__PURE__*/React.createElement("button", {
+    className: "header-btn",
+    onClick: function onClick() {
+      var json = JSON.stringify(store, null, 2);
+      var blob = new Blob([json], {
+        type: 'application/json'
+      });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = "CFH_backup_".concat(new Date().toISOString().slice(0, 10), ".json");
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  }, "\uD83D\uDCBE Backup"))), /*#__PURE__*/React.createElement("main", {
+    className: "page"
+  }, tab === 'resumen' && /*#__PURE__*/React.createElement(TabResumen, {
+    monthData: monthData,
+    totals: totals,
+    year: selectedYear,
+    month: selectedMonth,
+    allMonthsData: userData
+  }), tab === 'ingresos' && /*#__PURE__*/React.createElement(TabIngresos, {
+    monthData: monthData,
+    updateMonth: updateMonth
+  }), tab === 'fijos' && /*#__PURE__*/React.createElement(TabGastosFijos, {
+    monthData: monthData,
+    updateMonth: updateMonth,
+    year: selectedYear,
+    month: selectedMonth
+  }), tab === 'variables' && /*#__PURE__*/React.createElement(TabGastosVariables, {
+    monthData: monthData,
+    updateMonth: updateMonth
+  }), tab === 'ocio' && /*#__PURE__*/React.createElement(TabOcio, {
+    monthData: monthData,
+    updateMonth: updateMonth
+  }), tab === 'hijos' && /*#__PURE__*/React.createElement(TabHijos, {
+    monthData: monthData,
+    updateMonth: updateMonth
+  }), tab === 'otros' && /*#__PURE__*/React.createElement(TabOtrosGastos, {
+    monthData: monthData,
+    updateMonth: updateMonth
+  }), tab === 'ahorro' && /*#__PURE__*/React.createElement(TabAhorro, {
+    monthData: monthData,
+    updateMonth: updateMonth
+  }), tab === 'graficos' && /*#__PURE__*/React.createElement(TabGraficos, {
+    allMonthsData: userData,
+    year: selectedYear,
+    month: selectedMonth
+  }), tab === 'ajustes' && /*#__PURE__*/React.createElement(TabAjustes, {
+    store: store,
+    setStore: setStore
+  })), /*#__PURE__*/React.createElement("nav", {
+    className: "mobile-nav"
+  }, NAV.map(function (n) {
+    return /*#__PURE__*/React.createElement("button", {
+      key: n.id,
+      className: "mobile-nav-item ".concat(tab === n.id ? 'active' : ''),
+      onClick: function onClick() {
+        return setTab(n.id);
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "mobile-nav-icon"
+    }, n.icon), /*#__PURE__*/React.createElement("span", {
+      className: "mobile-nav-label"
+    }, n.label));
+  }))), showSetup && /*#__PURE__*/React.createElement(SetupModal, {
+    month: selectedMonth,
+    year: selectedYear,
+    monthData: monthData,
+    onSave: handleSetupSave,
+    onSkip: function onSkip() {
+      updateMonth(function (md) {
+        return _objectSpread(_objectSpread({}, md), {}, {
+          initialized: true
+        });
+      });
+      setShowSetup(false);
+    }
+  }));
+}
+    ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+  </script>
+</body>
+</html>
