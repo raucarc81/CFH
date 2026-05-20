@@ -712,1726 +712,2432 @@ body {
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('sw.js')
-          .then(function(r){ console.log('SW OK', r.scope); })
+          .then(function(r){ console.log('SW OK:', r.scope); })
           .catch(function(e){ console.log('SW error:', e); });
       });
     }
   </script>
 </head>
 <body>
-  <div id="root"><div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;color:#64748b">Cargando CFH...</div></div>
-
+  <div id="root"></div>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-  <script type="text/babel">
+  <script>
     const { useState, useEffect, useMemo, useCallback, useRef } = React;
     const { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } = Recharts;
-
-const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
-const MONTHS_S = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
-const FREQ_OPTS = [
-  { value:'monthly', label:'Mensual' },
-  { value:'quarterly', label:'Trimestral' },
-  { value:'semiannual', label:'Semestral' },
-  { value:'annual', label:'Anual' },
-]
-const CHILD_CATS = [
-  { key:'clothing', label:'Ropa', icon:'👕' },
-  { key:'food', label:'Comida / Restaurantes', icon:'🍽️' },
-  { key:'education', label:'Educación', icon:'📚' },
-  { key:'treats', label:'Caprichos', icon:'🎁' },
-  { key:'leisure', label:'Ocio', icon:'🎠' },
-]
-const THEME_COLORS = ['#1D9E75','#185FA5','#7F77DD','#D85A30','#BA7517','#A32D2D','#3B6D11']
-
-const CLR = {
-  income: '#1D9E75',   incomeBg: '#E1F5EE',
-  fixed:  '#D85A30',   fixedBg:  '#FAECE7',
-  varExp: '#BA7517',   varBg:    '#FAEEDA',
-  leisure:'#7F77DD',   leisBg:   '#EEEDFE',
-  child:  '#185FA5',   childBg:  '#E6F1FB',
-  other:  '#768390',   otherBg:  '#f1f5f9',
-  savings:'#3B6D11',   savBg:    '#EAF3DE',
-  balance:'#0F6E56',
-}
-
-const STORE_KEY = 'cfh_app_v2'
-const today = new Date()
-const CY = today.getFullYear()
-const CM = today.getMonth() + 1
-const genId = () => Math.random().toString(36).slice(2, 11)
-const fmt = (n = 0) => new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2 }).format(Number(n) || 0)
-const fmtDate = (s) => s ? new Date(s + 'T00:00:00').toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' }) : ''
+  </script>
+  <script>
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+var MONTHS = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+var MONTHS_S = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+var FREQ_OPTS = [{
+  value: 'monthly',
+  label: 'Mensual'
+}, {
+  value: 'quarterly',
+  label: 'Trimestral'
+}, {
+  value: 'semiannual',
+  label: 'Semestral'
+}, {
+  value: 'annual',
+  label: 'Anual'
+}];
+var CHILD_CATS = [{
+  key: 'clothing',
+  label: 'Ropa',
+  icon: '👕'
+}, {
+  key: 'food',
+  label: 'Comida / Restaurantes',
+  icon: '🍽️'
+}, {
+  key: 'education',
+  label: 'Educación',
+  icon: '📚'
+}, {
+  key: 'treats',
+  label: 'Caprichos',
+  icon: '🎁'
+}, {
+  key: 'leisure',
+  label: 'Ocio',
+  icon: '🎠'
+}];
+var THEME_COLORS = ['#1D9E75', '#185FA5', '#7F77DD', '#D85A30', '#BA7517', '#A32D2D', '#3B6D11'];
+var CLR = {
+  income: '#1D9E75',
+  incomeBg: '#E1F5EE',
+  fixed: '#D85A30',
+  fixedBg: '#FAECE7',
+  varExp: '#BA7517',
+  varBg: '#FAEEDA',
+  leisure: '#7F77DD',
+  leisBg: '#EEEDFE',
+  child: '#185FA5',
+  childBg: '#E6F1FB',
+  other: '#768390',
+  otherBg: '#f1f5f9',
+  savings: '#3B6D11',
+  savBg: '#EAF3DE',
+  balance: '#0F6E56'
+};
+var STORE_KEY = 'cfh_app_v2';
+var today = new Date();
+var CY = today.getFullYear();
+var CM = today.getMonth() + 1;
+var genId = function genId() {
+  return Math.random().toString(36).slice(2, 11);
+};
+var fmt = function fmt() {
+  var n = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 2
+  }).format(Number(n) || 0);
+};
+var fmtDate = function fmtDate(s) {
+  return s ? new Date(s + 'T00:00:00').toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: '2-digit'
+  }) : '';
+};
 
 // ═══════════════════════════════════════════════════════════════
 //  HELPERS
 // ═══════════════════════════════════════════════════════════════
 function insAmtForMonth(ins, year, month) {
-  if (ins.freq === 'monthly') return Number(ins.amount) || 0
-  const sy = ins.sy || CY, sm = ins.sm || CM
-  const diff = (year - sy) * 12 + (month - sm)
-  if (diff < 0) return 0
-  if (ins.freq === 'annual') return diff === 0 ? (Number(ins.amount) || 0) : 0
-  if (ins.freq === 'quarterly') return diff % 3 === 0 ? (Number(ins.amount) || 0) : 0
-  if (ins.freq === 'semiannual') return diff % 6 === 0 ? (Number(ins.amount) || 0) : 0
-  return 0
+  if (ins.freq === 'monthly') return Number(ins.amount) || 0;
+  var sy = ins.sy || CY,
+    sm = ins.sm || CM;
+  var diff = (year - sy) * 12 + (month - sm);
+  if (diff < 0) return 0;
+  if (ins.freq === 'annual') return diff === 0 ? Number(ins.amount) || 0 : 0;
+  if (ins.freq === 'quarterly') return diff % 3 === 0 ? Number(ins.amount) || 0 : 0;
+  if (ins.freq === 'semiannual') return diff % 6 === 0 ? Number(ins.amount) || 0 : 0;
+  return 0;
 }
-
 function computeTotals(md, year, month) {
-  if (!md) return { income: 0, fixed: 0, varExp: 0, leisure: 0, children: 0, other: 0, savings: 0, total: 0, balance: 0 }
-  const income =
-    (md.incFixed || []).reduce((s, i) => s + (Number(i.amount) || 0), 0) +
-    (md.incExtra || []).reduce((s, i) => s + (Number(i.amount) || 0), 0)
-  const mortg = Number(md.mortgage) || 0
-  const loans = (md.loans || []).reduce((s, l) => s + (Number(l.amount) || 0), 0)
-  const insur = (md.insurance || []).reduce((s, i) => s + insAmtForMonth(i, year, month), 0)
-  const fixOth = (md.fixOthers || []).reduce((s, i) => s + (Number(i.amount) || 0), 0)
-  const fixed = mortg + loans + insur + fixOth
-  const ve = md.varExp || {}
-  const varExp =
-    ['electricity', 'water', 'supermarket', 'internet', 'phone', 'petrol', 'gas']
-      .reduce((s, k) => s + (Number(ve[k]) || 0), 0) +
-    (ve.others || []).reduce((s, i) => s + (Number(i.amount) || 0), 0)
-  const lei = md.leisure || {}
-  const leisure = ['entertainment', 'dining', 'treats', 'others']
-    .reduce((s, k) => s + (lei[k] || []).reduce((ss, i) => ss + (Number(i.amount) || 0), 0), 0)
-  const children = (md.children || []).reduce((s, child) =>
-    s + CHILD_CATS.map(c => c.key).reduce((ss, k) =>
-      ss + (child[k] || []).reduce((sss, i) => sss + (Number(i.amount) || 0), 0), 0), 0)
-  const oe = md.otherExp || {}
-  const other = ['gifts', 'events', 'others']
-    .reduce((s, k) => s + (oe[k] || []).reduce((ss, i) => ss + (Number(i.amount) || 0), 0), 0)
-  const sv = md.savings || {}
-  const savings =
-    ['vacation', 'home', 'emergency', 'investment'].reduce((s, k) => s + (Number(sv[k]) || 0), 0) +
-    (sv.others || []).reduce((s, i) => s + (Number(i.amount) || 0), 0)
-  const total = fixed + varExp + leisure + children + other + savings
-  return { income, fixed, varExp, leisure, children, other, savings, total, balance: income - total }
+  if (!md) return {
+    income: 0,
+    fixed: 0,
+    varExp: 0,
+    leisure: 0,
+    children: 0,
+    other: 0,
+    savings: 0,
+    total: 0,
+    balance: 0
+  };
+  var income = (md.incFixed || []).reduce(function (s, i) {
+    return s + (Number(i.amount) || 0);
+  }, 0) + (md.incExtra || []).reduce(function (s, i) {
+    return s + (Number(i.amount) || 0);
+  }, 0);
+  var mortg = Number(md.mortgage) || 0;
+  var loans = (md.loans || []).reduce(function (s, l) {
+    return s + (Number(l.amount) || 0);
+  }, 0);
+  var insur = (md.insurance || []).reduce(function (s, i) {
+    return s + insAmtForMonth(i, year, month);
+  }, 0);
+  var fixOth = (md.fixOthers || []).reduce(function (s, i) {
+    return s + (Number(i.amount) || 0);
+  }, 0);
+  var fixed = mortg + loans + insur + fixOth;
+  var ve = md.varExp || {};
+  var varExp = ['electricity', 'water', 'supermarket', 'internet', 'phone', 'petrol', 'gas'].reduce(function (s, k) {
+    return s + (Number(ve[k]) || 0);
+  }, 0) + (ve.others || []).reduce(function (s, i) {
+    return s + (Number(i.amount) || 0);
+  }, 0);
+  var lei = md.leisure || {};
+  var leisure = ['entertainment', 'dining', 'treats', 'others'].reduce(function (s, k) {
+    return s + (lei[k] || []).reduce(function (ss, i) {
+      return ss + (Number(i.amount) || 0);
+    }, 0);
+  }, 0);
+  var children = (md.children || []).reduce(function (s, child) {
+    return s + CHILD_CATS.map(function (c) {
+      return c.key;
+    }).reduce(function (ss, k) {
+      return ss + (child[k] || []).reduce(function (sss, i) {
+        return sss + (Number(i.amount) || 0);
+      }, 0);
+    }, 0);
+  }, 0);
+  var oe = md.otherExp || {};
+  var other = ['gifts', 'events', 'others'].reduce(function (s, k) {
+    return s + (oe[k] || []).reduce(function (ss, i) {
+      return ss + (Number(i.amount) || 0);
+    }, 0);
+  }, 0);
+  var sv = md.savings || {};
+  var savings = ['vacation', 'home', 'emergency', 'investment'].reduce(function (s, k) {
+    return s + (Number(sv[k]) || 0);
+  }, 0) + (sv.others || []).reduce(function (s, i) {
+    return s + (Number(i.amount) || 0);
+  }, 0);
+  var total = fixed + varExp + leisure + children + other + savings;
+  return {
+    income: income,
+    fixed: fixed,
+    varExp: varExp,
+    leisure: leisure,
+    children: children,
+    other: other,
+    savings: savings,
+    total: total,
+    balance: income - total
+  };
 }
-
 function buildEmptyMonth(prev) {
+  var _prev$incFixed, _prev$loans, _prev$insurance, _prev$fixOthers, _prev$varExp, _prev$varExp2, _prev$children;
   return {
     initialized: false,
-    incFixed: prev?.incFixed?.map(i => ({ ...i, id: genId() })) || [{ id: genId(), name: 'Salario', amount: 0 }],
+    incFixed: (prev === null || prev === void 0 || (_prev$incFixed = prev.incFixed) === null || _prev$incFixed === void 0 ? void 0 : _prev$incFixed.map(function (i) {
+      return _objectSpread(_objectSpread({}, i), {}, {
+        id: genId()
+      });
+    })) || [{
+      id: genId(),
+      name: 'Salario',
+      amount: 0
+    }],
     incExtra: [],
-    mortgage: prev?.mortgage || 0,
-    loans: prev?.loans?.map(l => ({ ...l, id: genId() })) || [],
-    insurance: prev?.insurance?.map(i => ({ ...i, id: genId() })) || [],
-    fixOthers: prev?.fixOthers?.map(i => ({ ...i, id: genId() })) || [],
-    varExp: { electricity: 0, water: 0, supermarket: 0, internet: prev?.varExp?.internet || 0, phone: prev?.varExp?.phone || 0, petrol: 0, gas: 0, others: [] },
-    leisure: { entertainment: [], dining: [], treats: [], others: [] },
-    children: prev?.children?.map(c => ({ ...c, id: genId(), clothing: [], food: [], education: [], treats: [], leisure: [] })) || [],
-    otherExp: { gifts: [], events: [], others: [] },
-    savings: { vacation: 0, home: 0, emergency: 0, investment: 0, others: [] },
+    mortgage: (prev === null || prev === void 0 ? void 0 : prev.mortgage) || 0,
+    loans: (prev === null || prev === void 0 || (_prev$loans = prev.loans) === null || _prev$loans === void 0 ? void 0 : _prev$loans.map(function (l) {
+      return _objectSpread(_objectSpread({}, l), {}, {
+        id: genId()
+      });
+    })) || [],
+    insurance: (prev === null || prev === void 0 || (_prev$insurance = prev.insurance) === null || _prev$insurance === void 0 ? void 0 : _prev$insurance.map(function (i) {
+      return _objectSpread(_objectSpread({}, i), {}, {
+        id: genId()
+      });
+    })) || [],
+    fixOthers: (prev === null || prev === void 0 || (_prev$fixOthers = prev.fixOthers) === null || _prev$fixOthers === void 0 ? void 0 : _prev$fixOthers.map(function (i) {
+      return _objectSpread(_objectSpread({}, i), {}, {
+        id: genId()
+      });
+    })) || [],
+    varExp: {
+      electricity: 0,
+      water: 0,
+      supermarket: 0,
+      internet: (prev === null || prev === void 0 || (_prev$varExp = prev.varExp) === null || _prev$varExp === void 0 ? void 0 : _prev$varExp.internet) || 0,
+      phone: (prev === null || prev === void 0 || (_prev$varExp2 = prev.varExp) === null || _prev$varExp2 === void 0 ? void 0 : _prev$varExp2.phone) || 0,
+      petrol: 0,
+      gas: 0,
+      others: []
+    },
+    leisure: {
+      entertainment: [],
+      dining: [],
+      treats: [],
+      others: []
+    },
+    children: (prev === null || prev === void 0 || (_prev$children = prev.children) === null || _prev$children === void 0 ? void 0 : _prev$children.map(function (c) {
+      return _objectSpread(_objectSpread({}, c), {}, {
+        id: genId(),
+        clothing: [],
+        food: [],
+        education: [],
+        treats: [],
+        leisure: []
+      });
+    })) || [],
+    otherExp: {
+      gifts: [],
+      events: [],
+      others: []
+    },
+    savings: {
+      vacation: 0,
+      home: 0,
+      emergency: 0,
+      investment: 0,
+      others: []
+    }
+  };
+}
+function loadStore() {
+  try {
+    var s = localStorage.getItem(STORE_KEY);
+    return s ? JSON.parse(s) : null;
+  } catch (_unused) {
+    return null;
   }
 }
-
-function loadStore() {
-  try { const s = localStorage.getItem(STORE_KEY); return s ? JSON.parse(s) : null } catch { return null }
-}
-
-const DEFAULT_STORE = {
-  settings: { theme: 'light', primaryColor: '#1D9E75', familyName: 'Mi Familia', familyPhoto: null },
-  users: [{ id: 'u1', name: 'Usuario 1', color: '#1D9E75' }],
+var DEFAULT_STORE = {
+  settings: {
+    theme: 'light',
+    primaryColor: '#1D9E75',
+    familyName: 'Mi Familia',
+    familyPhoto: null
+  },
+  users: [{
+    id: 'u1',
+    name: 'Usuario 1',
+    color: '#1D9E75'
+  }],
   currentUser: 'u1',
   selectedYear: CY,
   selectedMonth: CM,
-  data: {},
-}
+  data: {}
+};
 
 // ═══════════════════════════════════════════════════════════════
 //  REUSABLE COMPONENTS
 // ═══════════════════════════════════════════════════════════════
-function Modal({ title, onClose, children, wide = false }) {
-  return (
-    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className={`modal fade-in ${wide ? 'modal-wide' : ''}`}>
-        <div className="modal-header">
-          <span className="modal-title">{title}</span>
-          <button className="modal-close" onClick={onClose}>✕</button>
-        </div>
-        <div className="modal-body">{children}</div>
-      </div>
-    </div>
-  )
+function Modal(_ref) {
+  var title = _ref.title,
+    onClose = _ref.onClose,
+    children = _ref.children,
+    _ref$wide = _ref.wide,
+    wide = _ref$wide === void 0 ? false : _ref$wide;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "modal-overlay",
+    onClick: function onClick(e) {
+      return e.target === e.currentTarget && onClose();
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal fade-in ".concat(wide ? 'modal-wide' : '')
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal-header"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "modal-title"
+  }, title), /*#__PURE__*/React.createElement("button", {
+    className: "modal-close",
+    onClick: onClose
+  }, "\u2715")), /*#__PURE__*/React.createElement("div", {
+    className: "modal-body"
+  }, children)));
 }
-
-function Field({ label, value, onChange, type = 'text', placeholder, min, step, required, children }) {
-  return (
-    <div className="form-field">
-      {label && <label className="form-label">{label}</label>}
-      {children || (
-        <input
-          className="form-input"
-          type={type}
-          value={value}
-          onChange={e => onChange(e.target.value)}
-          placeholder={placeholder}
-          min={min}
-          step={step}
-          required={required}
-        />
-      )}
-    </div>
-  )
+function Field(_ref2) {
+  var label = _ref2.label,
+    value = _ref2.value,
+    _onChange = _ref2.onChange,
+    _ref2$type = _ref2.type,
+    type = _ref2$type === void 0 ? 'text' : _ref2$type,
+    placeholder = _ref2.placeholder,
+    min = _ref2.min,
+    step = _ref2.step,
+    required = _ref2.required,
+    children = _ref2.children;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "form-field"
+  }, label && /*#__PURE__*/React.createElement("label", {
+    className: "form-label"
+  }, label), children || /*#__PURE__*/React.createElement("input", {
+    className: "form-input",
+    type: type,
+    value: value,
+    onChange: function onChange(e) {
+      return _onChange(e.target.value);
+    },
+    placeholder: placeholder,
+    min: min,
+    step: step,
+    required: required
+  }));
 }
-
-function SelectField({ label, value, onChange, options }) {
-  return (
-    <div className="form-field">
-      {label && <label className="form-label">{label}</label>}
-      <select className="form-input" value={value} onChange={e => onChange(e.target.value)}>
-        {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-      </select>
-    </div>
-  )
+function SelectField(_ref3) {
+  var label = _ref3.label,
+    value = _ref3.value,
+    _onChange2 = _ref3.onChange,
+    options = _ref3.options;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "form-field"
+  }, label && /*#__PURE__*/React.createElement("label", {
+    className: "form-label"
+  }, label), /*#__PURE__*/React.createElement("select", {
+    className: "form-input",
+    value: value,
+    onChange: function onChange(e) {
+      return _onChange2(e.target.value);
+    }
+  }, options.map(function (o) {
+    return /*#__PURE__*/React.createElement("option", {
+      key: o.value,
+      value: o.value
+    }, o.label);
+  })));
 }
-
-function LineItem({ name, amount, color, badge, meta, onEdit, onDelete, extra }) {
-  return (
-    <div className="line-item">
-      <div className="line-item-left">
-        {color && <span className="line-item-dot" style={{ background: color }} />}
-        <span className="line-item-name">{name}</span>
-        {badge && <span className="line-item-badge" style={{ background: badge.bg, color: badge.color }}>{badge.text}</span>}
-        {meta && <span className="line-item-meta">{meta}</span>}
-      </div>
-      <div className="line-item-right">
-        {extra && <span className="line-item-meta">{extra}</span>}
-        <span className="line-item-amount">{fmt(amount)}</span>
-        {onEdit && <button className="icon-btn" onClick={onEdit} title="Editar">✏️</button>}
-        {onDelete && <button className="icon-btn danger" onClick={onDelete} title="Eliminar">🗑️</button>}
-      </div>
-    </div>
-  )
+function LineItem(_ref4) {
+  var name = _ref4.name,
+    amount = _ref4.amount,
+    color = _ref4.color,
+    badge = _ref4.badge,
+    meta = _ref4.meta,
+    onEdit = _ref4.onEdit,
+    onDelete = _ref4.onDelete,
+    extra = _ref4.extra;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "line-item"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "line-item-left"
+  }, color && /*#__PURE__*/React.createElement("span", {
+    className: "line-item-dot",
+    style: {
+      background: color
+    }
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "line-item-name"
+  }, name), badge && /*#__PURE__*/React.createElement("span", {
+    className: "line-item-badge",
+    style: {
+      background: badge.bg,
+      color: badge.color
+    }
+  }, badge.text), meta && /*#__PURE__*/React.createElement("span", {
+    className: "line-item-meta"
+  }, meta)), /*#__PURE__*/React.createElement("div", {
+    className: "line-item-right"
+  }, extra && /*#__PURE__*/React.createElement("span", {
+    className: "line-item-meta"
+  }, extra), /*#__PURE__*/React.createElement("span", {
+    className: "line-item-amount"
+  }, fmt(amount)), onEdit && /*#__PURE__*/React.createElement("button", {
+    className: "icon-btn",
+    onClick: onEdit,
+    title: "Editar"
+  }, "\u270F\uFE0F"), onDelete && /*#__PURE__*/React.createElement("button", {
+    className: "icon-btn danger",
+    onClick: onDelete,
+    title: "Eliminar"
+  }, "\uD83D\uDDD1\uFE0F")));
 }
-
-function AccordionSection({ icon, title, total, color, colorBg, children, defaultOpen = true, onAdd, addLabel }) {
-  const [open, setOpen] = useState(defaultOpen)
-  return (
-    <div className="accordion-section">
-      <div className="accordion-header" onClick={() => setOpen(!open)}>
-        <div className="accordion-left">
-          <span className="accordion-icon">{icon}</span>
-          <span className="accordion-name">{title}</span>
-        </div>
-        <div className="accordion-right">
-          <span className="accordion-total" style={{ color }}>{fmt(total)}</span>
-          {onAdd && (
-            <button className="btn btn-sm" style={{ background: colorBg, color, borderColor: 'transparent', fontSize: 12 }}
-              onClick={e => { e.stopPropagation(); onAdd() }}>
-              + {addLabel || 'Añadir'}
-            </button>
-          )}
-          <span className={`accordion-chevron ${open ? 'open' : ''}`}>▼</span>
-        </div>
-      </div>
-      {open && <div className="accordion-body fade-in">{children}</div>}
-    </div>
-  )
+function AccordionSection(_ref5) {
+  var icon = _ref5.icon,
+    title = _ref5.title,
+    total = _ref5.total,
+    color = _ref5.color,
+    colorBg = _ref5.colorBg,
+    children = _ref5.children,
+    _ref5$defaultOpen = _ref5.defaultOpen,
+    defaultOpen = _ref5$defaultOpen === void 0 ? true : _ref5$defaultOpen,
+    onAdd = _ref5.onAdd,
+    addLabel = _ref5.addLabel;
+  var _useState = useState(defaultOpen),
+    _useState2 = _slicedToArray(_useState, 2),
+    open = _useState2[0],
+    setOpen = _useState2[1];
+  return /*#__PURE__*/React.createElement("div", {
+    className: "accordion-section"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "accordion-header",
+    onClick: function onClick() {
+      return setOpen(!open);
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "accordion-left"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "accordion-icon"
+  }, icon), /*#__PURE__*/React.createElement("span", {
+    className: "accordion-name"
+  }, title)), /*#__PURE__*/React.createElement("div", {
+    className: "accordion-right"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "accordion-total",
+    style: {
+      color: color
+    }
+  }, fmt(total)), onAdd && /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-sm",
+    style: {
+      background: colorBg,
+      color: color,
+      borderColor: 'transparent',
+      fontSize: 12
+    },
+    onClick: function onClick(e) {
+      e.stopPropagation();
+      onAdd();
+    }
+  }, "+ ", addLabel || 'Añadir'), /*#__PURE__*/React.createElement("span", {
+    className: "accordion-chevron ".concat(open ? 'open' : '')
+  }, "\u25BC"))), open && /*#__PURE__*/React.createElement("div", {
+    className: "accordion-body fade-in"
+  }, children));
 }
-
-function KpiCard({ label, value, color, sub, badge }) {
-  return (
-    <div className="kpi-card" style={{ borderLeftColor: color }}>
-      <div className="kpi-label">{label}</div>
-      <div className="kpi-value" style={{ color }}>{value}</div>
-      {sub && <div className="kpi-sub">{sub}</div>}
-      {badge && (
-        <span className="kpi-badge" style={{ background: badge.bg, color: badge.color }}>
-          {badge.text}
-        </span>
-      )}
-    </div>
-  )
+function KpiCard(_ref6) {
+  var label = _ref6.label,
+    value = _ref6.value,
+    color = _ref6.color,
+    sub = _ref6.sub,
+    badge = _ref6.badge;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "kpi-card",
+    style: {
+      borderLeftColor: color
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "kpi-label"
+  }, label), /*#__PURE__*/React.createElement("div", {
+    className: "kpi-value",
+    style: {
+      color: color
+    }
+  }, value), sub && /*#__PURE__*/React.createElement("div", {
+    className: "kpi-sub"
+  }, sub), badge && /*#__PURE__*/React.createElement("span", {
+    className: "kpi-badge",
+    style: {
+      background: badge.bg,
+      color: badge.color
+    }
+  }, badge.text));
 }
-
-function EmptyState({ icon, text }) {
-  return (
-    <div className="empty-state">
-      <div className="empty-state-icon">{icon}</div>
-      <div>{text}</div>
-    </div>
-  )
+function EmptyState(_ref7) {
+  var icon = _ref7.icon,
+    text = _ref7.text;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "empty-state"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "empty-state-icon"
+  }, icon), /*#__PURE__*/React.createElement("div", null, text));
 }
 
 // ═══════════════════════════════════════════════════════════════
 //  SETUP WIZARD MODAL
 // ═══════════════════════════════════════════════════════════════
-function SetupModal({ month, year, monthData, onSave, onSkip }) {
-  const [step, setStep] = useState(0)
-  const [mortgage, setMortgage] = useState(String(monthData?.mortgage || ''))
-  const [loans, setLoans] = useState(monthData?.loans || [])
-  const [insurance, setInsurance] = useState(monthData?.insurance || [])
-  const [fixOthers, setFixOthers] = useState(monthData?.fixOthers || [])
-  const [incFixed, setIncFixed] = useState(monthData?.incFixed || [{ id: genId(), name: 'Salario', amount: '' }])
-
-  const steps = ['Ingresos fijos', 'Hipoteca y préstamos', 'Seguros', 'Otros fijos']
-
-  const addLoan = () => setLoans(l => [...l, { id: genId(), name: '', amount: '' }])
-  const updLoan = (id, k, v) => setLoans(l => l.map(x => x.id === id ? { ...x, [k]: v } : x))
-  const delLoan = (id) => setLoans(l => l.filter(x => x.id !== id))
-
-  const addIns = () => setInsurance(l => [...l, { id: genId(), name: '', amount: '', freq: 'monthly', sy: year, sm: month }])
-  const updIns = (id, k, v) => setInsurance(l => l.map(x => x.id === id ? { ...x, [k]: v } : x))
-  const delIns = (id) => setInsurance(l => l.filter(x => x.id !== id))
-
-  const addOther = () => setFixOthers(l => [...l, { id: genId(), name: '', amount: '' }])
-  const updOther = (id, k, v) => setFixOthers(l => l.map(x => x.id === id ? { ...x, [k]: v } : x))
-  const delOther = (id) => setFixOthers(l => l.filter(x => x.id !== id))
-
-  const addInc = () => setIncFixed(l => [...l, { id: genId(), name: '', amount: '' }])
-  const updInc = (id, k, v) => setIncFixed(l => l.map(x => x.id === id ? { ...x, [k]: v } : x))
-  const delInc = (id) => setIncFixed(l => l.filter(x => x.id !== id))
-
-  const handleSave = () => {
-    onSave({ mortgage: Number(mortgage) || 0, loans, insurance, fixOthers, incFixed })
-  }
-
-  return (
-    <div className="modal-overlay">
-      <div className="modal modal-wide fade-in" style={{ maxWidth: 600 }}>
-        <div className="modal-header">
-          <div>
-            <div className="modal-title">⚙️ Configurar {MONTHS[month - 1]} {year}</div>
-            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>Paso {step + 1} de {steps.length}</div>
-          </div>
-          <button className="modal-close" onClick={onSkip}>✕</button>
-        </div>
-        <div style={{ padding: '0 20px', paddingTop: 16 }}>
-          <div className="wizard-steps">
-            {steps.map((s, i) => (
-              <div key={i} className={`wizard-step ${i < step ? 'done' : i === step ? 'active' : ''}`} />
-            ))}
-          </div>
-          <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 14 }}>{steps[step]}</div>
-        </div>
-        <div className="modal-body" style={{ paddingTop: 0 }}>
-
-          {step === 0 && (
-            <div>
-              {incFixed.map(i => (
-                <div key={i.id} style={{ display: 'grid', gridTemplateColumns: '1fr 120px 36px', gap: 8, marginBottom: 8 }}>
-                  <input className="form-input" placeholder="Nombre ingreso" value={i.name} onChange={e => updInc(i.id, 'name', e.target.value)} />
-                  <input className="form-input" type="number" placeholder="Importe €" min="0" value={i.amount} onChange={e => updInc(i.id, 'amount', e.target.value)} />
-                  <button className="icon-btn danger" onClick={() => delInc(i.id)} style={{ border: '1px solid var(--border)', borderRadius: 7 }}>🗑️</button>
-                </div>
-              ))}
-              <button className="btn-add" onClick={addInc}>+ Añadir ingreso fijo</button>
-            </div>
-          )}
-
-          {step === 1 && (
-            <div>
-              <Field label="Hipoteca / Alquiler mensual">
-                <input className="form-input" type="number" min="0" placeholder="0,00 €" value={mortgage} onChange={e => setMortgage(e.target.value)} />
-              </Field>
-              <div style={{ fontWeight: 500, fontSize: 13, marginBottom: 8, marginTop: 4 }}>Préstamos:</div>
-              {loans.map(l => (
-                <div key={l.id} style={{ display: 'grid', gridTemplateColumns: '1fr 120px 36px', gap: 8, marginBottom: 8 }}>
-                  <input className="form-input" placeholder="Nombre préstamo" value={l.name} onChange={e => updLoan(l.id, 'name', e.target.value)} />
-                  <input className="form-input" type="number" placeholder="Cuota €" min="0" value={l.amount} onChange={e => updLoan(l.id, 'amount', e.target.value)} />
-                  <button className="icon-btn danger" onClick={() => delLoan(l.id)} style={{ border: '1px solid var(--border)', borderRadius: 7 }}>🗑️</button>
-                </div>
-              ))}
-              <button className="btn-add" onClick={addLoan}>+ Añadir préstamo</button>
-            </div>
-          )}
-
-          {step === 2 && (
-            <div>
-              <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 12 }}>
-                Los seguros anuales/trimestrales/semestrales solo computan en el mes que se introducen.
-              </p>
-              {insurance.map(i => (
-                <div key={i.id} style={{ display: 'grid', gridTemplateColumns: '1fr 110px 120px 36px', gap: 8, marginBottom: 8 }}>
-                  <input className="form-input" placeholder="Nombre seguro" value={i.name} onChange={e => updIns(i.id, 'name', e.target.value)} />
-                  <input className="form-input" type="number" placeholder="Importe €" min="0" value={i.amount} onChange={e => updIns(i.id, 'amount', e.target.value)} />
-                  <select className="form-input" value={i.freq} onChange={e => updIns(i.id, 'freq', e.target.value)}>
-                    {FREQ_OPTS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                  </select>
-                  <button className="icon-btn danger" onClick={() => delIns(i.id)} style={{ border: '1px solid var(--border)', borderRadius: 7 }}>🗑️</button>
-                </div>
-              ))}
-              <button className="btn-add" onClick={addIns}>+ Añadir seguro</button>
-            </div>
-          )}
-
-          {step === 3 && (
-            <div>
-              {fixOthers.map(o => (
-                <div key={o.id} style={{ display: 'grid', gridTemplateColumns: '1fr 120px 36px', gap: 8, marginBottom: 8 }}>
-                  <input className="form-input" placeholder="Nombre gasto fijo" value={o.name} onChange={e => updOther(o.id, 'name', e.target.value)} />
-                  <input className="form-input" type="number" placeholder="Importe €" min="0" value={o.amount} onChange={e => updOther(o.id, 'amount', e.target.value)} />
-                  <button className="icon-btn danger" onClick={() => delOther(o.id)} style={{ border: '1px solid var(--border)', borderRadius: 7 }}>🗑️</button>
-                </div>
-              ))}
-              <button className="btn-add" onClick={addOther}>+ Añadir otro gasto fijo</button>
-            </div>
-          )}
-
-          <div className="form-actions" style={{ marginTop: 20 }}>
-            {step > 0 && <button className="btn" onClick={() => setStep(s => s - 1)}>← Anterior</button>}
-            {step < steps.length - 1 ? (
-              <button className="btn btn-primary" onClick={() => setStep(s => s + 1)}>Siguiente →</button>
-            ) : (
-              <button className="btn btn-primary" onClick={handleSave}>✓ Guardar y continuar</button>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
+function SetupModal(_ref8) {
+  var month = _ref8.month,
+    year = _ref8.year,
+    monthData = _ref8.monthData,
+    onSave = _ref8.onSave,
+    onSkip = _ref8.onSkip;
+  var _useState3 = useState(0),
+    _useState4 = _slicedToArray(_useState3, 2),
+    step = _useState4[0],
+    setStep = _useState4[1];
+  var _useState5 = useState(String((monthData === null || monthData === void 0 ? void 0 : monthData.mortgage) || '')),
+    _useState6 = _slicedToArray(_useState5, 2),
+    mortgage = _useState6[0],
+    setMortgage = _useState6[1];
+  var _useState7 = useState((monthData === null || monthData === void 0 ? void 0 : monthData.loans) || []),
+    _useState8 = _slicedToArray(_useState7, 2),
+    loans = _useState8[0],
+    setLoans = _useState8[1];
+  var _useState9 = useState((monthData === null || monthData === void 0 ? void 0 : monthData.insurance) || []),
+    _useState0 = _slicedToArray(_useState9, 2),
+    insurance = _useState0[0],
+    setInsurance = _useState0[1];
+  var _useState1 = useState((monthData === null || monthData === void 0 ? void 0 : monthData.fixOthers) || []),
+    _useState10 = _slicedToArray(_useState1, 2),
+    fixOthers = _useState10[0],
+    setFixOthers = _useState10[1];
+  var _useState11 = useState((monthData === null || monthData === void 0 ? void 0 : monthData.incFixed) || [{
+      id: genId(),
+      name: 'Salario',
+      amount: ''
+    }]),
+    _useState12 = _slicedToArray(_useState11, 2),
+    incFixed = _useState12[0],
+    setIncFixed = _useState12[1];
+  var steps = ['Ingresos fijos', 'Hipoteca y préstamos', 'Seguros', 'Otros fijos'];
+  var addLoan = function addLoan() {
+    return setLoans(function (l) {
+      return [].concat(_toConsumableArray(l), [{
+        id: genId(),
+        name: '',
+        amount: ''
+      }]);
+    });
+  };
+  var updLoan = function updLoan(id, k, v) {
+    return setLoans(function (l) {
+      return l.map(function (x) {
+        return x.id === id ? _objectSpread(_objectSpread({}, x), {}, _defineProperty({}, k, v)) : x;
+      });
+    });
+  };
+  var delLoan = function delLoan(id) {
+    return setLoans(function (l) {
+      return l.filter(function (x) {
+        return x.id !== id;
+      });
+    });
+  };
+  var addIns = function addIns() {
+    return setInsurance(function (l) {
+      return [].concat(_toConsumableArray(l), [{
+        id: genId(),
+        name: '',
+        amount: '',
+        freq: 'monthly',
+        sy: year,
+        sm: month
+      }]);
+    });
+  };
+  var updIns = function updIns(id, k, v) {
+    return setInsurance(function (l) {
+      return l.map(function (x) {
+        return x.id === id ? _objectSpread(_objectSpread({}, x), {}, _defineProperty({}, k, v)) : x;
+      });
+    });
+  };
+  var delIns = function delIns(id) {
+    return setInsurance(function (l) {
+      return l.filter(function (x) {
+        return x.id !== id;
+      });
+    });
+  };
+  var addOther = function addOther() {
+    return setFixOthers(function (l) {
+      return [].concat(_toConsumableArray(l), [{
+        id: genId(),
+        name: '',
+        amount: ''
+      }]);
+    });
+  };
+  var updOther = function updOther(id, k, v) {
+    return setFixOthers(function (l) {
+      return l.map(function (x) {
+        return x.id === id ? _objectSpread(_objectSpread({}, x), {}, _defineProperty({}, k, v)) : x;
+      });
+    });
+  };
+  var delOther = function delOther(id) {
+    return setFixOthers(function (l) {
+      return l.filter(function (x) {
+        return x.id !== id;
+      });
+    });
+  };
+  var addInc = function addInc() {
+    return setIncFixed(function (l) {
+      return [].concat(_toConsumableArray(l), [{
+        id: genId(),
+        name: '',
+        amount: ''
+      }]);
+    });
+  };
+  var updInc = function updInc(id, k, v) {
+    return setIncFixed(function (l) {
+      return l.map(function (x) {
+        return x.id === id ? _objectSpread(_objectSpread({}, x), {}, _defineProperty({}, k, v)) : x;
+      });
+    });
+  };
+  var delInc = function delInc(id) {
+    return setIncFixed(function (l) {
+      return l.filter(function (x) {
+        return x.id !== id;
+      });
+    });
+  };
+  var handleSave = function handleSave() {
+    onSave({
+      mortgage: Number(mortgage) || 0,
+      loans: loans,
+      insurance: insurance,
+      fixOthers: fixOthers,
+      incFixed: incFixed
+    });
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "modal-overlay"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal modal-wide fade-in",
+    style: {
+      maxWidth: 600
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal-header"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "modal-title"
+  }, "\u2699\uFE0F Configurar ", MONTHS[month - 1], " ", year), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 12,
+      color: 'var(--text-muted)',
+      marginTop: 2
+    }
+  }, "Paso ", step + 1, " de ", steps.length)), /*#__PURE__*/React.createElement("button", {
+    className: "modal-close",
+    onClick: onSkip
+  }, "\u2715")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: '0 20px',
+      paddingTop: 16
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "wizard-steps"
+  }, steps.map(function (s, i) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: i,
+      className: "wizard-step ".concat(i < step ? 'done' : i === step ? 'active' : '')
+    });
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontWeight: 600,
+      fontSize: 14,
+      marginBottom: 14
+    }
+  }, steps[step])), /*#__PURE__*/React.createElement("div", {
+    className: "modal-body",
+    style: {
+      paddingTop: 0
+    }
+  }, step === 0 && /*#__PURE__*/React.createElement("div", null, incFixed.map(function (i) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: i.id,
+      style: {
+        display: 'grid',
+        gridTemplateColumns: '1fr 120px 36px',
+        gap: 8,
+        marginBottom: 8
+      }
+    }, /*#__PURE__*/React.createElement("input", {
+      className: "form-input",
+      placeholder: "Nombre ingreso",
+      value: i.name,
+      onChange: function onChange(e) {
+        return updInc(i.id, 'name', e.target.value);
+      }
+    }), /*#__PURE__*/React.createElement("input", {
+      className: "form-input",
+      type: "number",
+      placeholder: "Importe \u20AC",
+      min: "0",
+      value: i.amount,
+      onChange: function onChange(e) {
+        return updInc(i.id, 'amount', e.target.value);
+      }
+    }), /*#__PURE__*/React.createElement("button", {
+      className: "icon-btn danger",
+      onClick: function onClick() {
+        return delInc(i.id);
+      },
+      style: {
+        border: '1px solid var(--border)',
+        borderRadius: 7
+      }
+    }, "\uD83D\uDDD1\uFE0F"));
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "btn-add",
+    onClick: addInc
+  }, "+ A\xF1adir ingreso fijo")), step === 1 && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Field, {
+    label: "Hipoteca / Alquiler mensual"
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "form-input",
+    type: "number",
+    min: "0",
+    placeholder: "0,00 \u20AC",
+    value: mortgage,
+    onChange: function onChange(e) {
+      return setMortgage(e.target.value);
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontWeight: 500,
+      fontSize: 13,
+      marginBottom: 8,
+      marginTop: 4
+    }
+  }, "Pr\xE9stamos:"), loans.map(function (l) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: l.id,
+      style: {
+        display: 'grid',
+        gridTemplateColumns: '1fr 120px 36px',
+        gap: 8,
+        marginBottom: 8
+      }
+    }, /*#__PURE__*/React.createElement("input", {
+      className: "form-input",
+      placeholder: "Nombre pr\xE9stamo",
+      value: l.name,
+      onChange: function onChange(e) {
+        return updLoan(l.id, 'name', e.target.value);
+      }
+    }), /*#__PURE__*/React.createElement("input", {
+      className: "form-input",
+      type: "number",
+      placeholder: "Cuota \u20AC",
+      min: "0",
+      value: l.amount,
+      onChange: function onChange(e) {
+        return updLoan(l.id, 'amount', e.target.value);
+      }
+    }), /*#__PURE__*/React.createElement("button", {
+      className: "icon-btn danger",
+      onClick: function onClick() {
+        return delLoan(l.id);
+      },
+      style: {
+        border: '1px solid var(--border)',
+        borderRadius: 7
+      }
+    }, "\uD83D\uDDD1\uFE0F"));
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "btn-add",
+    onClick: addLoan
+  }, "+ A\xF1adir pr\xE9stamo")), step === 2 && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    style: {
+      fontSize: 12,
+      color: 'var(--text-muted)',
+      marginBottom: 12
+    }
+  }, "Los seguros anuales/trimestrales/semestrales solo computan en el mes que se introducen."), insurance.map(function (i) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: i.id,
+      style: {
+        display: 'grid',
+        gridTemplateColumns: '1fr 110px 120px 36px',
+        gap: 8,
+        marginBottom: 8
+      }
+    }, /*#__PURE__*/React.createElement("input", {
+      className: "form-input",
+      placeholder: "Nombre seguro",
+      value: i.name,
+      onChange: function onChange(e) {
+        return updIns(i.id, 'name', e.target.value);
+      }
+    }), /*#__PURE__*/React.createElement("input", {
+      className: "form-input",
+      type: "number",
+      placeholder: "Importe \u20AC",
+      min: "0",
+      value: i.amount,
+      onChange: function onChange(e) {
+        return updIns(i.id, 'amount', e.target.value);
+      }
+    }), /*#__PURE__*/React.createElement("select", {
+      className: "form-input",
+      value: i.freq,
+      onChange: function onChange(e) {
+        return updIns(i.id, 'freq', e.target.value);
+      }
+    }, FREQ_OPTS.map(function (o) {
+      return /*#__PURE__*/React.createElement("option", {
+        key: o.value,
+        value: o.value
+      }, o.label);
+    })), /*#__PURE__*/React.createElement("button", {
+      className: "icon-btn danger",
+      onClick: function onClick() {
+        return delIns(i.id);
+      },
+      style: {
+        border: '1px solid var(--border)',
+        borderRadius: 7
+      }
+    }, "\uD83D\uDDD1\uFE0F"));
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "btn-add",
+    onClick: addIns
+  }, "+ A\xF1adir seguro")), step === 3 && /*#__PURE__*/React.createElement("div", null, fixOthers.map(function (o) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: o.id,
+      style: {
+        display: 'grid',
+        gridTemplateColumns: '1fr 120px 36px',
+        gap: 8,
+        marginBottom: 8
+      }
+    }, /*#__PURE__*/React.createElement("input", {
+      className: "form-input",
+      placeholder: "Nombre gasto fijo",
+      value: o.name,
+      onChange: function onChange(e) {
+        return updOther(o.id, 'name', e.target.value);
+      }
+    }), /*#__PURE__*/React.createElement("input", {
+      className: "form-input",
+      type: "number",
+      placeholder: "Importe \u20AC",
+      min: "0",
+      value: o.amount,
+      onChange: function onChange(e) {
+        return updOther(o.id, 'amount', e.target.value);
+      }
+    }), /*#__PURE__*/React.createElement("button", {
+      className: "icon-btn danger",
+      onClick: function onClick() {
+        return delOther(o.id);
+      },
+      style: {
+        border: '1px solid var(--border)',
+        borderRadius: 7
+      }
+    }, "\uD83D\uDDD1\uFE0F"));
+  }), /*#__PURE__*/React.createElement("button", {
+    className: "btn-add",
+    onClick: addOther
+  }, "+ A\xF1adir otro gasto fijo")), /*#__PURE__*/React.createElement("div", {
+    className: "form-actions",
+    style: {
+      marginTop: 20
+    }
+  }, step > 0 && /*#__PURE__*/React.createElement("button", {
+    className: "btn",
+    onClick: function onClick() {
+      return setStep(function (s) {
+        return s - 1;
+      });
+    }
+  }, "\u2190 Anterior"), step < steps.length - 1 ? /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: function onClick() {
+      return setStep(function (s) {
+        return s + 1;
+      });
+    }
+  }, "Siguiente \u2192") : /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: handleSave
+  }, "\u2713 Guardar y continuar")))));
 }
 
 // ═══════════════════════════════════════════════════════════════
 //  TAB: RESUMEN (Dashboard)
 // ═══════════════════════════════════════════════════════════════
-function TabResumen({ monthData, totals, year, month, allMonthsData }) {
-  const t = totals
-  const savingsRate = t.income > 0 ? Math.round(((t.income - t.total) / t.income) * 100) : 0
-
-  const annualSummary = useMemo(() => {
-    return MONTHS_S.map((name, i) => {
-      const m = i + 1
-      const key = `${year}-${m}`
-      const md = allMonthsData[key]
-      const mt = computeTotals(md, year, m)
-      return { name, ingresos: mt.income, gastos: mt.total, ahorro: mt.balance }
-    })
-  }, [allMonthsData, year])
-
-  const expBreakdown = [
-    { name: 'G. Fijos', value: t.fixed, color: CLR.fixed },
-    { name: 'G. Variables', value: t.varExp, color: CLR.varExp },
-    { name: 'Ocio', value: t.leisure, color: CLR.leisure },
-    { name: 'Hijos', value: t.children, color: CLR.child },
-    { name: 'Otros', value: t.other, color: CLR.other },
-    { name: 'Ahorro', value: t.savings, color: CLR.savings },
-  ].filter(x => x.value > 0)
-
-  return (
-    <div className="fade-in">
-      <div className="kpi-grid">
-        <KpiCard label="Ingresos del mes" value={fmt(t.income)} color={CLR.income}
-          sub={`${MONTHS[month - 1]} ${year}`}
-          badge={{ text: 'ENTRADAS', bg: CLR.incomeBg, color: CLR.income }} />
-        <KpiCard label="Gastos totales" value={fmt(t.total)} color={CLR.fixed}
-          sub={`Fijos: ${fmt(t.fixed)}`}
-          badge={{ text: 'SALIDAS', bg: CLR.fixedBg, color: CLR.fixed }} />
-        <KpiCard label="Ahorro / Saldo" value={fmt(t.balance)} color={t.balance >= 0 ? CLR.income : CLR.fixed}
-          sub={`Tasa ahorro: ${savingsRate}%`}
-          badge={t.balance >= 0 ? { text: '✓ POSITIVO', bg: CLR.incomeBg, color: CLR.income } : { text: '⚠ NEGATIVO', bg: CLR.fixedBg, color: CLR.fixed }} />
-        <KpiCard label="Ahorro / Inversión" value={fmt(t.savings)} color={CLR.savings}
-          sub="Asignado este mes"
-          badge={{ text: 'AHORRO', bg: CLR.savBg, color: CLR.savings }} />
-      </div>
-
-      <div className="chart-grid">
-        <div className="card">
-          <div className="card-body">
-            <div className="chart-title">Evolución anual {year}</div>
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={annualSummary} barGap={2}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                <XAxis dataKey="name" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v} />
-                <Tooltip formatter={(v) => fmt(v)} contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
-                <Legend wrapperStyle={{ fontSize: 12 }} />
-                <Bar dataKey="ingresos" name="Ingresos" fill={CLR.income} radius={[3, 3, 0, 0]} />
-                <Bar dataKey="gastos" name="Gastos" fill={CLR.fixed} radius={[3, 3, 0, 0]} />
-                <Bar dataKey="ahorro" name="Ahorro" fill={CLR.savings} radius={[3, 3, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="card-body">
-            <div className="chart-title">Distribución gastos — {MONTHS_S[month - 1]}</div>
-            {expBreakdown.length > 0 ? (
-              <>
-                <ResponsiveContainer width="100%" height={160}>
-                  <PieChart>
-                    <Pie data={expBreakdown} dataKey="value" innerRadius={45} outerRadius={70} strokeWidth={0} paddingAngle={2}>
-                      {expBreakdown.map((e, i) => <Cell key={i} fill={e.color} />)}
-                    </Pie>
-                    <Tooltip formatter={(v) => fmt(v)} contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }} />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="chart-legend">
-                  {expBreakdown.map((e, i) => (
-                    <div key={i} className="legend-item">
-                      <span className="legend-dot" style={{ background: e.color }} />
-                      <span>{e.name}: {fmt(e.value)}</span>
-                    </div>
-                  ))}
-                </div>
-              </>
-            ) : <EmptyState icon="📊" text="Sin datos de gastos este mes" />}
-          </div>
-        </div>
-      </div>
-
-      <div className="card">
-        <div className="card-header">
-          <div className="card-header-left">
-            <span className="card-icon">📋</span>
-            <div>
-              <div className="card-title">Resumen del mes — {MONTHS[month - 1]} {year}</div>
-              <div className="card-subtitle">Desglose completo de ingresos y gastos</div>
-            </div>
-          </div>
-        </div>
-        <div className="card-body">
-          <table className="summary-table">
-            <thead>
-              <tr>
-                <th>Categoría</th>
-                <th className="amount-col">Importe</th>
-                <th className="amount-col">% s/ ingresos</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style={{ background: CLR.incomeBg }}><td style={{ color: CLR.income, fontWeight: 500 }}>💰 Ingresos totales</td><td className="amount-col" style={{ color: CLR.income, fontWeight: 600 }}>{fmt(t.income)}</td><td className="amount-col">100%</td></tr>
-              {[
-                { label: '🔒 Gastos fijos', val: t.fixed, color: CLR.fixed },
-                { label: '📊 Gastos variables', val: t.varExp, color: CLR.varExp },
-                { label: '🎭 Ocio', val: t.leisure, color: CLR.leisure },
-                { label: '👶 Hijos', val: t.children, color: CLR.child },
-                { label: '📦 Otros gastos', val: t.other, color: CLR.other },
-                { label: '🎯 Ahorro e inversión', val: t.savings, color: CLR.savings },
-              ].map((row, i) => (
-                <tr key={i}>
-                  <td style={{ color: row.color }}>{row.label}</td>
-                  <td className="amount-col">{fmt(row.val)}</td>
-                  <td className="amount-col">{t.income > 0 ? Math.round((row.val / t.income) * 100) : 0}%</td>
-                </tr>
-              ))}
-              <tr className="total-row">
-                <td>💸 Total gastos</td>
-                <td className="amount-col">{fmt(t.total)}</td>
-                <td className="amount-col">{t.income > 0 ? Math.round((t.total / t.income) * 100) : 0}%</td>
-              </tr>
-              <tr className="total-row" style={{ background: t.balance >= 0 ? CLR.incomeBg : CLR.fixedBg }}>
-                <td style={{ color: t.balance >= 0 ? CLR.income : CLR.fixed }}>{t.balance >= 0 ? '✅' : '❌'} Saldo neto</td>
-                <td className="amount-col" style={{ color: t.balance >= 0 ? CLR.income : CLR.fixed }}>{fmt(t.balance)}</td>
-                <td className="amount-col" style={{ color: t.balance >= 0 ? CLR.income : CLR.fixed }}>{savingsRate}%</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  )
+function TabResumen(_ref9) {
+  var monthData = _ref9.monthData,
+    totals = _ref9.totals,
+    year = _ref9.year,
+    month = _ref9.month,
+    allMonthsData = _ref9.allMonthsData;
+  var t = totals;
+  var savingsRate = t.income > 0 ? Math.round((t.income - t.total) / t.income * 100) : 0;
+  var annualSummary = useMemo(function () {
+    return MONTHS_S.map(function (name, i) {
+      var m = i + 1;
+      var key = "".concat(year, "-").concat(m);
+      var md = allMonthsData[key];
+      var mt = computeTotals(md, year, m);
+      return {
+        name: name,
+        ingresos: mt.income,
+        gastos: mt.total,
+        ahorro: mt.balance
+      };
+    });
+  }, [allMonthsData, year]);
+  var expBreakdown = [{
+    name: 'G. Fijos',
+    value: t.fixed,
+    color: CLR.fixed
+  }, {
+    name: 'G. Variables',
+    value: t.varExp,
+    color: CLR.varExp
+  }, {
+    name: 'Ocio',
+    value: t.leisure,
+    color: CLR.leisure
+  }, {
+    name: 'Hijos',
+    value: t.children,
+    color: CLR.child
+  }, {
+    name: 'Otros',
+    value: t.other,
+    color: CLR.other
+  }, {
+    name: 'Ahorro',
+    value: t.savings,
+    color: CLR.savings
+  }].filter(function (x) {
+    return x.value > 0;
+  });
+  return /*#__PURE__*/React.createElement("div", {
+    className: "fade-in"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "kpi-grid"
+  }, /*#__PURE__*/React.createElement(KpiCard, {
+    label: "Ingresos del mes",
+    value: fmt(t.income),
+    color: CLR.income,
+    sub: "".concat(MONTHS[month - 1], " ").concat(year),
+    badge: {
+      text: 'ENTRADAS',
+      bg: CLR.incomeBg,
+      color: CLR.income
+    }
+  }), /*#__PURE__*/React.createElement(KpiCard, {
+    label: "Gastos totales",
+    value: fmt(t.total),
+    color: CLR.fixed,
+    sub: "Fijos: ".concat(fmt(t.fixed)),
+    badge: {
+      text: 'SALIDAS',
+      bg: CLR.fixedBg,
+      color: CLR.fixed
+    }
+  }), /*#__PURE__*/React.createElement(KpiCard, {
+    label: "Ahorro / Saldo",
+    value: fmt(t.balance),
+    color: t.balance >= 0 ? CLR.income : CLR.fixed,
+    sub: "Tasa ahorro: ".concat(savingsRate, "%"),
+    badge: t.balance >= 0 ? {
+      text: '✓ POSITIVO',
+      bg: CLR.incomeBg,
+      color: CLR.income
+    } : {
+      text: '⚠ NEGATIVO',
+      bg: CLR.fixedBg,
+      color: CLR.fixed
+    }
+  }), /*#__PURE__*/React.createElement(KpiCard, {
+    label: "Ahorro / Inversi\xF3n",
+    value: fmt(t.savings),
+    color: CLR.savings,
+    sub: "Asignado este mes",
+    badge: {
+      text: 'AHORRO',
+      bg: CLR.savBg,
+      color: CLR.savings
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "chart-grid"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-body"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "chart-title"
+  }, "Evoluci\xF3n anual ", year), /*#__PURE__*/React.createElement(ResponsiveContainer, {
+    width: "100%",
+    height: 220
+  }, /*#__PURE__*/React.createElement(BarChart, {
+    data: annualSummary,
+    barGap: 2
+  }, /*#__PURE__*/React.createElement(CartesianGrid, {
+    strokeDasharray: "3 3",
+    stroke: "var(--border)",
+    vertical: false
+  }), /*#__PURE__*/React.createElement(XAxis, {
+    dataKey: "name",
+    tick: {
+      fill: 'var(--text-muted)',
+      fontSize: 11
+    },
+    axisLine: false,
+    tickLine: false
+  }), /*#__PURE__*/React.createElement(YAxis, {
+    tick: {
+      fill: 'var(--text-muted)',
+      fontSize: 11
+    },
+    axisLine: false,
+    tickLine: false,
+    tickFormatter: function tickFormatter(v) {
+      return v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v;
+    }
+  }), /*#__PURE__*/React.createElement(Tooltip, {
+    formatter: function formatter(v) {
+      return fmt(v);
+    },
+    contentStyle: {
+      background: 'var(--bg-card)',
+      border: '1px solid var(--border)',
+      borderRadius: 8,
+      fontSize: 12
+    }
+  }), /*#__PURE__*/React.createElement(Legend, {
+    wrapperStyle: {
+      fontSize: 12
+    }
+  }), /*#__PURE__*/React.createElement(Bar, {
+    dataKey: "ingresos",
+    name: "Ingresos",
+    fill: CLR.income,
+    radius: [3, 3, 0, 0]
+  }), /*#__PURE__*/React.createElement(Bar, {
+    dataKey: "gastos",
+    name: "Gastos",
+    fill: CLR.fixed,
+    radius: [3, 3, 0, 0]
+  }), /*#__PURE__*/React.createElement(Bar, {
+    dataKey: "ahorro",
+    name: "Ahorro",
+    fill: CLR.savings,
+    radius: [3, 3, 0, 0]
+  }))))), /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-body"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "chart-title"
+  }, "Distribuci\xF3n gastos \u2014 ", MONTHS_S[month - 1]), expBreakdown.length > 0 ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(ResponsiveContainer, {
+    width: "100%",
+    height: 160
+  }, /*#__PURE__*/React.createElement(PieChart, null, /*#__PURE__*/React.createElement(Pie, {
+    data: expBreakdown,
+    dataKey: "value",
+    innerRadius: 45,
+    outerRadius: 70,
+    strokeWidth: 0,
+    paddingAngle: 2
+  }, expBreakdown.map(function (e, i) {
+    return /*#__PURE__*/React.createElement(Cell, {
+      key: i,
+      fill: e.color
+    });
+  })), /*#__PURE__*/React.createElement(Tooltip, {
+    formatter: function formatter(v) {
+      return fmt(v);
+    },
+    contentStyle: {
+      background: 'var(--bg-card)',
+      border: '1px solid var(--border)',
+      borderRadius: 8,
+      fontSize: 12
+    }
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "chart-legend"
+  }, expBreakdown.map(function (e, i) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: i,
+      className: "legend-item"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "legend-dot",
+      style: {
+        background: e.color
+      }
+    }), /*#__PURE__*/React.createElement("span", null, e.name, ": ", fmt(e.value)));
+  }))) : /*#__PURE__*/React.createElement(EmptyState, {
+    icon: "\uD83D\uDCCA",
+    text: "Sin datos de gastos este mes"
+  })))), /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-header"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-header-left"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "card-icon"
+  }, "\uD83D\uDCCB"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "card-title"
+  }, "Resumen del mes \u2014 ", MONTHS[month - 1], " ", year), /*#__PURE__*/React.createElement("div", {
+    className: "card-subtitle"
+  }, "Desglose completo de ingresos y gastos")))), /*#__PURE__*/React.createElement("div", {
+    className: "card-body"
+  }, /*#__PURE__*/React.createElement("table", {
+    className: "summary-table"
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("th", null, "Categor\xEDa"), /*#__PURE__*/React.createElement("th", {
+    className: "amount-col"
+  }, "Importe"), /*#__PURE__*/React.createElement("th", {
+    className: "amount-col"
+  }, "% s/ ingresos"))), /*#__PURE__*/React.createElement("tbody", null, /*#__PURE__*/React.createElement("tr", {
+    style: {
+      background: CLR.incomeBg
+    }
+  }, /*#__PURE__*/React.createElement("td", {
+    style: {
+      color: CLR.income,
+      fontWeight: 500
+    }
+  }, "\uD83D\uDCB0 Ingresos totales"), /*#__PURE__*/React.createElement("td", {
+    className: "amount-col",
+    style: {
+      color: CLR.income,
+      fontWeight: 600
+    }
+  }, fmt(t.income)), /*#__PURE__*/React.createElement("td", {
+    className: "amount-col"
+  }, "100%")), [{
+    label: '🔒 Gastos fijos',
+    val: t.fixed,
+    color: CLR.fixed
+  }, {
+    label: '📊 Gastos variables',
+    val: t.varExp,
+    color: CLR.varExp
+  }, {
+    label: '🎭 Ocio',
+    val: t.leisure,
+    color: CLR.leisure
+  }, {
+    label: '👶 Hijos',
+    val: t.children,
+    color: CLR.child
+  }, {
+    label: '📦 Otros gastos',
+    val: t.other,
+    color: CLR.other
+  }, {
+    label: '🎯 Ahorro e inversión',
+    val: t.savings,
+    color: CLR.savings
+  }].map(function (row, i) {
+    return /*#__PURE__*/React.createElement("tr", {
+      key: i
+    }, /*#__PURE__*/React.createElement("td", {
+      style: {
+        color: row.color
+      }
+    }, row.label), /*#__PURE__*/React.createElement("td", {
+      className: "amount-col"
+    }, fmt(row.val)), /*#__PURE__*/React.createElement("td", {
+      className: "amount-col"
+    }, t.income > 0 ? Math.round(row.val / t.income * 100) : 0, "%"));
+  }), /*#__PURE__*/React.createElement("tr", {
+    className: "total-row"
+  }, /*#__PURE__*/React.createElement("td", null, "\uD83D\uDCB8 Total gastos"), /*#__PURE__*/React.createElement("td", {
+    className: "amount-col"
+  }, fmt(t.total)), /*#__PURE__*/React.createElement("td", {
+    className: "amount-col"
+  }, t.income > 0 ? Math.round(t.total / t.income * 100) : 0, "%")), /*#__PURE__*/React.createElement("tr", {
+    className: "total-row",
+    style: {
+      background: t.balance >= 0 ? CLR.incomeBg : CLR.fixedBg
+    }
+  }, /*#__PURE__*/React.createElement("td", {
+    style: {
+      color: t.balance >= 0 ? CLR.income : CLR.fixed
+    }
+  }, t.balance >= 0 ? '✅' : '❌', " Saldo neto"), /*#__PURE__*/React.createElement("td", {
+    className: "amount-col",
+    style: {
+      color: t.balance >= 0 ? CLR.income : CLR.fixed
+    }
+  }, fmt(t.balance)), /*#__PURE__*/React.createElement("td", {
+    className: "amount-col",
+    style: {
+      color: t.balance >= 0 ? CLR.income : CLR.fixed
+    }
+  }, savingsRate, "%")))))));
 }
 
 // ═══════════════════════════════════════════════════════════════
 //  TAB: INGRESOS
 // ═══════════════════════════════════════════════════════════════
-function TabIngresos({ monthData, updateMonth }) {
-  const [modalType, setModalType] = useState(null) // 'fixed'|'extra'
-  const [editing, setEditing] = useState(null)
-  const [form, setForm] = useState({ name: '', amount: '', date: '', isFixed: false })
-
-  const incFixed = monthData?.incFixed || []
-  const incExtra = monthData?.incExtra || []
-  const totalFixed = incFixed.reduce((s, i) => s + (Number(i.amount) || 0), 0)
-  const totalExtra = incExtra.reduce((s, i) => s + (Number(i.amount) || 0), 0)
-
-  const openAdd = (type) => {
-    setEditing(null)
-    setForm({ name: '', amount: '', date: today.toISOString().split('T')[0] })
-    setModalType(type)
-  }
-
-  const openEdit = (type, item) => {
-    setEditing(item.id)
-    setForm({ name: item.name, amount: String(item.amount), date: item.date || '' })
-    setModalType(type)
-  }
-
-  const handleSave = () => {
-    if (!form.name || !form.amount) return
-    const item = { id: editing || genId(), name: form.name, amount: Number(form.amount), date: form.date }
+function TabIngresos(_ref0) {
+  var monthData = _ref0.monthData,
+    updateMonth = _ref0.updateMonth;
+  var _useState13 = useState(null),
+    _useState14 = _slicedToArray(_useState13, 2),
+    modalType = _useState14[0],
+    setModalType = _useState14[1]; // 'fixed'|'extra'
+  var _useState15 = useState(null),
+    _useState16 = _slicedToArray(_useState15, 2),
+    editing = _useState16[0],
+    setEditing = _useState16[1];
+  var _useState17 = useState({
+      name: '',
+      amount: '',
+      date: '',
+      isFixed: false
+    }),
+    _useState18 = _slicedToArray(_useState17, 2),
+    form = _useState18[0],
+    setForm = _useState18[1];
+  var incFixed = (monthData === null || monthData === void 0 ? void 0 : monthData.incFixed) || [];
+  var incExtra = (monthData === null || monthData === void 0 ? void 0 : monthData.incExtra) || [];
+  var totalFixed = incFixed.reduce(function (s, i) {
+    return s + (Number(i.amount) || 0);
+  }, 0);
+  var totalExtra = incExtra.reduce(function (s, i) {
+    return s + (Number(i.amount) || 0);
+  }, 0);
+  var openAdd = function openAdd(type) {
+    setEditing(null);
+    setForm({
+      name: '',
+      amount: '',
+      date: today.toISOString().split('T')[0]
+    });
+    setModalType(type);
+  };
+  var openEdit = function openEdit(type, item) {
+    setEditing(item.id);
+    setForm({
+      name: item.name,
+      amount: String(item.amount),
+      date: item.date || ''
+    });
+    setModalType(type);
+  };
+  var handleSave = function handleSave() {
+    if (!form.name || !form.amount) return;
+    var item = {
+      id: editing || genId(),
+      name: form.name,
+      amount: Number(form.amount),
+      date: form.date
+    };
     if (modalType === 'fixed') {
-      updateMonth(md => ({
-        ...md,
-        incFixed: editing ? md.incFixed.map(x => x.id === editing ? item : x) : [...(md.incFixed || []), item]
-      }))
+      updateMonth(function (md) {
+        return _objectSpread(_objectSpread({}, md), {}, {
+          incFixed: editing ? md.incFixed.map(function (x) {
+            return x.id === editing ? item : x;
+          }) : [].concat(_toConsumableArray(md.incFixed || []), [item])
+        });
+      });
     } else {
-      updateMonth(md => ({
-        ...md,
-        incExtra: editing ? md.incExtra.map(x => x.id === editing ? item : x) : [...(md.incExtra || []), item]
-      }))
+      updateMonth(function (md) {
+        return _objectSpread(_objectSpread({}, md), {}, {
+          incExtra: editing ? md.incExtra.map(function (x) {
+            return x.id === editing ? item : x;
+          }) : [].concat(_toConsumableArray(md.incExtra || []), [item])
+        });
+      });
     }
-    setModalType(null)
-  }
-
-  const del = (type, id) => updateMonth(md => ({
-    ...md,
-    [type === 'fixed' ? 'incFixed' : 'incExtra']: md[type === 'fixed' ? 'incFixed' : 'incExtra'].filter(x => x.id !== id)
-  }))
-
-  return (
-    <div className="fade-in section-grid">
-      <AccordionSection icon="💼" title="Ingresos fijos (nómina, etc.)" total={totalFixed} color={CLR.income} colorBg={CLR.incomeBg} onAdd={() => openAdd('fixed')} addLabel="Ingreso fijo">
-        {incFixed.length === 0 ? <EmptyState icon="💼" text="Sin ingresos fijos configurados" /> :
-          <div className="line-items">
-            {incFixed.map(i => <LineItem key={i.id} name={i.name} amount={i.amount} color={CLR.income} onEdit={() => openEdit('fixed', i)} onDelete={() => del('fixed', i.id)} />)}
-          </div>}
-      </AccordionSection>
-
-      <AccordionSection icon="💡" title="Ingresos extra / extraordinarios" total={totalExtra} color="#7F77DD" colorBg="#EEEDFE" onAdd={() => openAdd('extra')} addLabel="Ingreso extra">
-        {incExtra.length === 0 ? <EmptyState icon="💡" text="Sin ingresos extra este mes" /> :
-          <div className="line-items">
-            {incExtra.map(i => <LineItem key={i.id} name={i.name} amount={i.amount} color="#7F77DD" meta={fmtDate(i.date)} onEdit={() => openEdit('extra', i)} onDelete={() => del('extra', i.id)} />)}
-          </div>}
-      </AccordionSection>
-
-      <div className="card">
-        <div className="card-body" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontWeight: 600, color: 'var(--text-muted)', fontSize: 13 }}>TOTAL INGRESOS</span>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 600, color: CLR.income }}>{fmt(totalFixed + totalExtra)}</span>
-        </div>
-      </div>
-
-      {modalType && (
-        <Modal title={`${editing ? 'Editar' : 'Añadir'} ingreso ${modalType === 'fixed' ? 'fijo' : 'extra'}`} onClose={() => setModalType(null)}>
-          <Field label="Nombre" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Ej: Salario, Freelance, Dividendos..." />
-          <Field label="Importe (€)" value={form.amount} onChange={v => setForm(f => ({ ...f, amount: v }))} type="number" min="0" step="0.01" placeholder="0,00" />
-          {modalType === 'extra' && <Field label="Fecha" value={form.date} onChange={v => setForm(f => ({ ...f, date: v }))} type="date" />}
-          <div className="form-actions">
-            <button className="btn" onClick={() => setModalType(null)}>Cancelar</button>
-            <button className="btn btn-primary" onClick={handleSave}>✓ Guardar</button>
-          </div>
-        </Modal>
-      )}
-    </div>
-  )
+    setModalType(null);
+  };
+  var del = function del(type, id) {
+    return updateMonth(function (md) {
+      return _objectSpread(_objectSpread({}, md), {}, _defineProperty({}, type === 'fixed' ? 'incFixed' : 'incExtra', md[type === 'fixed' ? 'incFixed' : 'incExtra'].filter(function (x) {
+        return x.id !== id;
+      })));
+    });
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "fade-in section-grid"
+  }, /*#__PURE__*/React.createElement(AccordionSection, {
+    icon: "\uD83D\uDCBC",
+    title: "Ingresos fijos (n\xF3mina, etc.)",
+    total: totalFixed,
+    color: CLR.income,
+    colorBg: CLR.incomeBg,
+    onAdd: function onAdd() {
+      return openAdd('fixed');
+    },
+    addLabel: "Ingreso fijo"
+  }, incFixed.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
+    icon: "\uD83D\uDCBC",
+    text: "Sin ingresos fijos configurados"
+  }) : /*#__PURE__*/React.createElement("div", {
+    className: "line-items"
+  }, incFixed.map(function (i) {
+    return /*#__PURE__*/React.createElement(LineItem, {
+      key: i.id,
+      name: i.name,
+      amount: i.amount,
+      color: CLR.income,
+      onEdit: function onEdit() {
+        return openEdit('fixed', i);
+      },
+      onDelete: function onDelete() {
+        return del('fixed', i.id);
+      }
+    });
+  }))), /*#__PURE__*/React.createElement(AccordionSection, {
+    icon: "\uD83D\uDCA1",
+    title: "Ingresos extra / extraordinarios",
+    total: totalExtra,
+    color: "#7F77DD",
+    colorBg: "#EEEDFE",
+    onAdd: function onAdd() {
+      return openAdd('extra');
+    },
+    addLabel: "Ingreso extra"
+  }, incExtra.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
+    icon: "\uD83D\uDCA1",
+    text: "Sin ingresos extra este mes"
+  }) : /*#__PURE__*/React.createElement("div", {
+    className: "line-items"
+  }, incExtra.map(function (i) {
+    return /*#__PURE__*/React.createElement(LineItem, {
+      key: i.id,
+      name: i.name,
+      amount: i.amount,
+      color: "#7F77DD",
+      meta: fmtDate(i.date),
+      onEdit: function onEdit() {
+        return openEdit('extra', i);
+      },
+      onDelete: function onDelete() {
+        return del('extra', i.id);
+      }
+    });
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-body",
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 600,
+      color: 'var(--text-muted)',
+      fontSize: 13
+    }
+  }, "TOTAL INGRESOS"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: 'var(--font-mono)',
+      fontSize: 20,
+      fontWeight: 600,
+      color: CLR.income
+    }
+  }, fmt(totalFixed + totalExtra)))), modalType && /*#__PURE__*/React.createElement(Modal, {
+    title: "".concat(editing ? 'Editar' : 'Añadir', " ingreso ").concat(modalType === 'fixed' ? 'fijo' : 'extra'),
+    onClose: function onClose() {
+      return setModalType(null);
+    }
+  }, /*#__PURE__*/React.createElement(Field, {
+    label: "Nombre",
+    value: form.name,
+    onChange: function onChange(v) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          name: v
+        });
+      });
+    },
+    placeholder: "Ej: Salario, Freelance, Dividendos..."
+  }), /*#__PURE__*/React.createElement(Field, {
+    label: "Importe (\u20AC)",
+    value: form.amount,
+    onChange: function onChange(v) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          amount: v
+        });
+      });
+    },
+    type: "number",
+    min: "0",
+    step: "0.01",
+    placeholder: "0,00"
+  }), modalType === 'extra' && /*#__PURE__*/React.createElement(Field, {
+    label: "Fecha",
+    value: form.date,
+    onChange: function onChange(v) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          date: v
+        });
+      });
+    },
+    type: "date"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "form-actions"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn",
+    onClick: function onClick() {
+      return setModalType(null);
+    }
+  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: handleSave
+  }, "\u2713 Guardar"))));
 }
 
 // ═══════════════════════════════════════════════════════════════
 //  TAB: GASTOS FIJOS
 // ═══════════════════════════════════════════════════════════════
-function TabGastosFijos({ monthData, updateMonth, year, month }) {
-  const [modal, setModal] = useState(null) // 'loan'|'ins'|'other'
-  const [editing, setEditing] = useState(null)
-  const [form, setForm] = useState({ name: '', amount: '', freq: 'monthly' })
-
-  const mortgage = Number(monthData?.mortgage) || 0
-  const loans = monthData?.loans || []
-  const insurance = monthData?.insurance || []
-  const fixOthers = monthData?.fixOthers || []
-  const insTotal = insurance.reduce((s, i) => s + insAmtForMonth(i, year, month), 0)
-  const totalLoans = loans.reduce((s, l) => s + (Number(l.amount) || 0), 0)
-  const totalOthers = fixOthers.reduce((s, o) => s + (Number(o.amount) || 0), 0)
-  const grandTotal = mortgage + totalLoans + insTotal + totalOthers
-
-  const openAdd = (type) => { setEditing(null); setForm({ name: '', amount: '', freq: 'monthly' }); setModal(type) }
-  const openEdit = (type, item) => { setEditing(item.id); setForm({ name: item.name, amount: String(item.amount), freq: item.freq || 'monthly' }); setModal(type) }
-
-  const handleSave = () => {
-    if (!form.name || !form.amount) return
+function TabGastosFijos(_ref1) {
+  var monthData = _ref1.monthData,
+    updateMonth = _ref1.updateMonth,
+    year = _ref1.year,
+    month = _ref1.month;
+  var _useState19 = useState(null),
+    _useState20 = _slicedToArray(_useState19, 2),
+    modal = _useState20[0],
+    setModal = _useState20[1]; // 'loan'|'ins'|'other'
+  var _useState21 = useState(null),
+    _useState22 = _slicedToArray(_useState21, 2),
+    editing = _useState22[0],
+    setEditing = _useState22[1];
+  var _useState23 = useState({
+      name: '',
+      amount: '',
+      freq: 'monthly'
+    }),
+    _useState24 = _slicedToArray(_useState23, 2),
+    form = _useState24[0],
+    setForm = _useState24[1];
+  var mortgage = Number(monthData === null || monthData === void 0 ? void 0 : monthData.mortgage) || 0;
+  var loans = (monthData === null || monthData === void 0 ? void 0 : monthData.loans) || [];
+  var insurance = (monthData === null || monthData === void 0 ? void 0 : monthData.insurance) || [];
+  var fixOthers = (monthData === null || monthData === void 0 ? void 0 : monthData.fixOthers) || [];
+  var insTotal = insurance.reduce(function (s, i) {
+    return s + insAmtForMonth(i, year, month);
+  }, 0);
+  var totalLoans = loans.reduce(function (s, l) {
+    return s + (Number(l.amount) || 0);
+  }, 0);
+  var totalOthers = fixOthers.reduce(function (s, o) {
+    return s + (Number(o.amount) || 0);
+  }, 0);
+  var grandTotal = mortgage + totalLoans + insTotal + totalOthers;
+  var openAdd = function openAdd(type) {
+    setEditing(null);
+    setForm({
+      name: '',
+      amount: '',
+      freq: 'monthly'
+    });
+    setModal(type);
+  };
+  var openEdit = function openEdit(type, item) {
+    setEditing(item.id);
+    setForm({
+      name: item.name,
+      amount: String(item.amount),
+      freq: item.freq || 'monthly'
+    });
+    setModal(type);
+  };
+  var handleSave = function handleSave() {
+    if (!form.name || !form.amount) return;
     if (modal === 'loan') {
-      const item = { id: editing || genId(), name: form.name, amount: Number(form.amount) }
-      updateMonth(md => ({ ...md, loans: editing ? md.loans.map(x => x.id === editing ? item : x) : [...(md.loans || []), item] }))
+      var item = {
+        id: editing || genId(),
+        name: form.name,
+        amount: Number(form.amount)
+      };
+      updateMonth(function (md) {
+        return _objectSpread(_objectSpread({}, md), {}, {
+          loans: editing ? md.loans.map(function (x) {
+            return x.id === editing ? item : x;
+          }) : [].concat(_toConsumableArray(md.loans || []), [item])
+        });
+      });
     } else if (modal === 'ins') {
-      const item = { id: editing || genId(), name: form.name, amount: Number(form.amount), freq: form.freq, sy: year, sm: month }
-      updateMonth(md => ({ ...md, insurance: editing ? md.insurance.map(x => x.id === editing ? item : x) : [...(md.insurance || []), item] }))
+      var _item = {
+        id: editing || genId(),
+        name: form.name,
+        amount: Number(form.amount),
+        freq: form.freq,
+        sy: year,
+        sm: month
+      };
+      updateMonth(function (md) {
+        return _objectSpread(_objectSpread({}, md), {}, {
+          insurance: editing ? md.insurance.map(function (x) {
+            return x.id === editing ? _item : x;
+          }) : [].concat(_toConsumableArray(md.insurance || []), [_item])
+        });
+      });
     } else {
-      const item = { id: editing || genId(), name: form.name, amount: Number(form.amount) }
-      updateMonth(md => ({ ...md, fixOthers: editing ? md.fixOthers.map(x => x.id === editing ? item : x) : [...(md.fixOthers || []), item] }))
+      var _item2 = {
+        id: editing || genId(),
+        name: form.name,
+        amount: Number(form.amount)
+      };
+      updateMonth(function (md) {
+        return _objectSpread(_objectSpread({}, md), {}, {
+          fixOthers: editing ? md.fixOthers.map(function (x) {
+            return x.id === editing ? _item2 : x;
+          }) : [].concat(_toConsumableArray(md.fixOthers || []), [_item2])
+        });
+      });
     }
-    setModal(null)
-  }
-
-  const del = (type, id) => updateMonth(md => ({ ...md, [type]: md[type].filter(x => x.id !== id) }))
-  const freqLabel = (f) => FREQ_OPTS.find(o => o.value === f)?.label || f
-
-  return (
-    <div className="fade-in section-grid">
-      <AccordionSection icon="🏠" title="Hipoteca / Alquiler" total={mortgage} color={CLR.fixed} colorBg={CLR.fixedBg}>
-        <div className="line-items">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <input className="form-input" type="number" min="0" step="0.01" placeholder="Importe mensual" style={{ maxWidth: 180 }}
-              value={mortgage || ''} onChange={e => updateMonth(md => ({ ...md, mortgage: Number(e.target.value) || 0 }))} />
-            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>€/mes</span>
-          </div>
-        </div>
-      </AccordionSection>
-
-      <AccordionSection icon="🏦" title="Préstamos" total={totalLoans} color={CLR.fixed} colorBg={CLR.fixedBg} onAdd={() => openAdd('loan')} addLabel="Préstamo">
-        {loans.length === 0 ? <EmptyState icon="🏦" text="Sin préstamos registrados" /> :
-          <div className="line-items">{loans.map(l => <LineItem key={l.id} name={l.name} amount={l.amount} color={CLR.fixed} onEdit={() => openEdit('loan', l)} onDelete={() => del('loans', l.id)} />)}</div>}
-      </AccordionSection>
-
-      <AccordionSection icon="🛡️" title="Seguros" total={insTotal} color={CLR.fixed} colorBg={CLR.fixedBg} onAdd={() => openAdd('ins')} addLabel="Seguro">
-        {insurance.length === 0 ? <EmptyState icon="🛡️" text="Sin seguros registrados" /> :
-          <div className="line-items">
-            {insurance.map(i => {
-              const amt = insAmtForMonth(i, year, month)
-              return <LineItem key={i.id} name={i.name} amount={amt} color={amt > 0 ? CLR.fixed : 'var(--text-muted)'}
-                badge={{ text: freqLabel(i.freq), bg: amt > 0 ? CLR.fixedBg : 'var(--bg)', color: amt > 0 ? CLR.fixed : 'var(--text-muted)' }}
-                onEdit={() => openEdit('ins', i)} onDelete={() => del('insurance', i.id)} />
-            })}
-          </div>}
-      </AccordionSection>
-
-      <AccordionSection icon="📌" title="Otros gastos fijos" total={totalOthers} color={CLR.fixed} colorBg={CLR.fixedBg} onAdd={() => openAdd('other')} addLabel="Otro fijo">
-        {fixOthers.length === 0 ? <EmptyState icon="📌" text="Sin otros gastos fijos" /> :
-          <div className="line-items">{fixOthers.map(o => <LineItem key={o.id} name={o.name} amount={o.amount} color={CLR.fixed} onEdit={() => openEdit('other', o)} onDelete={() => del('fixOthers', o.id)} />)}</div>}
-      </AccordionSection>
-
-      <div className="card">
-        <div className="card-body" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontWeight: 600, color: 'var(--text-muted)', fontSize: 13 }}>TOTAL GASTOS FIJOS</span>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 600, color: CLR.fixed }}>{fmt(grandTotal)}</span>
-        </div>
-      </div>
-
-      {modal && (
-        <Modal title={`${editing ? 'Editar' : 'Añadir'} ${modal === 'loan' ? 'préstamo' : modal === 'ins' ? 'seguro' : 'gasto fijo'}`} onClose={() => setModal(null)}>
-          <Field label="Nombre" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Nombre descriptivo" />
-          <Field label="Importe (€)" value={form.amount} onChange={v => setForm(f => ({ ...f, amount: v }))} type="number" min="0" step="0.01" />
-          {modal === 'ins' && (
-            <SelectField label="Periodicidad" value={form.freq} onChange={v => setForm(f => ({ ...f, freq: v }))} options={FREQ_OPTS} />
-          )}
-          {modal === 'ins' && form.freq !== 'monthly' && (
-            <div style={{ padding: '10px 14px', background: 'var(--amber-light)', borderRadius: 7, fontSize: 12, color: 'var(--text-muted)', marginBottom: 12 }}>
-              ⚠️ Este seguro solo computará en el cálculo de este mes ({MONTHS[month - 1]}), y cada {form.freq === 'quarterly' ? '3 meses' : form.freq === 'semiannual' ? '6 meses' : 'año'} desde esta fecha.
-            </div>
-          )}
-          <div className="form-actions">
-            <button className="btn" onClick={() => setModal(null)}>Cancelar</button>
-            <button className="btn btn-primary" onClick={handleSave}>✓ Guardar</button>
-          </div>
-        </Modal>
-      )}
-    </div>
-  )
+    setModal(null);
+  };
+  var del = function del(type, id) {
+    return updateMonth(function (md) {
+      return _objectSpread(_objectSpread({}, md), {}, _defineProperty({}, type, md[type].filter(function (x) {
+        return x.id !== id;
+      })));
+    });
+  };
+  var freqLabel = function freqLabel(f) {
+    var _FREQ_OPTS$find;
+    return ((_FREQ_OPTS$find = FREQ_OPTS.find(function (o) {
+      return o.value === f;
+    })) === null || _FREQ_OPTS$find === void 0 ? void 0 : _FREQ_OPTS$find.label) || f;
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "fade-in section-grid"
+  }, /*#__PURE__*/React.createElement(AccordionSection, {
+    icon: "\uD83C\uDFE0",
+    title: "Hipoteca / Alquiler",
+    total: mortgage,
+    color: CLR.fixed,
+    colorBg: CLR.fixedBg
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "line-items"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "form-input",
+    type: "number",
+    min: "0",
+    step: "0.01",
+    placeholder: "Importe mensual",
+    style: {
+      maxWidth: 180
+    },
+    value: mortgage || '',
+    onChange: function onChange(e) {
+      return updateMonth(function (md) {
+        return _objectSpread(_objectSpread({}, md), {}, {
+          mortgage: Number(e.target.value) || 0
+        });
+      });
+    }
+  }), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12,
+      color: 'var(--text-muted)'
+    }
+  }, "\u20AC/mes")))), /*#__PURE__*/React.createElement(AccordionSection, {
+    icon: "\uD83C\uDFE6",
+    title: "Pr\xE9stamos",
+    total: totalLoans,
+    color: CLR.fixed,
+    colorBg: CLR.fixedBg,
+    onAdd: function onAdd() {
+      return openAdd('loan');
+    },
+    addLabel: "Pr\xE9stamo"
+  }, loans.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
+    icon: "\uD83C\uDFE6",
+    text: "Sin pr\xE9stamos registrados"
+  }) : /*#__PURE__*/React.createElement("div", {
+    className: "line-items"
+  }, loans.map(function (l) {
+    return /*#__PURE__*/React.createElement(LineItem, {
+      key: l.id,
+      name: l.name,
+      amount: l.amount,
+      color: CLR.fixed,
+      onEdit: function onEdit() {
+        return openEdit('loan', l);
+      },
+      onDelete: function onDelete() {
+        return del('loans', l.id);
+      }
+    });
+  }))), /*#__PURE__*/React.createElement(AccordionSection, {
+    icon: "\uD83D\uDEE1\uFE0F",
+    title: "Seguros",
+    total: insTotal,
+    color: CLR.fixed,
+    colorBg: CLR.fixedBg,
+    onAdd: function onAdd() {
+      return openAdd('ins');
+    },
+    addLabel: "Seguro"
+  }, insurance.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
+    icon: "\uD83D\uDEE1\uFE0F",
+    text: "Sin seguros registrados"
+  }) : /*#__PURE__*/React.createElement("div", {
+    className: "line-items"
+  }, insurance.map(function (i) {
+    var amt = insAmtForMonth(i, year, month);
+    return /*#__PURE__*/React.createElement(LineItem, {
+      key: i.id,
+      name: i.name,
+      amount: amt,
+      color: amt > 0 ? CLR.fixed : 'var(--text-muted)',
+      badge: {
+        text: freqLabel(i.freq),
+        bg: amt > 0 ? CLR.fixedBg : 'var(--bg)',
+        color: amt > 0 ? CLR.fixed : 'var(--text-muted)'
+      },
+      onEdit: function onEdit() {
+        return openEdit('ins', i);
+      },
+      onDelete: function onDelete() {
+        return del('insurance', i.id);
+      }
+    });
+  }))), /*#__PURE__*/React.createElement(AccordionSection, {
+    icon: "\uD83D\uDCCC",
+    title: "Otros gastos fijos",
+    total: totalOthers,
+    color: CLR.fixed,
+    colorBg: CLR.fixedBg,
+    onAdd: function onAdd() {
+      return openAdd('other');
+    },
+    addLabel: "Otro fijo"
+  }, fixOthers.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
+    icon: "\uD83D\uDCCC",
+    text: "Sin otros gastos fijos"
+  }) : /*#__PURE__*/React.createElement("div", {
+    className: "line-items"
+  }, fixOthers.map(function (o) {
+    return /*#__PURE__*/React.createElement(LineItem, {
+      key: o.id,
+      name: o.name,
+      amount: o.amount,
+      color: CLR.fixed,
+      onEdit: function onEdit() {
+        return openEdit('other', o);
+      },
+      onDelete: function onDelete() {
+        return del('fixOthers', o.id);
+      }
+    });
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-body",
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 600,
+      color: 'var(--text-muted)',
+      fontSize: 13
+    }
+  }, "TOTAL GASTOS FIJOS"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: 'var(--font-mono)',
+      fontSize: 20,
+      fontWeight: 600,
+      color: CLR.fixed
+    }
+  }, fmt(grandTotal)))), modal && /*#__PURE__*/React.createElement(Modal, {
+    title: "".concat(editing ? 'Editar' : 'Añadir', " ").concat(modal === 'loan' ? 'préstamo' : modal === 'ins' ? 'seguro' : 'gasto fijo'),
+    onClose: function onClose() {
+      return setModal(null);
+    }
+  }, /*#__PURE__*/React.createElement(Field, {
+    label: "Nombre",
+    value: form.name,
+    onChange: function onChange(v) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          name: v
+        });
+      });
+    },
+    placeholder: "Nombre descriptivo"
+  }), /*#__PURE__*/React.createElement(Field, {
+    label: "Importe (\u20AC)",
+    value: form.amount,
+    onChange: function onChange(v) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          amount: v
+        });
+      });
+    },
+    type: "number",
+    min: "0",
+    step: "0.01"
+  }), modal === 'ins' && /*#__PURE__*/React.createElement(SelectField, {
+    label: "Periodicidad",
+    value: form.freq,
+    onChange: function onChange(v) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          freq: v
+        });
+      });
+    },
+    options: FREQ_OPTS
+  }), modal === 'ins' && form.freq !== 'monthly' && /*#__PURE__*/React.createElement("div", {
+    style: {
+      padding: '10px 14px',
+      background: 'var(--amber-light)',
+      borderRadius: 7,
+      fontSize: 12,
+      color: 'var(--text-muted)',
+      marginBottom: 12
+    }
+  }, "\u26A0\uFE0F Este seguro solo computar\xE1 en el c\xE1lculo de este mes (", MONTHS[month - 1], "), y cada ", form.freq === 'quarterly' ? '3 meses' : form.freq === 'semiannual' ? '6 meses' : 'año', " desde esta fecha."), /*#__PURE__*/React.createElement("div", {
+    className: "form-actions"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn",
+    onClick: function onClick() {
+      return setModal(null);
+    }
+  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: handleSave
+  }, "\u2713 Guardar"))));
 }
 
 // ═══════════════════════════════════════════════════════════════
 //  TAB: GASTOS VARIABLES
 // ═══════════════════════════════════════════════════════════════
-function TabGastosVariables({ monthData, updateMonth }) {
-  const [modal, setModal] = useState(false)
-  const [editing, setEditing] = useState(null)
-  const [form, setForm] = useState({ name: '', amount: '' })
-  const ve = monthData?.varExp || {}
-
-  const VAR_FIELDS = [
-    { key: 'electricity', label: '💡 Luz', icon: '💡' },
-    { key: 'water', label: '💧 Agua', icon: '💧' },
-    { key: 'supermarket', label: '🛒 Supermercado', icon: '🛒' },
-    { key: 'internet', label: '🌐 Internet', icon: '🌐' },
-    { key: 'phone', label: '📱 Telefonía', icon: '📱' },
-    { key: 'petrol', label: '⛽ Gasolina', icon: '⛽' },
-    { key: 'gas', label: '🔥 Gas', icon: '🔥' },
-  ]
-
-  const others = ve.others || []
-  const standardTotal = VAR_FIELDS.reduce((s, f) => s + (Number(ve[f.key]) || 0), 0)
-  const othersTotal = others.reduce((s, i) => s + (Number(i.amount) || 0), 0)
-  const grandTotal = standardTotal + othersTotal
-
-  const setField = (key, val) => updateMonth(md => ({ ...md, varExp: { ...(md.varExp || {}), [key]: Number(val) || 0 } }))
-
-  const handleSave = () => {
-    if (!form.name || !form.amount) return
-    const item = { id: editing || genId(), name: form.name, amount: Number(form.amount) }
-    updateMonth(md => ({
-      ...md, varExp: {
-        ...(md.varExp || {}),
-        others: editing ? (md.varExp?.others || []).map(x => x.id === editing ? item : x) : [...(md.varExp?.others || []), item]
+function TabGastosVariables(_ref10) {
+  var monthData = _ref10.monthData,
+    updateMonth = _ref10.updateMonth;
+  var _useState25 = useState(false),
+    _useState26 = _slicedToArray(_useState25, 2),
+    modal = _useState26[0],
+    setModal = _useState26[1];
+  var _useState27 = useState(null),
+    _useState28 = _slicedToArray(_useState27, 2),
+    editing = _useState28[0],
+    setEditing = _useState28[1];
+  var _useState29 = useState({
+      name: '',
+      amount: ''
+    }),
+    _useState30 = _slicedToArray(_useState29, 2),
+    form = _useState30[0],
+    setForm = _useState30[1];
+  var ve = (monthData === null || monthData === void 0 ? void 0 : monthData.varExp) || {};
+  var VAR_FIELDS = [{
+    key: 'electricity',
+    label: '💡 Luz',
+    icon: '💡'
+  }, {
+    key: 'water',
+    label: '💧 Agua',
+    icon: '💧'
+  }, {
+    key: 'supermarket',
+    label: '🛒 Supermercado',
+    icon: '🛒'
+  }, {
+    key: 'internet',
+    label: '🌐 Internet',
+    icon: '🌐'
+  }, {
+    key: 'phone',
+    label: '📱 Telefonía',
+    icon: '📱'
+  }, {
+    key: 'petrol',
+    label: '⛽ Gasolina',
+    icon: '⛽'
+  }, {
+    key: 'gas',
+    label: '🔥 Gas',
+    icon: '🔥'
+  }];
+  var others = ve.others || [];
+  var standardTotal = VAR_FIELDS.reduce(function (s, f) {
+    return s + (Number(ve[f.key]) || 0);
+  }, 0);
+  var othersTotal = others.reduce(function (s, i) {
+    return s + (Number(i.amount) || 0);
+  }, 0);
+  var grandTotal = standardTotal + othersTotal;
+  var setField = function setField(key, val) {
+    return updateMonth(function (md) {
+      return _objectSpread(_objectSpread({}, md), {}, {
+        varExp: _objectSpread(_objectSpread({}, md.varExp || {}), {}, _defineProperty({}, key, Number(val) || 0))
+      });
+    });
+  };
+  var handleSave = function handleSave() {
+    if (!form.name || !form.amount) return;
+    var item = {
+      id: editing || genId(),
+      name: form.name,
+      amount: Number(form.amount)
+    };
+    updateMonth(function (md) {
+      var _md$varExp, _md$varExp2;
+      return _objectSpread(_objectSpread({}, md), {}, {
+        varExp: _objectSpread(_objectSpread({}, md.varExp || {}), {}, {
+          others: editing ? (((_md$varExp = md.varExp) === null || _md$varExp === void 0 ? void 0 : _md$varExp.others) || []).map(function (x) {
+            return x.id === editing ? item : x;
+          }) : [].concat(_toConsumableArray(((_md$varExp2 = md.varExp) === null || _md$varExp2 === void 0 ? void 0 : _md$varExp2.others) || []), [item])
+        })
+      });
+    });
+    setModal(false);
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "fade-in"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card",
+    style: {
+      marginBottom: 14
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-header"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-header-left"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "card-icon"
+  }, "\uD83D\uDCCA"), /*#__PURE__*/React.createElement("div", {
+    className: "card-title"
+  }, "Gastos variables est\xE1ndar")), /*#__PURE__*/React.createElement("span", {
+    className: "card-total",
+    style: {
+      color: CLR.varExp
+    }
+  }, fmt(standardTotal))), /*#__PURE__*/React.createElement("div", {
+    className: "card-body"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+      gap: 10
+    }
+  }, VAR_FIELDS.map(function (f) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: f.key
+    }, /*#__PURE__*/React.createElement("label", {
+      className: "form-label"
+    }, f.label), /*#__PURE__*/React.createElement("input", {
+      className: "form-input",
+      type: "number",
+      min: "0",
+      step: "0.01",
+      placeholder: "0,00",
+      value: ve[f.key] || '',
+      onChange: function onChange(e) {
+        return setField(f.key, e.target.value);
       }
-    }))
-    setModal(false)
-  }
-
-  return (
-    <div className="fade-in">
-      <div className="card" style={{ marginBottom: 14 }}>
-        <div className="card-header">
-          <div className="card-header-left">
-            <span className="card-icon">📊</span>
-            <div className="card-title">Gastos variables estándar</div>
-          </div>
-          <span className="card-total" style={{ color: CLR.varExp }}>{fmt(standardTotal)}</span>
-        </div>
-        <div className="card-body">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 10 }}>
-            {VAR_FIELDS.map(f => (
-              <div key={f.key}>
-                <label className="form-label">{f.label}</label>
-                <input className="form-input" type="number" min="0" step="0.01" placeholder="0,00"
-                  value={ve[f.key] || ''} onChange={e => setField(f.key, e.target.value)} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <AccordionSection icon="➕" title="Otros gastos variables" total={othersTotal} color={CLR.varExp} colorBg={CLR.varBg}
-        onAdd={() => { setEditing(null); setForm({ name: '', amount: '' }); setModal(true) }} addLabel="Otro variable">
-        {others.length === 0 ? <EmptyState icon="➕" text="Sin otros gastos variables" /> :
-          <div className="line-items">
-            {others.map(o => <LineItem key={o.id} name={o.name} amount={o.amount} color={CLR.varExp}
-              onEdit={() => { setEditing(o.id); setForm({ name: o.name, amount: String(o.amount) }); setModal(true) }}
-              onDelete={() => updateMonth(md => ({ ...md, varExp: { ...md.varExp, others: md.varExp.others.filter(x => x.id !== o.id) } }))} />)}
-          </div>}
-      </AccordionSection>
-
-      <div className="card">
-        <div className="card-body" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontWeight: 600, color: 'var(--text-muted)', fontSize: 13 }}>TOTAL GASTOS VARIABLES</span>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 600, color: CLR.varExp }}>{fmt(grandTotal)}</span>
-        </div>
-      </div>
-
-      {modal && (
-        <Modal title={`${editing ? 'Editar' : 'Añadir'} gasto variable`} onClose={() => setModal(false)}>
-          <Field label="Nombre" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Ej: Parking, Gimnasio..." />
-          <Field label="Importe (€)" value={form.amount} onChange={v => setForm(f => ({ ...f, amount: v }))} type="number" min="0" step="0.01" />
-          <div className="form-actions">
-            <button className="btn" onClick={() => setModal(false)}>Cancelar</button>
-            <button className="btn btn-primary" onClick={handleSave}>✓ Guardar</button>
-          </div>
-        </Modal>
-      )}
-    </div>
-  )
+    }));
+  })))), /*#__PURE__*/React.createElement(AccordionSection, {
+    icon: "\u2795",
+    title: "Otros gastos variables",
+    total: othersTotal,
+    color: CLR.varExp,
+    colorBg: CLR.varBg,
+    onAdd: function onAdd() {
+      setEditing(null);
+      setForm({
+        name: '',
+        amount: ''
+      });
+      setModal(true);
+    },
+    addLabel: "Otro variable"
+  }, others.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
+    icon: "\u2795",
+    text: "Sin otros gastos variables"
+  }) : /*#__PURE__*/React.createElement("div", {
+    className: "line-items"
+  }, others.map(function (o) {
+    return /*#__PURE__*/React.createElement(LineItem, {
+      key: o.id,
+      name: o.name,
+      amount: o.amount,
+      color: CLR.varExp,
+      onEdit: function onEdit() {
+        setEditing(o.id);
+        setForm({
+          name: o.name,
+          amount: String(o.amount)
+        });
+        setModal(true);
+      },
+      onDelete: function onDelete() {
+        return updateMonth(function (md) {
+          return _objectSpread(_objectSpread({}, md), {}, {
+            varExp: _objectSpread(_objectSpread({}, md.varExp), {}, {
+              others: md.varExp.others.filter(function (x) {
+                return x.id !== o.id;
+              })
+            })
+          });
+        });
+      }
+    });
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-body",
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 600,
+      color: 'var(--text-muted)',
+      fontSize: 13
+    }
+  }, "TOTAL GASTOS VARIABLES"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: 'var(--font-mono)',
+      fontSize: 20,
+      fontWeight: 600,
+      color: CLR.varExp
+    }
+  }, fmt(grandTotal)))), modal && /*#__PURE__*/React.createElement(Modal, {
+    title: "".concat(editing ? 'Editar' : 'Añadir', " gasto variable"),
+    onClose: function onClose() {
+      return setModal(false);
+    }
+  }, /*#__PURE__*/React.createElement(Field, {
+    label: "Nombre",
+    value: form.name,
+    onChange: function onChange(v) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          name: v
+        });
+      });
+    },
+    placeholder: "Ej: Parking, Gimnasio..."
+  }), /*#__PURE__*/React.createElement(Field, {
+    label: "Importe (\u20AC)",
+    value: form.amount,
+    onChange: function onChange(v) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          amount: v
+        });
+      });
+    },
+    type: "number",
+    min: "0",
+    step: "0.01"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "form-actions"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn",
+    onClick: function onClick() {
+      return setModal(false);
+    }
+  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: handleSave
+  }, "\u2713 Guardar"))));
 }
 
 // ═══════════════════════════════════════════════════════════════
 //  TAB: OCIO
 // ═══════════════════════════════════════════════════════════════
-function TabOcio({ monthData, updateMonth }) {
-  const [modal, setModal] = useState(null) // section key
-  const [editing, setEditing] = useState(null)
-  const [form, setForm] = useState({ name: '', amount: '', date: '', person: '', isFixed: false, isAnnual: false })
-  const lei = monthData?.leisure || {}
-
-  const SECTIONS = [
-    { key: 'entertainment', label: 'Entretenimiento', icon: '🎬', color: CLR.leisure, bg: CLR.leisBg },
-    { key: 'dining', label: 'Restauración', icon: '🍽️', color: '#D85A30', bg: '#FAECE7' },
-    { key: 'treats', label: 'Caprichos', icon: '🛍️', color: '#BA7517', bg: '#FAEEDA' },
-    { key: 'others', label: 'Otros ocio', icon: '✨', color: '#768390', bg: '#f1f5f9' },
-  ]
-
-  const openAdd = (key) => { setEditing(null); setForm({ name: '', amount: '', date: today.toISOString().split('T')[0], person: '', isFixed: false, isAnnual: false }); setModal(key) }
-  const openEdit = (key, item) => { setEditing(item.id); setForm({ name: item.name, amount: String(item.amount), date: item.date || '', person: item.person || '', isFixed: !!item.isFixed, isAnnual: !!item.isAnnual }); setModal(key) }
-
-  const handleSave = () => {
-    if (!form.name || !form.amount) return
-    const item = { id: editing || genId(), name: form.name, amount: Number(form.amount), date: form.date, person: form.person, isFixed: form.isFixed, isAnnual: form.isAnnual }
-    updateMonth(md => ({
-      ...md, leisure: {
-        ...(md.leisure || {}),
-        [modal]: editing ? (lei[modal] || []).map(x => x.id === editing ? item : x) : [...(lei[modal] || []), item]
-      }
-    }))
-    setModal(null)
-  }
-
-  const del = (key, id) => updateMonth(md => ({ ...md, leisure: { ...(md.leisure || {}), [key]: (lei[key] || []).filter(x => x.id !== id) } }))
-
-  const totalAll = SECTIONS.reduce((s, sec) => s + (lei[sec.key] || []).reduce((ss, i) => ss + (Number(i.amount) || 0), 0), 0)
-
-  return (
-    <div className="fade-in section-grid">
-      {SECTIONS.map(sec => {
-        const items = lei[sec.key] || []
-        const total = items.reduce((s, i) => s + (Number(i.amount) || 0), 0)
-        return (
-          <AccordionSection key={sec.key} icon={sec.icon} title={sec.label} total={total} color={sec.color} colorBg={sec.bg}
-            onAdd={() => openAdd(sec.key)} addLabel={sec.label}>
-            {items.length === 0 ? <EmptyState icon={sec.icon} text={`Sin ${sec.label.toLowerCase()} este mes`} /> :
-              <div className="line-items">
-                {items.map(i => (
-                  <LineItem key={i.id} name={i.name} amount={i.amount} color={sec.color}
-                    meta={[fmtDate(i.date), i.person].filter(Boolean).join(' · ')}
-                    badge={i.isFixed ? { text: 'FIJO', bg: sec.bg, color: sec.color } : i.isAnnual ? { text: 'ANUAL', bg: '#FAEEDA', color: '#BA7517' } : null}
-                    onEdit={() => openEdit(sec.key, i)} onDelete={() => del(sec.key, i.id)} />
-                ))}
-              </div>}
-          </AccordionSection>
-        )
-      })}
-
-      <div className="card">
-        <div className="card-body" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontWeight: 600, color: 'var(--text-muted)', fontSize: 13 }}>TOTAL OCIO</span>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 600, color: CLR.leisure }}>{fmt(totalAll)}</span>
-        </div>
-      </div>
-
-      {modal && (
-        <Modal title={`Añadir ${SECTIONS.find(s => s.key === modal)?.label || ''}`} onClose={() => setModal(null)}>
-          <Field label="Nombre / Descripción" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Ej: Cine, Restaurante La Paloma..." />
-          <div className="form-row">
-            <Field label="Importe (€)" value={form.amount} onChange={v => setForm(f => ({ ...f, amount: v }))} type="number" min="0" step="0.01" />
-            <Field label="Fecha" value={form.date} onChange={v => setForm(f => ({ ...f, date: v }))} type="date" />
-          </div>
-          <Field label="Mano rota (¿quién gasta?)" value={form.person} onChange={v => setForm(f => ({ ...f, person: v }))} placeholder="Nombre de la persona" />
-          <div style={{ display: 'flex', gap: 16, marginBottom: 14 }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, cursor: 'pointer' }}>
-              <input type="checkbox" checked={form.isFixed} onChange={e => setForm(f => ({ ...f, isFixed: e.target.checked, isAnnual: false }))} />
-              Gasto fijo mensual
-            </label>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, cursor: 'pointer' }}>
-              <input type="checkbox" checked={form.isAnnual} onChange={e => setForm(f => ({ ...f, isAnnual: e.target.checked, isFixed: false }))} />
-              Pago anual (solo este mes)
-            </label>
-          </div>
-          <div className="form-actions">
-            <button className="btn" onClick={() => setModal(null)}>Cancelar</button>
-            <button className="btn btn-primary" onClick={handleSave}>✓ Guardar</button>
-          </div>
-        </Modal>
-      )}
-    </div>
-  )
+function TabOcio(_ref11) {
+  var _SECTIONS$find;
+  var monthData = _ref11.monthData,
+    updateMonth = _ref11.updateMonth;
+  var _useState31 = useState(null),
+    _useState32 = _slicedToArray(_useState31, 2),
+    modal = _useState32[0],
+    setModal = _useState32[1]; // section key
+  var _useState33 = useState(null),
+    _useState34 = _slicedToArray(_useState33, 2),
+    editing = _useState34[0],
+    setEditing = _useState34[1];
+  var _useState35 = useState({
+      name: '',
+      amount: '',
+      date: '',
+      person: '',
+      isFixed: false,
+      isAnnual: false
+    }),
+    _useState36 = _slicedToArray(_useState35, 2),
+    form = _useState36[0],
+    setForm = _useState36[1];
+  var lei = (monthData === null || monthData === void 0 ? void 0 : monthData.leisure) || {};
+  var SECTIONS = [{
+    key: 'entertainment',
+    label: 'Entretenimiento',
+    icon: '🎬',
+    color: CLR.leisure,
+    bg: CLR.leisBg
+  }, {
+    key: 'dining',
+    label: 'Restauración',
+    icon: '🍽️',
+    color: '#D85A30',
+    bg: '#FAECE7'
+  }, {
+    key: 'treats',
+    label: 'Caprichos',
+    icon: '🛍️',
+    color: '#BA7517',
+    bg: '#FAEEDA'
+  }, {
+    key: 'others',
+    label: 'Otros ocio',
+    icon: '✨',
+    color: '#768390',
+    bg: '#f1f5f9'
+  }];
+  var openAdd = function openAdd(key) {
+    setEditing(null);
+    setForm({
+      name: '',
+      amount: '',
+      date: today.toISOString().split('T')[0],
+      person: '',
+      isFixed: false,
+      isAnnual: false
+    });
+    setModal(key);
+  };
+  var openEdit = function openEdit(key, item) {
+    setEditing(item.id);
+    setForm({
+      name: item.name,
+      amount: String(item.amount),
+      date: item.date || '',
+      person: item.person || '',
+      isFixed: !!item.isFixed,
+      isAnnual: !!item.isAnnual
+    });
+    setModal(key);
+  };
+  var handleSave = function handleSave() {
+    if (!form.name || !form.amount) return;
+    var item = {
+      id: editing || genId(),
+      name: form.name,
+      amount: Number(form.amount),
+      date: form.date,
+      person: form.person,
+      isFixed: form.isFixed,
+      isAnnual: form.isAnnual
+    };
+    updateMonth(function (md) {
+      return _objectSpread(_objectSpread({}, md), {}, {
+        leisure: _objectSpread(_objectSpread({}, md.leisure || {}), {}, _defineProperty({}, modal, editing ? (lei[modal] || []).map(function (x) {
+          return x.id === editing ? item : x;
+        }) : [].concat(_toConsumableArray(lei[modal] || []), [item])))
+      });
+    });
+    setModal(null);
+  };
+  var del = function del(key, id) {
+    return updateMonth(function (md) {
+      return _objectSpread(_objectSpread({}, md), {}, {
+        leisure: _objectSpread(_objectSpread({}, md.leisure || {}), {}, _defineProperty({}, key, (lei[key] || []).filter(function (x) {
+          return x.id !== id;
+        })))
+      });
+    });
+  };
+  var totalAll = SECTIONS.reduce(function (s, sec) {
+    return s + (lei[sec.key] || []).reduce(function (ss, i) {
+      return ss + (Number(i.amount) || 0);
+    }, 0);
+  }, 0);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "fade-in section-grid"
+  }, SECTIONS.map(function (sec) {
+    var items = lei[sec.key] || [];
+    var total = items.reduce(function (s, i) {
+      return s + (Number(i.amount) || 0);
+    }, 0);
+    return /*#__PURE__*/React.createElement(AccordionSection, {
+      key: sec.key,
+      icon: sec.icon,
+      title: sec.label,
+      total: total,
+      color: sec.color,
+      colorBg: sec.bg,
+      onAdd: function onAdd() {
+        return openAdd(sec.key);
+      },
+      addLabel: sec.label
+    }, items.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
+      icon: sec.icon,
+      text: "Sin ".concat(sec.label.toLowerCase(), " este mes")
+    }) : /*#__PURE__*/React.createElement("div", {
+      className: "line-items"
+    }, items.map(function (i) {
+      return /*#__PURE__*/React.createElement(LineItem, {
+        key: i.id,
+        name: i.name,
+        amount: i.amount,
+        color: sec.color,
+        meta: [fmtDate(i.date), i.person].filter(Boolean).join(' · '),
+        badge: i.isFixed ? {
+          text: 'FIJO',
+          bg: sec.bg,
+          color: sec.color
+        } : i.isAnnual ? {
+          text: 'ANUAL',
+          bg: '#FAEEDA',
+          color: '#BA7517'
+        } : null,
+        onEdit: function onEdit() {
+          return openEdit(sec.key, i);
+        },
+        onDelete: function onDelete() {
+          return del(sec.key, i.id);
+        }
+      });
+    })));
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "card"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-body",
+    style: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 600,
+      color: 'var(--text-muted)',
+      fontSize: 13
+    }
+  }, "TOTAL OCIO"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontFamily: 'var(--font-mono)',
+      fontSize: 20,
+      fontWeight: 600,
+      color: CLR.leisure
+    }
+  }, fmt(totalAll)))), modal && /*#__PURE__*/React.createElement(Modal, {
+    title: "A\xF1adir ".concat(((_SECTIONS$find = SECTIONS.find(function (s) {
+      return s.key === modal;
+    })) === null || _SECTIONS$find === void 0 ? void 0 : _SECTIONS$find.label) || ''),
+    onClose: function onClose() {
+      return setModal(null);
+    }
+  }, /*#__PURE__*/React.createElement(Field, {
+    label: "Nombre / Descripci\xF3n",
+    value: form.name,
+    onChange: function onChange(v) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          name: v
+        });
+      });
+    },
+    placeholder: "Ej: Cine, Restaurante La Paloma..."
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "form-row"
+  }, /*#__PURE__*/React.createElement(Field, {
+    label: "Importe (\u20AC)",
+    value: form.amount,
+    onChange: function onChange(v) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          amount: v
+        });
+      });
+    },
+    type: "number",
+    min: "0",
+    step: "0.01"
+  }), /*#__PURE__*/React.createElement(Field, {
+    label: "Fecha",
+    value: form.date,
+    onChange: function onChange(v) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          date: v
+        });
+      });
+    },
+    type: "date"
+  })), /*#__PURE__*/React.createElement(Field, {
+    label: "Mano rota (\xBFqui\xE9n gasta?)",
+    value: form.person,
+    onChange: function onChange(v) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          person: v
+        });
+      });
+    },
+    placeholder: "Nombre de la persona"
+  }), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 16,
+      marginBottom: 14
+    }
+  }, /*#__PURE__*/React.createElement("label", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 6,
+      fontSize: 13,
+      cursor: 'pointer'
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "checkbox",
+    checked: form.isFixed,
+    onChange: function onChange(e) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          isFixed: e.target.checked,
+          isAnnual: false
+        });
+      });
+    }
+  }), "Gasto fijo mensual"), /*#__PURE__*/React.createElement("label", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 6,
+      fontSize: 13,
+      cursor: 'pointer'
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "checkbox",
+    checked: form.isAnnual,
+    onChange: function onChange(e) {
+      return setForm(function (f) {
+        return _objectSpread(_objectSpread({}, f), {}, {
+          isAnnual: e.target.checked,
+          isFixed: false
+        });
+      });
+    }
+  }), "Pago anual (solo este mes)")), /*#__PURE__*/React.createElement("div", {
+    className: "form-actions"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn",
+    onClick: function onClick() {
+      return setModal(null);
+    }
+  }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-primary",
+    onClick: handleSave
+  }, "\u2713 Guardar"))));
 }
 
 // ═══════════════════════════════════════════════════════════════
 //  TAB: HIJOS
 // ═══════════════════════════════════════════════════════════════
-function TabHijos({ monthData, updateMonth }) {
-  const [addChildModal, setAddChildModal] = useState(false)
-  const [childName, setChildName] = useState('')
-  const [modal, setModal] = useState(null) // { childId, catKey }
-  const [editing, setEditing] = useState(null)
-  const [form, setForm] = useState({ name: '', amount: '', date: '' })
-  const children = monthData?.children || []
-
-  const addChild = () => {
-    if (!childName.trim()) return
-    const child = { id: genId(), name: childName.trim(), clothing: [], food: [], education: [], treats: [], leisure: [] }
-    updateMonth(md => ({ ...md, children: [...(md.children || []), child] }))
-    setChildName(''); setAddChildModal(false)
-  }
-  const delChild = (id) => updateMonth(md => ({ ...md, children: md.children.filter(c => c.id !== id) }))
-
-  const openAdd = (childId, catKey) => { setEditing(null); setForm({ name: '', amount: '', date: today.toISOString().split('T')[0] }); setModal({ childId, catKey }) }
-  const openEdit = (childId, catKey, item) => { setEditing(item.id); setForm({ name: item.name, amount: String(item.amount), date: item.date || '' }); setModal({ childId, catKey }) }
-
-  const handleSave = () => {
-    if (!form.name || !form.amount) return
-    const item = { id: editing || genId(), name: form.name, amount: Number(form.amount), date: form.date }
-    updateMonth(md => ({
-      ...md,
-      children: md.children.map(c => c.id === modal.childId ? {
-        ...c,
-        [modal.catKey]: editing ? c[modal.catKey].map(x => x.id === editing ? item : x) : [...(c[modal.catKey] || []), item]
-      } : c)
-    }))
-    setModal(null)
-  }
-
-  const delItem = (childId, catKey, itemId) => updateMonth(md => ({
-    ...md, children: md.children.map(c => c.id === childId ? { ...c, [catKey]: c[catKey].filter(x => x.id !== itemId) } : c)
-  }))
-
-  const childTotal = (child) => CHILD_CATS.reduce((s, cat) => s + (child[cat.key] || []).reduce((ss, i) => ss + (Number(i.amount) || 0), 0), 0)
-
-  return (
-    <div className="fade-in">
-      {children.length === 0 ? (
-        <div className="card" style={{ marginBottom: 14 }}>
-          <div className="card-body" style={{ textAlign: 'center', padding: '32px' }}>
-            <div style={{ fontSize: 40, marginBottom: 12 }}>👶</div>
-            <div style={{ fontSize: 15, fontWeight: 500, marginBottom: 8 }}>Sin hijos configurados</div>
-            <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 20 }}>Añade hijos para registrar sus gastos</div>
-            <button className="btn btn-primary" onClick={() => setAddChildModal(true)}>+ Añadir hijo/a</button>
-          </div>
-        </div>
-      ) : (
-        <div className="section-grid">
-          {children.map(child => (
-            <div key={child.id} className="card">
-              <div className="card-header">
-                <div className="card-header-left">
-                  <span style={{ fontSize: 20 }}>👶</span>
-                  <div>
-                    <div className="card-title">{child.name}</div>
-                    <div className="card-subtitle">Total: {fmt(childTotal(child))}</div>
-                  </div>
-                </div>
-                <button className="btn btn-sm" style={{ color: 'var(--red)', borderColor: 'var(--red)' }} onClick={() => delChild(child.id)}>Eliminar</button>
-              </div>
-              <div className="card-body">
-                {CHILD_CATS.map(cat => {
-                  const items = child[cat.key] || []
-                  const total = items.reduce((s, i) => s + (Number(i.amount) || 0), 0)
-                  return (
-                    <AccordionSection key={cat.key} icon={cat.icon} title={cat.label} total={total} color={CLR.child} colorBg={CLR.childBg}
-                      defaultOpen={false} onAdd={() => openAdd(child.id, cat.key)} addLabel="Gasto">
-                      {items.length === 0 ? <EmptyState icon={cat.icon} text={`Sin gastos de ${cat.label.toLowerCase()}`} /> :
-                        <div className="line-items">
-                          {items.map(i => <LineItem key={i.id} name={i.name} amount={i.amount} color={CLR.child}
-                            meta={fmtDate(i.date)}
-                            onEdit={() => openEdit(child.id, cat.key, i)}
-                            onDelete={() => delItem(child.id, cat.key, i.id)} />)}
-                        </div>}
-                    </AccordionSection>
-                  )
-                })}
-              </div>
-            </div>
-          ))}
-          <button className="btn-add" style={{ width: '100%', padding: '12px', justifyContent: 'center' }} onClick={() => setAddChildModal(true)}>
-            + Añadir otro hijo/a
-          </button>
-        </div>
-      )}
-
-      {addChildModal && (
-        <Modal title="Añadir hijo/a" onClose={() => setAddChildModal(false)}>
-          <Field label="Nombre del hijo/a" value={childName} onChange={setChildName} placeholder="Ej: Carlos, María..." />
-          <div className="form-actions">
-            <button className="btn" onClick={() => setAddChildModal(false)}>Cancelar</button>
-            <button className="btn btn-primary" onClick={addChild}>✓ Añadir</button>
-          </div>
-        </Modal>
-      )}
-
-      {modal && (
-        <Modal title={`Añadir gasto — ${CHILD_CATS.find(c => c.key === modal.catKey)?.label}`} onClose={() => setModal(null)}>
-          <Field label="Descripción" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Descripción del gasto" />
-          <div className="form-row">
-            <Field label="Importe (€)" value={form.amount} onChange={v => setForm(f => ({ ...f, amount: v }))} type="number" min="0" step="0.01" />
-            <Field label="Fecha" value={form.date} onChange={v => setForm(f => ({ ...f, date: v }))} type="date" />
-          </div>
-          <div className="form-actions">
-            <button className="btn" onClick={() => setModal(null)}>Cancelar</button>
-            <button className="btn btn-primary" onClick={handleSave}>✓ Guardar</button>
-          </div>
-        </Modal>
-      )}
-    </div>
-  )
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  TAB: OTROS GASTOS
-// ═══════════════════════════════════════════════════════════════
-function TabOtrosGastos({ monthData, updateMonth }) {
-  const [modal, setModal] = useState(null)
-  const [editing, setEditing] = useState(null)
-  const [form, setForm] = useState({ name: '', amount: '', date: '' })
-  const oe = monthData?.otherExp || {}
-
-  const SECS = [
-    { key: 'gifts', label: 'Regalos', icon: '🎁', color: '#D85A30', bg: '#FAECE7' },
-    { key: 'events', label: 'Eventos', icon: '🎉', color: '#7F77DD', bg: '#EEEDFE' },
-    { key: 'others', label: 'Otros', icon: '📦', color: CLR.other, bg: CLR.otherBg },
-  ]
-
-  const openAdd = (key) => { setEditing(null); setForm({ name: '', amount: '', date: today.toISOString().split('T')[0] }); setModal(key) }
-  const openEdit = (key, item) => { setEditing(item.id); setForm({ name: item.name, amount: String(item.amount), date: item.date || '' }); setModal(key) }
-
-  const handleSave = () => {
-    if (!form.name || !form.amount) return
-    const item = { id: editing || genId(), name: form.name, amount: Number(form.amount), date: form.date }
-    updateMonth(md => ({
-      ...md, otherExp: {
-        ...(md.otherExp || {}),
-        [modal]: editing ? (oe[modal] || []).map(x => x.id === editing ? item : x) : [...(oe[modal] || []), item]
-      }
-    }))
-    setModal(null)
-  }
-
-  const del = (key, id) => updateMonth(md => ({ ...md, otherExp: { ...md.otherExp, [key]: (oe[key] || []).filter(x => x.id !== id) } }))
-  const grandTotal = SECS.reduce((s, sec) => s + (oe[sec.key] || []).reduce((ss, i) => ss + (Number(i.amount) || 0), 0), 0)
-
-  return (
-    <div className="fade-in section-grid">
-      {SECS.map(sec => {
-        const items = oe[sec.key] || []
-        const total = items.reduce((s, i) => s + (Number(i.amount) || 0), 0)
-        return (
-          <AccordionSection key={sec.key} icon={sec.icon} title={sec.label} total={total} color={sec.color} colorBg={sec.bg}
-            onAdd={() => openAdd(sec.key)} addLabel={sec.label}>
-            {items.length === 0 ? <EmptyState icon={sec.icon} text={`Sin ${sec.label.toLowerCase()} este mes`} /> :
-              <div className="line-items">
-                {items.map(i => <LineItem key={i.id} name={i.name} amount={i.amount} color={sec.color} meta={fmtDate(i.date)}
-                  onEdit={() => openEdit(sec.key, i)} onDelete={() => del(sec.key, i.id)} />)}
-              </div>}
-          </AccordionSection>
-        )
-      })}
-      <div className="card">
-        <div className="card-body" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontWeight: 600, color: 'var(--text-muted)', fontSize: 13 }}>TOTAL OTROS GASTOS</span>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 600, color: CLR.other }}>{fmt(grandTotal)}</span>
-        </div>
-      </div>
-
-      {modal && (
-        <Modal title={`Añadir ${SECS.find(s => s.key === modal)?.label || ''}`} onClose={() => setModal(null)}>
-          <Field label="Descripción" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Descripción del gasto" />
-          <div className="form-row">
-            <Field label="Importe (€)" value={form.amount} onChange={v => setForm(f => ({ ...f, amount: v }))} type="number" min="0" step="0.01" />
-            <Field label="Fecha" value={form.date} onChange={v => setForm(f => ({ ...f, date: v }))} type="date" />
-          </div>
-          <div className="form-actions">
-            <button className="btn" onClick={() => setModal(null)}>Cancelar</button>
-            <button className="btn btn-primary" onClick={handleSave}>✓ Guardar</button>
-          </div>
-        </Modal>
-      )}
-    </div>
-  )
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  TAB: AHORRO E INVERSIÓN
-// ═══════════════════════════════════════════════════════════════
-function TabAhorro({ monthData, updateMonth }) {
-  const [modal, setModal] = useState(false)
-  const [editing, setEditing] = useState(null)
-  const [form, setForm] = useState({ name: '', amount: '' })
-  const sv = monthData?.savings || {}
-
-  const STD_FIELDS = [
-    { key: 'vacation', label: '🏖️ Ahorro vacaciones', color: '#185FA5' },
-    { key: 'home', label: '🏠 Ahorro hogar', color: '#1D9E75' },
-    { key: 'emergency', label: '🛟 Fondo de emergencia', color: '#D85A30' },
-    { key: 'investment', label: '📈 Inversión', color: '#7F77DD' },
-  ]
-  const others = sv.others || []
-  const stdTotal = STD_FIELDS.reduce((s, f) => s + (Number(sv[f.key]) || 0), 0)
-  const othersTotal = others.reduce((s, i) => s + (Number(i.amount) || 0), 0)
-  const grandTotal = stdTotal + othersTotal
-  const setField = (key, val) => updateMonth(md => ({ ...md, savings: { ...(md.savings || {}), [key]: Number(val) || 0 } }))
-
-  const handleSave = () => {
-    if (!form.name || !form.amount) return
-    const item = { id: editing || genId(), name: form.name, amount: Number(form.amount) }
-    updateMonth(md => ({
-      ...md, savings: {
-        ...(md.savings || {}),
-        others: editing ? (md.savings?.others || []).map(x => x.id === editing ? item : x) : [...(md.savings?.others || []), item]
-      }
-    }))
-    setModal(false)
-  }
-
-  return (
-    <div className="fade-in">
-      <div className="card" style={{ marginBottom: 14 }}>
-        <div className="card-header">
-          <div className="card-header-left">
-            <span className="card-icon">🎯</span>
-            <div className="card-title">Ahorro e inversión mensual</div>
-          </div>
-          <span className="card-total" style={{ color: CLR.savings }}>{fmt(stdTotal)}</span>
-        </div>
-        <div className="card-body">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 10 }}>
-            {STD_FIELDS.map(f => (
-              <div key={f.key}>
-                <label className="form-label">{f.label}</label>
-                <input className="form-input" type="number" min="0" step="0.01" placeholder="0,00"
-                  value={sv[f.key] || ''} onChange={e => setField(f.key, e.target.value)} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <AccordionSection icon="➕" title="Otros ahorros / objetivos" total={othersTotal} color={CLR.savings} colorBg={CLR.savBg}
-        onAdd={() => { setEditing(null); setForm({ name: '', amount: '' }); setModal(true) }} addLabel="Objetivo">
-        {others.length === 0 ? <EmptyState icon="🎯" text="Sin otros objetivos de ahorro" /> :
-          <div className="line-items">
-            {others.map(o => <LineItem key={o.id} name={o.name} amount={o.amount} color={CLR.savings}
-              onEdit={() => { setEditing(o.id); setForm({ name: o.name, amount: String(o.amount) }); setModal(true) }}
-              onDelete={() => updateMonth(md => ({ ...md, savings: { ...md.savings, others: md.savings.others.filter(x => x.id !== o.id) } }))} />)}
-          </div>}
-      </AccordionSection>
-
-      <div className="card">
-        <div className="card-body" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontWeight: 600, color: 'var(--text-muted)', fontSize: 13 }}>TOTAL AHORRO E INVERSIÓN</span>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 600, color: CLR.savings }}>{fmt(grandTotal)}</span>
-        </div>
-      </div>
-
-      {modal && (
-        <Modal title={`${editing ? 'Editar' : 'Añadir'} objetivo de ahorro`} onClose={() => setModal(false)}>
-          <Field label="Nombre del objetivo" value={form.name} onChange={v => setForm(f => ({ ...f, name: v }))} placeholder="Ej: Ahorro coche, Viaje Japón..." />
-          <Field label="Importe mensual (€)" value={form.amount} onChange={v => setForm(f => ({ ...f, amount: v }))} type="number" min="0" step="0.01" />
-          <div className="form-actions">
-            <button className="btn" onClick={() => setModal(false)}>Cancelar</button>
-            <button className="btn btn-primary" onClick={handleSave}>✓ Guardar</button>
-          </div>
-        </Modal>
-      )}
-    </div>
-  )
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  TAB: GRÁFICOS
-// ═══════════════════════════════════════════════════════════════
-function TabGraficos({ allMonthsData, year, month }) {
-  const [selMonth, setSelMonth] = useState(month)
-
-  const selMd = allMonthsData[`${year}-${selMonth}`]
-  const selTotals = computeTotals(selMd, year, selMonth)
-
-  const annualData = useMemo(() => MONTHS_S.map((name, i) => {
-    const m = i + 1
-    const md = allMonthsData[`${year}-${m}`]
-    const t = computeTotals(md, year, m)
-    return { name, ingresos: t.income, 'G. Fijos': t.fixed, 'G. Variables': t.varExp, Ocio: t.leisure, Ahorro: t.savings, total: t.total }
-  }), [allMonthsData, year])
-
-  const monthBreakdown = [
-    { name: 'G. Fijos', value: selTotals.fixed, fill: CLR.fixed },
-    { name: 'G. Variables', value: selTotals.varExp, fill: CLR.varExp },
-    { name: 'Ocio', value: selTotals.leisure, fill: CLR.leisure },
-    { name: 'Hijos', value: selTotals.children, fill: CLR.child },
-    { name: 'Otros', value: selTotals.other, fill: CLR.other },
-    { name: 'Ahorro', value: selTotals.savings, fill: CLR.savings },
-  ].filter(x => x.value > 0)
-
-  const barData = [
-    { name: 'Ingresos', value: selTotals.income, fill: CLR.income },
-    ...monthBreakdown,
-    { name: 'SALDO', value: selTotals.balance, fill: selTotals.balance >= 0 ? CLR.income : CLR.fixed },
-  ]
-
-  const TT_STYLE = { background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 12 }
-
-  return (
-    <div className="fade-in">
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-        <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>Mes detallado:</span>
-        <select className="form-input" style={{ width: 160 }} value={selMonth} onChange={e => setSelMonth(Number(e.target.value))}>
-          {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
-        </select>
-      </div>
-
-      {/* Chart 1: Month bars */}
-      <div className="card chart-full">
-        <div className="card-body">
-          <div className="chart-title">📊 Ingresos vs. Gastos — {MONTHS[selMonth - 1]} {year}</div>
-          <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={barData} layout="vertical" margin={{ left: 80, right: 20 }}>
-              <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--border)" />
-              <XAxis type="number" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false}
-                tickFormatter={v => v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v} />
-              <YAxis type="category" dataKey="name" tick={{ fill: 'var(--text)', fontSize: 12 }} axisLine={false} tickLine={false} width={80} />
-              <Tooltip formatter={(v) => fmt(v)} contentStyle={TT_STYLE} />
-              <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-                {barData.map((d, i) => <Cell key={i} fill={d.fill} />)}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Chart 2: Annual */}
-      <div className="card chart-full">
-        <div className="card-body">
-          <div className="chart-title">📈 Evolución anual — {year}</div>
-          <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={annualData} barGap={2} barCategoryGap="25%">
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-              <XAxis dataKey="name" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false}
-                tickFormatter={v => v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v} />
-              <Tooltip formatter={(v) => fmt(v)} contentStyle={TT_STYLE} />
-              <Legend wrapperStyle={{ fontSize: 12 }} />
-              <Bar dataKey="ingresos" name="Ingresos" fill={CLR.income} radius={[3, 3, 0, 0]} />
-              <Bar dataKey="total" name="Gastos totales" fill={CLR.fixed} radius={[3, 3, 0, 0]} />
-              <Bar dataKey="Ahorro" name="Ahorro" fill={CLR.savings} radius={[3, 3, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Chart 3: Pie */}
-      <div className="chart-grid">
-        <div className="card">
-          <div className="card-body">
-            <div className="chart-title">🥧 Distribución gastos — {MONTHS[selMonth - 1]}</div>
-            {monthBreakdown.length > 0 ? (
-              <>
-                <ResponsiveContainer width="100%" height={220}>
-                  <PieChart>
-                    <Pie data={monthBreakdown} dataKey="value" cx="50%" cy="50%" outerRadius={85} strokeWidth={0} paddingAngle={2}
-                      label={({ name, percent }) => `${name} ${Math.round(percent * 100)}%`}
-                      labelLine={{ stroke: 'var(--border)', strokeWidth: 1 }}>
-                      {monthBreakdown.map((d, i) => <Cell key={i} fill={d.fill} />)}
-                    </Pie>
-                    <Tooltip formatter={(v) => fmt(v)} contentStyle={TT_STYLE} />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="chart-legend" style={{ justifyContent: 'center' }}>
-                  {monthBreakdown.map((d, i) => (
-                    <div key={i} className="legend-item">
-                      <span className="legend-dot" style={{ background: d.fill }} />
-                      <span>{d.name}: {fmt(d.value)}</span>
-                    </div>
-                  ))}
-                </div>
-              </>
-            ) : <EmptyState icon="📊" text="Sin datos de gastos para este mes" />}
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="card-body">
-            <div className="chart-title">📋 Resumen acumulado {year}</div>
-            <table className="summary-table">
-              <thead><tr><th>Mes</th><th className="amount-col">Ingresos</th><th className="amount-col">Gastos</th><th className="amount-col">Saldo</th></tr></thead>
-              <tbody>
-                {annualData.filter(d => d.ingresos > 0 || d.total > 0).map((d, i) => (
-                  <tr key={i}>
-                    <td>{d.name}</td>
-                    <td className="amount-col" style={{ color: CLR.income }}>{fmt(d.ingresos)}</td>
-                    <td className="amount-col" style={{ color: CLR.fixed }}>{fmt(d.total)}</td>
-                    <td className="amount-col" style={{ color: d.ingresos - d.total >= 0 ? CLR.income : CLR.fixed }}>{fmt(d.ingresos - d.total)}</td>
-                  </tr>
-                ))}
-                {(() => {
-                  const totInc = annualData.reduce((s, d) => s + d.ingresos, 0)
-                  const totGas = annualData.reduce((s, d) => s + d.total, 0)
-                  return (
-                    <tr className="total-row">
-                      <td>TOTAL</td>
-                      <td className="amount-col" style={{ color: CLR.income }}>{fmt(totInc)}</td>
-                      <td className="amount-col" style={{ color: CLR.fixed }}>{fmt(totGas)}</td>
-                      <td className="amount-col" style={{ color: totInc - totGas >= 0 ? CLR.income : CLR.fixed }}>{fmt(totInc - totGas)}</td>
-                    </tr>
-                  )
-                })()}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  TAB: AJUSTES
-// ═══════════════════════════════════════════════════════════════
-function TabAjustes({ store, setStore }) {
-  const { settings, users } = store
-  const [addUserModal, setAddUserModal] = useState(false)
-  const [newUserName, setNewUserName] = useState('')
-  const [newUserColor, setNewUserColor] = useState(THEME_COLORS[0])
-
-  const updSetting = (key, val) => setStore(s => ({ ...s, settings: { ...s.settings, [key]: val } }))
-
-  const exportData = () => {
-    const json = JSON.stringify(store, null, 2)
-    const blob = new Blob([json], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `CFH_backup_${new Date().toISOString().slice(0, 10)}.json`
-    a.click()
-    URL.revokeObjectURL(url)
-  }
-
-  const importData = (e) => {
-    const file = e.target.files[0]
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = (ev) => {
-      try {
-        const data = JSON.parse(ev.target.result)
-        if (data.users && data.data) { setStore(data); alert('✅ Datos importados correctamente') }
-        else alert('❌ Archivo no válido')
-      } catch { alert('❌ Error al leer el archivo') }
+function TabHijos(_ref12) {
+  var _CHILD_CATS$find;
+  var monthData = _ref12.monthData,
+    updateMonth = _ref12.updateMonth;
+  var _useState37 = useState(false),
+    _useState38 = _slicedToArray(_useState37, 2),
+    addChildModal = _useState38[0],
+    setAddChildModal = _useState38[1];
+  var _useState39 = useState(''),
+    _useState40 = _slicedToArray(_useState39, 2),
+    childName = _useState40[0],
+    setChildName = _useState40[1];
+  var _useState41 = useState(null),
+    _useState42 = _slicedToArray(_useState41, 2),
+    modal = _useState42[0],
+    setModal = _useState42[1]; // { childId, catKey }
+  var _useState43 = useState(null),
+    _useState44 = _slicedToArray(_useState43, 2),
+    editing = _useState44[0],
+    setEditing = _useState44[1];
+  var _useState45 = useState({
+      name: '',
+      amount: '',
+      date: ''
+    }),
+    _useState46 = _slicedToArray(_useState45, 2),
+    form = _useState46[0],
+    setForm = _useState46[1];
+  var children = (monthData === null || monthData === void 0 ? void 0 : monthData.children) || [];
+  var addChild = function addChild() {
+    if (!childName.trim()) return;
+    var child = {
+      id: genId(),
+      name: childName.trim(),
+      clothing: [],
+      food: [],
+      education: [],
+      treats: [],
+      leisure: []
+    };
+    updateMonth(function (md) {
+      return _objectSpread(_objectSpread({}, md), {}, {
+        children: [].concat(_toConsumableArray(md.children || []), [child])
+      });
+    });
+    setChildName('');
+    setAddChildModal(false);
+  };
+  var delChild = function delChild(id) {
+    return updateMonth(function (md) {
+      return _objectSpread(_objectSpread({}, md), {}, {
+        children: md.children.filter(function (c) {
+          return c.id !== id;
+        })
+      });
+    });
+  };
+  var openAdd = function openAdd(childId, catKey) {
+    setEditing(null);
+    setForm({
+      name: '',
+      amount: '',
+      date: today.toISOString().split('T')[0]
+    });
+    setModal({
+      childId: childId,
+      catKey: catKey
+    });
+  };
+  var openEdit = function openEdit(childId, catKey, item) {
+    setEditing(item.id);
+    setForm({
+      name: item.name,
+      amount: String(item.amount),
+      date: item.date || ''
+    });
+    setModal({
+      childId: childId,
+      catKey: catKey
+    });
+  };
+  var handleSave = function handleSave() {
+    if (!form.name || !form.amount) return;
+    var item = {
+      id: editing || genId(),
+      name: form.name,
+      amount: Number(form.amount),
+      date: form.date
+    };
+    updateMonth(function (md) {
+      return _objectSpread(_objectSpread({}, md), {}, {
+        children: md.children.map(function (c) {
+          return c.id === modal.childId ? _objectSpread(_objectSpread({}, c), {}, _defineProperty({}, modal.catKey, editing ? c[modal.catKey].map(function (x) {
+            return x.id === editing ? item : x;
+          }) : [].concat(_toConsumableArray(c[modal.catKey] || []), [item]))) : c;
+        })
+      });
+    });
+    setModal(null);
+  };
+  var delItem = function delItem(childId, catKey, itemId) {
+    return updateMonth(function (md) {
+      return _objectSpread(_objectSpread({}, md), {}, {
+        children: md.children.map(function (c) {
+          return c.id === childId ? _objectSpread(_objectSpread({}, c), {}, _defineProperty({}, catKey, c[catKey].filter(function (x) {
+            return x.id !== itemId;
+          }))) : c;
+        })
+      });
+    });
+  };
+  var childTotal = function childTotal(child) {
+    return CHILD_CATS.reduce(function (s, cat) {
+      return s + (child[cat.key] || []).reduce(function (ss, i) {
+        return ss + (Number(i.amount) || 0);
+      }, 0);
+    }, 0);
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "fade-in"
+  }, children.length === 0 ? /*#__PURE__*/React.createElement("div", {
+    className: "card",
+    style: {
+      marginBottom: 14
     }
-    reader.readAsText(file)
-  }
-
-  const addUser = () => {
-    if (!newUserName.trim()) return
-    const newUser = { id: genId(), name: newUserName.trim(), color: newUserColor }
-    setStore(s => ({ ...s, users: [...s.users, newUser] }))
-    setNewUserName(''); setAddUserModal(false)
-  }
-
-  const delUser = (id) => {
-    if (users.length <= 1) return alert('Debe haber al menos un usuario.')
-    setStore(s => ({ ...s, users: s.users.filter(u => u.id !== id), currentUser: s.currentUser === id ? s.users[0].id : s.currentUser, data: Object.fromEntries(Object.entries(s.data).filter(([k]) => k !== id)) }))
-  }
-
-  const handlePhotoUpload = (e) => {
-    const file = e.target.files[0]
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = (ev) => updSetting('familyPhoto', ev.target.result)
-    reader.readAsDataURL(file)
-  }
-
-  return (
-    <div className="fade-in">
-      <div className="settings-grid">
-        <div className="card">
-          <div className="card-header"><div className="card-header-left"><span className="card-icon">👨‍👩‍👧‍👦</span><div className="card-title">Familia</div></div></div>
-          <div className="card-body">
-            <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 16 }}>
-              <div style={{ width: 56, height: 56, borderRadius: '50%', background: settings.primaryColor, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', cursor: 'pointer', border: '2px dashed var(--border)' }}
-                onClick={() => document.getElementById('photo-upload').click()}>
-                {settings.familyPhoto ? <img src={settings.familyPhoto} alt="Familia" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> :
-                  <span style={{ fontSize: 22 }}>🏠</span>}
-              </div>
-              <div style={{ flex: 1 }}>
-                <Field label="Nombre de la familia">
-                  <input className="form-input" value={settings.familyName} onChange={e => updSetting('familyName', e.target.value)} placeholder="Familia..." />
-                </Field>
-              </div>
-              <input id="photo-upload" type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhotoUpload} />
-            </div>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="card-header"><div className="card-header-left"><span className="card-icon">🎨</span><div className="card-title">Apariencia</div></div></div>
-          <div className="card-body">
-            <div className="form-field">
-              <div className="form-label">Tema</div>
-              <div style={{ display: 'flex', gap: 8 }}>
-                {['light', 'dark'].map(t => (
-                  <button key={t} className={`btn ${settings.theme === t ? 'btn-primary' : ''}`} onClick={() => updSetting('theme', t)}>
-                    {t === 'light' ? '☀️ Claro' : '🌙 Oscuro'}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="form-field">
-              <div className="form-label">Color principal</div>
-              <div className="color-swatches">
-                {THEME_COLORS.map(c => (
-                  <div key={c} className={`color-swatch ${settings.primaryColor === c ? 'selected' : ''}`}
-                    style={{ background: c }} onClick={() => updSetting('primaryColor', c)} />
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="card-header"><div className="card-header-left"><span className="card-icon">👥</span><div className="card-title">Usuarios</div></div>
-            <button className="btn btn-sm" onClick={() => setAddUserModal(true)}>+ Añadir</button>
-          </div>
-          <div className="card-body">
-            {users.map(u => (
-              <div key={u.id} className="line-item">
-                <div className="line-item-left">
-                  <div style={{ width: 28, height: 28, borderRadius: '50%', background: u.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 11, fontWeight: 600 }}>
-                    {u.name.slice(0, 2).toUpperCase()}
-                  </div>
-                  <span className="line-item-name">{u.name}</span>
-                  {u.id === store.currentUser && <span className="badge" style={{ background: CLR.incomeBg, color: CLR.income, fontSize: 10 }}>Activo</span>}
-                </div>
-                <div className="line-item-right">
-                  <button className="icon-btn danger" onClick={() => delUser(u.id)}>🗑️</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="card-header"><div className="card-header-left"><span className="card-icon">💾</span><div className="card-title">Copia de seguridad</div></div></div>
-          <div className="card-body">
-            <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 16 }}>Exporta todos tus datos en un archivo JSON. Importa un backup previo para restaurar.</p>
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              <button className="btn btn-primary" onClick={exportData}>⬇️ Exportar backup</button>
-              <label className="btn" style={{ cursor: 'pointer' }}>
-                ⬆️ Importar backup
-                <input type="file" accept=".json" style={{ display: 'none' }} onChange={importData} />
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {addUserModal && (
-        <Modal title="Añadir usuario" onClose={() => setAddUserModal(false)}>
-          <Field label="Nombre del usuario" value={newUserName} onChange={setNewUserName} placeholder="Ej: María, Papá..." />
-          <div className="form-field">
-            <div className="form-label">Color</div>
-            <div className="color-swatches">
-              {THEME_COLORS.map(c => <div key={c} className={`color-swatch ${newUserColor === c ? 'selected' : ''}`} style={{ background: c }} onClick={() => setNewUserColor(c)} />)}
-            </div>
-          </div>
-          <div className="form-actions">
-            <button className="btn" onClick={() => setAddUserModal(false)}>Cancelar</button>
-            <button className="btn btn-primary" onClick={addUser}>✓ Añadir</button>
-          </div>
-        </Modal>
-      )}
-    </div>
-  )
-}
-
-// ═══════════════════════════════════════════════════════════════
-//  MAIN APP
-// ═══════════════════════════════════════════════════════════════
-function App() {
-  const [store, setStore] = useState(() => loadStore() || DEFAULT_STORE)
-  const [tab, setTab] = useState('resumen')
-  const [showSetup, setShowSetup] = useState(false)
-  const fileInputRef = useRef(null)
-  const [deferredPrompt, setDeferredPrompt] = useState(null)
-
-  useEffect(() => {
-    if (window.deferredInstallPrompt) setDeferredPrompt(window.deferredInstallPrompt)
-    const handler = (e) => { e.preventDefault(); setDeferredPrompt(e); window.deferredInstallPrompt = e }
-    const pwaReady = () => { if (window.deferredInstallPrompt) setDeferredPrompt(window.deferredInstallPrompt) }
-    window.addEventListener('beforeinstallprompt', handler)
-    window.addEventListener('pwa-listo', pwaReady)
-    window.addEventListener('appinstalled', () => { setDeferredPrompt(null); window.deferredInstallPrompt = null })
-    return () => { window.removeEventListener('beforeinstallprompt', handler); window.removeEventListener('pwa-listo', pwaReady) }
-  }, [])
-
-  const installApp = () => {
-    if (!deferredPrompt) return
-    deferredPrompt.prompt()
-    deferredPrompt.userChoice.then(() => { setDeferredPrompt(null); window.deferredInstallPrompt = null })
-  }
-
-  const { settings, users, currentUser, selectedYear, selectedMonth, data } = store
-  const userData = data[currentUser] || {}
-  const monthKey = `${selectedYear}-${selectedMonth}`
-  const monthData = userData[monthKey]
-  const totals = useMemo(() => computeTotals(monthData, selectedYear, selectedMonth), [monthData, selectedYear, selectedMonth])
-
-  // Apply theme
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', settings.theme)
-    document.documentElement.style.setProperty('--teal', settings.primaryColor)
-    document.documentElement.style.setProperty('--teal-dark', settings.primaryColor)
-    document.documentElement.style.setProperty('--bg-sidebar-active', settings.primaryColor)
-  }, [settings.theme, settings.primaryColor])
-
-  // Save to localStorage
-  useEffect(() => { localStorage.setItem(STORE_KEY, JSON.stringify(store)) }, [store])
-
-  // Initialize month
-  useEffect(() => {
-    if (!monthData) {
-      const prev = Object.keys(userData).sort().filter(k => k < monthKey).pop()
-      const prevMd = prev ? userData[prev] : null
-      const newMd = buildEmptyMonth(prevMd)
-      setStore(s => ({
-        ...s,
-        data: { ...s.data, [s.currentUser]: { ...userData, [monthKey]: newMd } }
-      }))
-      setShowSetup(true)
-    } else if (!monthData.initialized && !showSetup) {
-      setShowSetup(true)
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "card-body",
+    style: {
+      textAlign: 'center',
+      padding: '32px'
     }
-  }, [monthKey, currentUser])
-
-  const updateMonth = useCallback((updater) => {
-    setStore(s => {
-      const ud = s.data[s.currentUser] || {}
-      const key = `${s.selectedYear}-${s.selectedMonth}`
-      return { ...s, data: { ...s.data, [s.currentUser]: { ...ud, [key]: updater(ud[key] || {}) } } }
-    })
-  }, [])
-
-  const handleSetupSave = (fixedData) => {
-    updateMonth(md => ({ ...md, ...fixedData, initialized: true }))
-    setShowSetup(false)
-  }
-
-  const prevMonth = () => {
-    setStore(s => {
-      let m = s.selectedMonth - 1, y = s.selectedYear
-      if (m < 1) { m = 12; y-- }
-      return { ...s, selectedYear: y, selectedMonth: m }
-    })
-  }
-
-  const nextMonth = () => {
-    setStore(s => {
-      let m = s.selectedMonth + 1, y = s.selectedYear
-      if (m > 12) { m = 1; y++ }
-      return { ...s, selectedYear: y, selectedMonth: m }
-    })
-  }
-
-  const NAV = [
-    { id: 'resumen', label: 'Resumen', icon: '🏠', group: 'Principal' },
-    { id: 'ingresos', label: 'Ingresos', icon: '💰', group: 'Finanzas' },
-    { id: 'fijos', label: 'G. Fijos', icon: '🔒', group: 'Finanzas' },
-    { id: 'variables', label: 'G. Variables', icon: '📊', group: 'Finanzas' },
-    { id: 'ocio', label: 'Ocio', icon: '🎭', group: 'Finanzas' },
-    { id: 'hijos', label: 'Hijos', icon: '👶', group: 'Finanzas' },
-    { id: 'otros', label: 'Otros Gastos', icon: '📦', group: 'Finanzas' },
-    { id: 'ahorro', label: 'Ahorro', icon: '🎯', group: 'Finanzas' },
-    { id: 'graficos', label: 'Gráficos', icon: '📈', group: 'Análisis' },
-    { id: 'ajustes', label: 'Ajustes', icon: '⚙️', group: 'Configuración' },
-  ]
-
-  const groups = [...new Set(NAV.map(n => n.group))]
-
-  const PAGE_TITLES = {
-    resumen: { title: 'Resumen', sub: 'Vista general del mes' },
-    ingresos: { title: 'Ingresos', sub: 'Nóminas y extras' },
-    fijos: { title: 'Gastos Fijos', sub: 'Hipoteca, préstamos, seguros' },
-    variables: { title: 'Gastos Variables', sub: 'Luz, agua, supermercado...' },
-    ocio: { title: 'Ocio', sub: 'Entretenimiento y restauración' },
-    hijos: { title: 'Hijos', sub: 'Gastos por hijo/a' },
-    otros: { title: 'Otros Gastos', sub: 'Regalos y eventos' },
-    ahorro: { title: 'Ahorro e Inversión', sub: 'Fondos y objetivos' },
-    graficos: { title: 'Gráficos', sub: 'Visualización de datos' },
-    ajustes: { title: 'Ajustes', sub: 'Configuración de la app' },
-  }
-
-  const currentUser_obj = users.find(u => u.id === currentUser) || users[0]
-
-  return (
-    <div className="app-layout">
-      {/* SIDEBAR */}
-      <aside className="sidebar">
-        <div className="sidebar-brand">
-          <div className="sidebar-brand-logo">CFH</div>
-          <div className="sidebar-brand-name">Control Financiero<br />Hogar</div>
-          {settings.familyName && <div className="sidebar-brand-family">{settings.familyName}</div>}
-        </div>
-
-        <div className="sidebar-month-selector">
-          <div className="sidebar-month-label">Período activo</div>
-          <div className="year-nav">
-            <button className="month-nav-btn" onClick={() => setStore(s => ({ ...s, selectedYear: s.selectedYear - 1 }))}>‹</button>
-            <span style={{ fontSize: 12, color: '#e2e8f0', fontWeight: 500 }}>{selectedYear}</span>
-            <button className="month-nav-btn" onClick={() => setStore(s => ({ ...s, selectedYear: s.selectedYear + 1 }))}>›</button>
-          </div>
-          <div className="month-nav" style={{ marginTop: 4 }}>
-            <button className="month-nav-btn" onClick={prevMonth}>‹</button>
-            <span className="month-nav-current">{MONTHS[selectedMonth - 1]}</span>
-            <button className="month-nav-btn" onClick={nextMonth}>›</button>
-          </div>
-        </div>
-
-        <div className="sidebar-balance">
-          <div className="balance-label">Saldo del mes</div>
-          <div className={`balance-value ${totals.balance >= 0 ? 'balance-positive' : 'balance-negative'}`}>
-            {fmt(totals.balance)}
-          </div>
-        </div>
-
-        <nav className="sidebar-nav">
-          {groups.map(group => (
-            <div key={group}>
-              <div className="nav-group-label">{group}</div>
-              {NAV.filter(n => n.group === group).map(n => (
-                <button key={n.id} className={`nav-item ${tab === n.id ? 'active' : ''}`} onClick={() => setTab(n.id)}>
-                  <span className="nav-item-icon">{n.icon}</span>
-                  <span>{n.label}</span>
-                </button>
-              ))}
-            </div>
-          ))}
-        </nav>
-
-        {/* User switcher */}
-        {users.length > 1 && (
-          <div style={{ padding: '12px 16px', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-            <div className="sidebar-month-label">Usuario</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 6 }}>
-              {users.map(u => (
-                <button key={u.id} className={`nav-item ${currentUser === u.id ? 'active' : ''}`}
-                  onClick={() => setStore(s => ({ ...s, currentUser: u.id }))}>
-                  <div style={{ width: 18, height: 18, borderRadius: '50%', background: u.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 9, fontWeight: 700 }}>
-                    {u.name.slice(0, 2).toUpperCase()}
-                  </div>
-                  <span>{u.name}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-      </aside>
-
-      {/* MAIN */}
-      <div className="main-content">
-        <header className="main-header">
-          <div>
-            <div className="header-title">{PAGE_TITLES[tab]?.title}</div>
-            <div className="header-subtitle">{MONTHS[selectedMonth - 1]} {selectedYear} · {PAGE_TITLES[tab]?.sub}</div>
-          </div>
-          <div className="header-actions">
-            {deferredPrompt && (
-              <button className="header-btn primary" onClick={installApp}>📲 Instalar CFH</button>
-            )}
-            {!monthData?.initialized && (
-              <button className="header-btn" onClick={() => setShowSetup(true)}>⚙️ Configurar mes</button>
-            )}
-            <button className="header-btn" onClick={() => {
-              const json = JSON.stringify(store, null, 2)
-              const blob = new Blob([json], { type: 'application/json' })
-              const url = URL.createObjectURL(blob)
-              const a = document.createElement('a'); a.href = url
-              a.download = `CFH_backup_${new Date().toISOString().slice(0, 10)}.json`; a.click()
-              URL.revokeObjectURL(url)
-            }}>💾 Backup</button>
-          </div>
-        </header>
-
-        <main className="page">
-          {tab === 'resumen' && (
-            <TabResumen monthData={monthData} totals={totals} year={selectedYear} month={selectedMonth} allMonthsData={userData} />
-          )}
-          {tab === 'ingresos' && <TabIngresos monthData={monthData} updateMonth={updateMonth} />}
-          {tab === 'fijos' && <TabGastosFijos monthData={monthData} updateMonth={updateMonth} year={selectedYear} month={selectedMonth} />}
-          {tab === 'variables' && <TabGastosVariables monthData={monthData} updateMonth={updateMonth} />}
-          {tab === 'ocio' && <TabOcio monthData={monthData} updateMonth={updateMonth} />}
-          {tab === 'hijos' && <TabHijos monthData={monthData} updateMonth={updateMonth} />}
-          {tab === 'otros' && <TabOtrosGastos monthData={monthData} updateMonth={updateMonth} />}
-          {tab === 'ahorro' && <TabAhorro monthData={monthData} updateMonth={updateMonth} />}
-          {tab === 'graficos' && <TabGraficos allMonthsData={userData} year={selectedYear} month={selectedMonth} />}
-          {tab === 'ajustes' && <TabAjustes store={store} setStore={setStore} />}
-        </main>
-
-        <nav className="mobile-nav">
-          {NAV.map(n => (
-            <button key={n.id}
-              className={`mobile-nav-item ${tab === n.id ? 'active' : ''}`}
-              onClick={() => setTab(n.id)}>
-              <span className="mobile-nav-icon">{n.icon}</span>
-              <span className="mobile-nav-label">{n.label}</span>
-            </button>
-          ))}
-        </nav>
-
-      </div>
-
-      {/* SETUP MODAL */}
-      {showSetup && (
-        <SetupModal
-          month={selectedMonth}
-          year={selectedYear}
-          monthData={monthData}
-          onSave={handleSetupSave}
-          onSkip={() => { updateMonth(md => ({ ...md, initialized: true })); setShowSetup(false) }}
-        />
-      )}
-    </div>
-  )
-}
-
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-  </script>
-</body>
-</html>
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 40,
+      marginBottom: 12
+    }
+  }, "\uD83D\uDC76"), /*#__PURE__*/React.crea
