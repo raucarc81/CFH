@@ -982,7 +982,8 @@ function buildEmptyMonth(prev) {
       home: 0,
       emergency: 0,
       investment: 0,
-      others: []
+      others: [],
+      patrimony: prev?.savings?.patrimony?.map(p => ({...p, id: genId()})) || []
     }
   };
 }
@@ -3233,6 +3234,12 @@ function TabAhorro({
     name: '',
     amount: ''
   });
+  const [patModal, setPatModal] = useState(false);
+  const [patEditing, setPatEditing] = useState(null);
+  const [patForm, setPatForm] = useState({
+    name: '',
+    amount: ''
+  });
   const sv = monthData?.savings || {};
   const STD_FIELDS = [{
     key: 'vacation',
@@ -3255,6 +3262,8 @@ function TabAhorro({
   const stdTotal = STD_FIELDS.reduce((s, f) => s + (Number(sv[f.key]) || 0), 0);
   const othersTotal = others.reduce((s, i) => s + (Number(i.amount) || 0), 0);
   const grandTotal = stdTotal + othersTotal;
+  const patrimony = sv.patrimony || [];
+  const patrimonyTotal = patrimony.reduce((s, p) => s + (Number(p.amount) || 0), 0);
   const setField = (key, val) => updateMonth(md => ({
     ...md,
     savings: {
@@ -3262,6 +3271,24 @@ function TabAhorro({
       [key]: Number(val) || 0
     }
   }));
+  const handlePatSave = () => {
+    if (!patForm.name || !patForm.amount) return;
+    const item = {
+      id: patEditing || genId(),
+      name: patForm.name,
+      amount: Number(patForm.amount)
+    };
+    updateMonth(md => ({
+      ...md,
+      savings: {
+        ...(md.savings || {}),
+        patrimony: patEditing
+          ? (md.savings?.patrimony || []).map(x => x.id === patEditing ? item : x)
+          : [...(md.savings?.patrimony || []), item]
+      }
+    }));
+    setPatModal(false);
+  };
   const handleSave = () => {
     if (!form.name || !form.amount) return;
     const item = {
@@ -3358,29 +3385,78 @@ function TabAhorro({
         others: md.savings.others.filter(x => x.id !== o.id)
       }
     }))
-  })))), /*#__PURE__*/React.createElement("div", {
+  })))), React.createElement(AccordionSection, {
+    icon: "\uD83C\uDFE6",
+    title: "Patrimonio / Ahorros ya existentes",
+    total: patrimonyTotal,
+    color: '#185FA5',
+    colorBg: '#E6F1FB',
+    defaultOpen: true,
+    onAdd: () => {
+      setPatEditing(null);
+      setPatForm({ name: '', amount: '' });
+      setPatModal(true);
+    },
+    addLabel: "A\xF1adir"
+  }, React.createElement('div', {
+    style: {
+      background: 'var(--blue-light)',
+      borderRadius: 7,
+      padding: '8px 12px',
+      fontSize: 12,
+      color: 'var(--blue)',
+      marginBottom: 10,
+      display: 'flex',
+      gap: 6,
+      alignItems: 'flex-start'
+    }
+  }, React.createElement('span', null, '\uD83D\uDCA1'), React.createElement('span', null, 'Estos ahorros ya exist\xEDan y no restan del saldo del mes. Solo computan en tu patrimonio neto total.')),
+  patrimony.length === 0
+    ? React.createElement(EmptyState, { icon: '\uD83C\uDFE6', text: 'Sin patrimonio registrado a\xFAn. A\xF1ade cuentas, fondos, dep\xF3sitos...' })
+    : React.createElement('div', { className: 'line-items' },
+        patrimony.map(p => React.createElement(LineItem, {
+          key: p.id,
+          name: p.name,
+          amount: p.amount,
+          color: '#185FA5',
+          onEdit: () => {
+            setPatEditing(p.id);
+            setPatForm({ name: p.name, amount: String(p.amount) });
+            setPatModal(true);
+          },
+          onDelete: () => updateMonth(md => ({
+            ...md,
+            savings: {
+              ...md.savings,
+              patrimony: (md.savings?.patrimony || []).filter(x => x.id !== p.id)
+            }
+          }))
+        }))
+      )
+  ), /*#__PURE__*/React.createElement("div", {
     className: "card"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "card-body",
-    style: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center'
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontWeight: 600,
-      color: 'var(--text-muted)',
-      fontSize: 13
-    }
-  }, "TOTAL AHORRO E INVERSI\xD3N"), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontFamily: 'var(--font-mono)',
-      fontSize: 20,
-      fontWeight: 600,
-      color: CLR.savings
-    }
-  }, fmt(grandTotal)))), modal && /*#__PURE__*/React.createElement(Modal, {
+    className: "card-body"
+  }, React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: 6 } },
+    React.createElement('div', {
+      style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 6 }
+    },
+      React.createElement('span', { style: { color: 'var(--text-muted)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 500 } }, 'Ahorro del mes'),
+      React.createElement('span', { style: { fontFamily: 'var(--font-mono)', fontSize: 16, fontWeight: 600, color: CLR.savings } }, fmt(grandTotal))
+    ),
+    patrimonyTotal > 0 && React.createElement('div', {
+      style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 6 }
+    },
+      React.createElement('span', { style: { color: 'var(--text-muted)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 500 } }, 'Patrimonio acumulado'),
+      React.createElement('span', { style: { fontFamily: 'var(--font-mono)', fontSize: 16, fontWeight: 600, color: '#185FA5' } }, fmt(patrimonyTotal))
+    ),
+    React.createElement('div', {
+      style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 8, borderTop: '1px solid var(--border)', marginTop: 2 }
+    },
+      React.createElement('span', { style: { fontWeight: 600, color: 'var(--text-muted)', fontSize: 13 } }, 'RIQUEZA NETA TOTAL'),
+      React.createElement('span', { style: { fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 600, color: CLR.savings } }, fmt(grandTotal + patrimonyTotal))
+    )
+  ))), modal && /*#__PURE__*/React.createElement(Modal, {
     title: `${editing ? 'Editar' : 'Añadir'} objetivo de ahorro`,
     onClose: () => setModal(false)
   }, /*#__PURE__*/React.createElement(Field, {
@@ -3409,7 +3485,26 @@ function TabAhorro({
   }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: handleSave
-  }, "\u2713 Guardar"))));
+  }, "\u2713 Guardar"))), patModal && React.createElement(Modal, {
+    title: `${patEditing ? 'Editar' : 'A\xF1adir'} patrimonio`,
+    onClose: () => setPatModal(false)
+  }, React.createElement(Field, {
+    label: 'Descripci\xF3n',
+    value: patForm.name,
+    onChange: v => setPatForm(f => ({...f, name: v})),
+    placeholder: 'Ej: Cuenta corriente, Fondo indexado, Dep\xF3sito, Acciones...'
+  }), React.createElement(Field, {
+    label: 'Importe (\u20AC)',
+    value: patForm.amount,
+    onChange: v => setPatForm(f => ({...f, amount: v})),
+    type: 'number',
+    min: '0',
+    step: '0.01',
+    placeholder: '0,00'
+  }), React.createElement('div', { className: 'form-actions' },
+    React.createElement('button', { className: 'btn', onClick: () => setPatModal(false) }, 'Cancelar'),
+    React.createElement('button', { className: 'btn btn-primary', onClick: handlePatSave }, '\u2713 Guardar')
+  )));
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -3653,7 +3748,11 @@ function TabAjustes({
     };
     setStore(s => ({
       ...s,
-      users: [...s.users, newUser]
+      users: [...s.users, newUser],
+      data: {
+        ...s.data,
+        [newUser.id]: {}
+      }
     }));
     setNewUserName('');
     setAddUserModal(false);
@@ -3797,7 +3896,13 @@ function TabAjustes({
     className: "card-body"
   }, users.map(u => /*#__PURE__*/React.createElement("div", {
     key: u.id,
-    className: "line-item"
+    className: "line-item",
+    style: {
+      cursor: u.id !== store.currentUser ? 'pointer' : 'default',
+      borderRadius: 8,
+      transition: 'background 0.15s'
+    },
+    onClick: () => u.id !== store.currentUser && setStore(s => ({...s, currentUser: u.id}))
   }, /*#__PURE__*/React.createElement("div", {
     className: "line-item-left"
   }, /*#__PURE__*/React.createElement("div", {
@@ -3811,7 +3916,10 @@ function TabAjustes({
       justifyContent: 'center',
       color: 'white',
       fontSize: 11,
-      fontWeight: 600
+      fontWeight: 600,
+      flexShrink: 0,
+      outline: u.id === store.currentUser ? `2px solid ${u.color}` : 'none',
+      outlineOffset: 2
     }
   }, u.name.slice(0, 2).toUpperCase()), /*#__PURE__*/React.createElement("span", {
     className: "line-item-name"
@@ -3824,9 +3932,25 @@ function TabAjustes({
     }
   }, "Activo")), /*#__PURE__*/React.createElement("div", {
     className: "line-item-right"
-  }, /*#__PURE__*/React.createElement("button", {
+  }, u.id !== store.currentUser && /*#__PURE__*/React.createElement("button", {
+    className: "btn btn-sm",
+    style: {
+      fontSize: 11,
+      padding: '3px 10px',
+      color: 'var(--teal)',
+      borderColor: 'var(--teal)',
+      background: 'var(--teal-light)'
+    },
+    onClick: e => {
+      e.stopPropagation();
+      setStore(s => ({...s, currentUser: u.id}));
+    }
+  }, "\u2714 Activar"), /*#__PURE__*/React.createElement("button", {
     className: "icon-btn danger",
-    onClick: () => delUser(u.id)
+    onClick: e => {
+      e.stopPropagation();
+      delUser(u.id);
+    }
   }, "\uD83D\uDDD1\uFE0F")))))), /*#__PURE__*/React.createElement("div", {
     className: "card"
   }, /*#__PURE__*/React.createElement("div", {
@@ -3973,7 +4097,7 @@ function App() {
         data: {
           ...s.data,
           [s.currentUser]: {
-            ...userData,
+            ...(s.data[s.currentUser] || {}),
             [monthKey]: newMd
           }
         }
@@ -4246,7 +4370,39 @@ function App() {
   }, deferredPrompt && /*#__PURE__*/React.createElement("button", {
     className: "header-btn primary",
     onClick: installApp
-  }, "\uD83D\uDCF2 Instalar CFH"), !monthData?.initialized && /*#__PURE__*/React.createElement("button", {
+  }, "\uD83D\uDCF2 Instalar CFH"), users.length > 1 && /*#__PURE__*/React.createElement("button", {
+    className: "header-btn",
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 6,
+      padding: '5px 10px'
+    },
+    onClick: () => setTab('ajustes'),
+    title: "Cambiar usuario"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: 20,
+      height: 20,
+      borderRadius: '50%',
+      background: users.find(u => u.id === currentUser)?.color || 'var(--teal)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: 'white',
+      fontSize: 9,
+      fontWeight: 700,
+      flexShrink: 0
+    }
+  }, (users.find(u => u.id === currentUser)?.name || '').slice(0, 2).toUpperCase()), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 12,
+      maxWidth: 70,
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap'
+    }
+  }, users.find(u => u.id === currentUser)?.name)), !monthData?.initialized && /*#__PURE__*/React.createElement("button", {
     className: "header-btn",
     onClick: () => setShowSetup(true)
   }, "\u2699\uFE0F Configurar mes"), /*#__PURE__*/React.createElement("button", {

@@ -1,4 +1,4 @@
-const CACHE = 'cfh-v5';
+const CACHE = 'cfh-v6';
 self.addEventListener('install', function() { self.skipWaiting(); });
 self.addEventListener('activate', function(e) {
   e.waitUntil(caches.keys().then(function(k) {
