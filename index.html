@@ -880,6 +880,10 @@ function insAmtForMonth(ins, year, month) {
   if (ins.freq === 'semiannual') return diff % 6 === 0 ? Number(ins.amount) || 0 : 0;
   return 0;
 }
+function arrSum(val) {
+  if (Array.isArray(val)) return val.reduce(function(s,i){ return s + (Number(i.amount)||0); }, 0);
+  return Number(val) || 0;
+}
 function computeTotals(md, year, month) {
   if (!md) return {
     income: 0,
@@ -893,15 +897,15 @@ function computeTotals(md, year, month) {
     balance: 0
   };
   const income = (md.incFixed || []).reduce((s, i) => s + (Number(i.amount) || 0), 0) + (md.incExtra || []).reduce((s, i) => s + (Number(i.amount) || 0), 0);
-  const mortg = Number(md.mortgage) || 0;
+  const mortg = arrSum(md.mortgage);
   const loans = (md.loans || []).reduce((s, l) => s + (Number(l.amount) || 0), 0);
   const insur = (md.insurance || []).reduce((s, i) => s + insAmtForMonth(i, year, month), 0);
   const fixOth = (md.fixOthers || []).reduce((s, i) => s + (Number(i.amount) || 0), 0);
   const ve = md.varExp || {};
-  const internet = Number(ve.internet) || 0;
-  const phone = Number(ve.phone) || 0;
+  const internet = arrSum(ve.internet);
+  const phone = arrSum(ve.phone);
   const fixed = mortg + loans + insur + fixOth + internet + phone;
-  const varExp = ['electricity', 'water', 'supermarket', 'petrol', 'gas'].reduce((s, k) => s + (Number(ve[k]) || 0), 0) + (ve.others || []).reduce((s, i) => s + (Number(i.amount) || 0), 0);
+  const varExp = ['electricity', 'water', 'supermarket', 'petrol', 'gas'].reduce((s, k) => s + arrSum(ve[k]), 0) + (ve.others || []).reduce((s, i) => s + (Number(i.amount) || 0), 0);
   const lei = md.leisure || {};
   const leisure = ['entertainment', 'dining', 'treats', 'others'].reduce((s, k) => s + (lei[k] || []).reduce((ss, i) => ss + (Number(i.amount) || 0), 0), 0);
   const children = (md.children || []).reduce((s, child) => s + CHILD_CATS.map(c => c.key).reduce((ss, k) => ss + (child[k] || []).reduce((sss, i) => sss + (Number(i.amount) || 0), 0), 0), 0);
@@ -934,27 +938,24 @@ function buildEmptyMonth(prev) {
       amount: 0
     }],
     incExtra: [],
-    mortgage: prev?.mortgage || 0,
-    loans: prev?.loans?.map(l => ({
-      ...l,
-      id: genId()
-    })) || [],
-    insurance: prev?.insurance?.map(i => ({
-      ...i,
-      id: genId()
-    })) || [],
-    fixOthers: prev?.fixOthers?.map(i => ({
-      ...i,
-      id: genId()
-    })) || [],
+    mortgage: Array.isArray(prev?.mortgage)
+      ? prev.mortgage.map(i => ({...i, id: genId()}))
+      : (prev?.mortgage > 0 ? [{id: genId(), name: 'Hipoteca/Alquiler', amount: prev.mortgage, date: null}] : []),
+    loans: prev?.loans?.map(l => ({...l, id: genId()})) || [],
+    insurance: prev?.insurance?.map(i => ({...i, id: genId()})) || [],
+    fixOthers: prev?.fixOthers?.map(i => ({...i, id: genId()})) || [],
     varExp: {
-      electricity: 0,
-      water: 0,
-      supermarket: 0,
-      internet: prev?.varExp?.internet || 0,
-      phone: prev?.varExp?.phone || 0,
-      petrol: 0,
-      gas: 0,
+      electricity: [],
+      water: [],
+      supermarket: [],
+      internet: Array.isArray(prev?.varExp?.internet)
+        ? prev.varExp.internet.map(i => ({...i, id: genId()}))
+        : (prev?.varExp?.internet > 0 ? [{id: genId(), name: 'Internet', amount: prev.varExp.internet, date: null}] : []),
+      phone: Array.isArray(prev?.varExp?.phone)
+        ? prev.varExp.phone.map(i => ({...i, id: genId()}))
+        : (prev?.varExp?.phone > 0 ? [{id: genId(), name: 'Teléfono', amount: prev.varExp.phone, date: null}] : []),
+      petrol: [],
+      gas: [],
       others: []
     },
     leisure: {
@@ -1997,6 +1998,7 @@ function TabIngresos({
     name: i.name,
     amount: i.amount,
     color: CLR.income,
+    meta: fmtDate(i.date),
     onEdit: () => openEdit('fixed', i),
     onDelete: () => del('fixed', i.id)
   })))), /*#__PURE__*/React.createElement(AccordionSection, {
@@ -2064,7 +2066,7 @@ function TabIngresos({
     min: "0",
     step: "0.01",
     placeholder: "0,00"
-  }), modalType === 'extra' && /*#__PURE__*/React.createElement(Field, {
+  }), /*#__PURE__*/React.createElement(Field, {
     label: "Fecha",
     value: form.date,
     onChange: v => setForm(f => ({
@@ -2092,160 +2094,151 @@ function TabGastosFijos({
   year,
   month
 }) {
-  const [modal, setModal] = useState(null); // 'loan'|'ins'|'other'
+  const [modal, setModal] = useState(null);
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({
-    name: '',
-    amount: '',
-    freq: 'monthly'
-  });
-  const mortgage = Number(monthData?.mortgage) || 0;
+  const [form, setForm] = useState({ name: '', amount: '', freq: 'monthly', date: '' });
+  const mortgages = Array.isArray(monthData?.mortgage) ? monthData.mortgage
+    : (monthData?.mortgage > 0 ? [{id:'_mg', name:'Hipoteca/Alquiler', amount: monthData.mortgage, date:null}] : []);
   const loans = monthData?.loans || [];
   const insurance = monthData?.insurance || [];
   const fixOthers = monthData?.fixOthers || [];
-  const fixInternet = Number(monthData?.varExp?.internet) || 0;
-  const fixPhone = Number(monthData?.varExp?.phone) || 0;
+  const internetItems = Array.isArray(monthData?.varExp?.internet) ? monthData.varExp.internet
+    : (monthData?.varExp?.internet > 0 ? [{id:'_inet', name:'Internet', amount: monthData.varExp.internet, date:null}] : []);
+  const phoneItems = Array.isArray(monthData?.varExp?.phone) ? monthData.varExp.phone
+    : (monthData?.varExp?.phone > 0 ? [{id:'_ph', name:'Tel\u00e9fono', amount: monthData.varExp.phone, date:null}] : []);
+  const mortgTotal = mortgages.reduce((s,i) => s + (Number(i.amount)||0), 0);
   const insTotal = insurance.reduce((s, i) => s + insAmtForMonth(i, year, month), 0);
   const totalLoans = loans.reduce((s, l) => s + (Number(l.amount) || 0), 0);
   const totalOthers = fixOthers.reduce((s, o) => s + (Number(o.amount) || 0), 0);
-  const grandTotal = mortgage + totalLoans + insTotal + totalOthers + fixInternet + fixPhone;
+  const internetTotal = internetItems.reduce((s,i) => s + (Number(i.amount)||0), 0);
+  const phoneTotal = phoneItems.reduce((s,i) => s + (Number(i.amount)||0), 0);
+  const grandTotal = mortgTotal + totalLoans + insTotal + totalOthers + internetTotal + phoneTotal;
   const openAdd = type => {
     setEditing(null);
-    setForm({
-      name: '',
-      amount: '',
-      freq: 'monthly'
-    });
+    setForm({ name: '', amount: '', freq: 'monthly', date: today.toISOString().split('T')[0] });
     setModal(type);
   };
   const openEdit = (type, item) => {
     setEditing(item.id);
-    setForm({
-      name: item.name,
-      amount: String(item.amount),
-      freq: item.freq || 'monthly'
-    });
+    setForm({ name: item.name, amount: String(item.amount), freq: item.freq || 'monthly', date: item.date || '' });
     setModal(type);
   };
   const handleSave = () => {
     if (!form.name || !form.amount) return;
-    if (modal === 'loan') {
-      const item = {
-        id: editing || genId(),
-        name: form.name,
-        amount: Number(form.amount)
-      };
-      updateMonth(md => ({
-        ...md,
-        loans: editing ? md.loans.map(x => x.id === editing ? item : x) : [...(md.loans || []), item]
-      }));
+    const item = { id: editing || genId(), name: form.name, amount: Number(form.amount), date: form.date };
+    if (modal === 'mortgage') {
+      updateMonth(md => {
+        const arr = Array.isArray(md.mortgage) ? md.mortgage : (md.mortgage > 0 ? [{id:'_mg', name:'Hipoteca/Alquiler', amount: md.mortgage, date:null}] : []);
+        return {...md, mortgage: editing ? arr.map(x => x.id === editing ? item : x) : [...arr, item]};
+      });
+    } else if (modal === 'internet') {
+      updateMonth(md => {
+        const arr = Array.isArray(md.varExp?.internet) ? md.varExp.internet : (md.varExp?.internet > 0 ? [{id:'_inet', name:'Internet', amount: md.varExp.internet, date:null}] : []);
+        return {...md, varExp: {...(md.varExp||{}), internet: editing ? arr.map(x => x.id === editing ? item : x) : [...arr, item]}};
+      });
+    } else if (modal === 'phone') {
+      updateMonth(md => {
+        const arr = Array.isArray(md.varExp?.phone) ? md.varExp.phone : (md.varExp?.phone > 0 ? [{id:'_ph', name:'Tel\u00e9fono', amount: md.varExp.phone, date:null}] : []);
+        return {...md, varExp: {...(md.varExp||{}), phone: editing ? arr.map(x => x.id === editing ? item : x) : [...arr, item]}};
+      });
+    } else if (modal === 'loan') {
+      updateMonth(md => ({...md, loans: editing ? md.loans.map(x => x.id === editing ? item : x) : [...(md.loans||[]), item]}));
     } else if (modal === 'ins') {
-      const item = {
-        id: editing || genId(),
-        name: form.name,
-        amount: Number(form.amount),
-        freq: form.freq,
-        sy: year,
-        sm: month
-      };
-      updateMonth(md => ({
-        ...md,
-        insurance: editing ? md.insurance.map(x => x.id === editing ? item : x) : [...(md.insurance || []), item]
-      }));
+      const ins = {...item, freq: form.freq, sy: year, sm: month};
+      updateMonth(md => ({...md, insurance: editing ? md.insurance.map(x => x.id === editing ? ins : x) : [...(md.insurance||[]), ins]}));
     } else {
-      const item = {
-        id: editing || genId(),
-        name: form.name,
-        amount: Number(form.amount)
-      };
-      updateMonth(md => ({
-        ...md,
-        fixOthers: editing ? md.fixOthers.map(x => x.id === editing ? item : x) : [...(md.fixOthers || []), item]
-      }));
+      updateMonth(md => ({...md, fixOthers: editing ? md.fixOthers.map(x => x.id === editing ? item : x) : [...(md.fixOthers||[]), item]}));
     }
     setModal(null);
   };
-  const del = (type, id) => updateMonth(md => ({
-    ...md,
-    [type]: md[type].filter(x => x.id !== id)
-  }));
+  const del = (type, id) => {
+    if (type === 'mortgage') {
+      updateMonth(md => { const arr = Array.isArray(md.mortgage) ? md.mortgage : []; return {...md, mortgage: arr.filter(x => x.id !== id)}; });
+    } else if (type === 'internet') {
+      updateMonth(md => { const arr = Array.isArray(md.varExp?.internet) ? md.varExp.internet : []; return {...md, varExp: {...(md.varExp||{}), internet: arr.filter(x => x.id !== id)}}; });
+    } else if (type === 'phone') {
+      updateMonth(md => { const arr = Array.isArray(md.varExp?.phone) ? md.varExp.phone : []; return {...md, varExp: {...(md.varExp||{}), phone: arr.filter(x => x.id !== id)}}; });
+    } else {
+      updateMonth(md => ({...md, [type]: md[type].filter(x => x.id !== id)}));
+    }
+  };
   const freqLabel = f => FREQ_OPTS.find(o => o.value === f)?.label || f;
   return /*#__PURE__*/React.createElement("div", {
     className: "fade-in section-grid"
   }, /*#__PURE__*/React.createElement(AccordionSection, {
     icon: "\uD83C\uDFE0",
     title: "Hipoteca / Alquiler",
-    total: mortgage,
+    total: mortgTotal,
     color: CLR.fixed,
-    colorBg: CLR.fixedBg
-  }, /*#__PURE__*/React.createElement("div", {
+    colorBg: CLR.fixedBg,
+    onAdd: () => openAdd('mortgage'),
+    addLabel: "Hipoteca"
+  }, mortgages.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
+    icon: "\uD83C\uDFE0",
+    text: "Sin hipoteca o alquiler registrado"
+  }) : /*#__PURE__*/React.createElement("div", {
     className: "line-items"
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: 8
-    }
-  }, /*#__PURE__*/React.createElement("input", {
-    className: "form-input",
-    type: "number",
-    min: "0",
-    step: "0.01",
-    placeholder: "Importe mensual",
-    style: {
-      maxWidth: 180
-    },
-    value: mortgage || '',
-    onChange: e => updateMonth(md => ({
-      ...md,
-      mortgage: Number(e.target.value) || 0
-    }))
-  }), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: 12,
-      color: 'var(--text-muted)'
-    }
-  }, "\u20AC/mes")))), /*#__PURE__*/React.createElement(AccordionSection, {
-    icon: "\uD83D\uDCF6",
-    title: "Servicios fijos",
-    total: fixInternet + fixPhone,
+  }, mortgages.map(m => /*#__PURE__*/React.createElement(LineItem, {
+    key: m.id,
+    name: m.name,
+    amount: m.amount,
     color: CLR.fixed,
-    colorBg: CLR.fixedBg
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {display:"flex", flexDirection:"column", gap:12}
-  }, /*#__PURE__*/React.createElement("div", null,
-    /*#__PURE__*/React.createElement("label", {className:"form-label"}, "\uD83C\uDF10 Internet"),
-    /*#__PURE__*/React.createElement("div", {style:{display:"flex",alignItems:"center",gap:8}},
-      /*#__PURE__*/React.createElement("input", {
-        className:"form-input", type:"number", min:"0", step:"0.01",
-        placeholder:"0,00", style:{maxWidth:180},
-        value: fixInternet || "",
-        onChange: function(e){ updateMonth(function(md){ return Object.assign({},md,{varExp:Object.assign({},(md.varExp||{}),{internet:Number(e.target.value)||0})}); }); }
-      }),
-      /*#__PURE__*/React.createElement("span",{style:{fontSize:12,color:"var(--text-muted)"}},"\u20AC/mes")
-    )
-  ), /*#__PURE__*/React.createElement("div", null,
-    /*#__PURE__*/React.createElement("label", {className:"form-label"}, "\uD83D\uDCF1 Telef\xF3nia"),
-    /*#__PURE__*/React.createElement("div", {style:{display:"flex",alignItems:"center",gap:8}},
-      /*#__PURE__*/React.createElement("input", {
-        className:"form-input", type:"number", min:"0", step:"0.01",
-        placeholder:"0,00", style:{maxWidth:180},
-        value: fixPhone || "",
-        onChange: function(e){ updateMonth(function(md){ return Object.assign({},md,{varExp:Object.assign({},(md.varExp||{}),{phone:Number(e.target.value)||0})}); }); }
-      }),
-      /*#__PURE__*/React.createElement("span",{style:{fontSize:12,color:"var(--text-muted)"}},"\u20AC/mes")
-    )
-  ))), /*#__PURE__*/React.createElement(AccordionSection, {
+    meta: fmtDate(m.date),
+    onEdit: () => openEdit('mortgage', m),
+    onDelete: () => del('mortgage', m.id)
+  })))), /*#__PURE__*/React.createElement(AccordionSection, {
+    icon: "\uD83C\uDF10",
+    title: "Internet",
+    total: internetTotal,
+    color: CLR.fixed,
+    colorBg: CLR.fixedBg,
+    onAdd: () => openAdd('internet'),
+    addLabel: "L\u00ednea"
+  }, internetItems.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
+    icon: "\uD83C\uDF10",
+    text: "Sin l\u00edneas de internet"
+  }) : /*#__PURE__*/React.createElement("div", {
+    className: "line-items"
+  }, internetItems.map(i => /*#__PURE__*/React.createElement(LineItem, {
+    key: i.id,
+    name: i.name,
+    amount: i.amount,
+    color: CLR.fixed,
+    meta: fmtDate(i.date),
+    onEdit: () => openEdit('internet', i),
+    onDelete: () => del('internet', i.id)
+  })))), /*#__PURE__*/React.createElement(AccordionSection, {
+    icon: "\uD83D\uDCF1",
+    title: "Telefon\u00eda",
+    total: phoneTotal,
+    color: CLR.fixed,
+    colorBg: CLR.fixedBg,
+    onAdd: () => openAdd('phone'),
+    addLabel: "L\u00ednea"
+  }, phoneItems.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
+    icon: "\uD83D\uDCF1",
+    text: "Sin l\u00edneas de tel\u00e9fono"
+  }) : /*#__PURE__*/React.createElement("div", {
+    className: "line-items"
+  }, phoneItems.map(i => /*#__PURE__*/React.createElement(LineItem, {
+    key: i.id,
+    name: i.name,
+    amount: i.amount,
+    color: CLR.fixed,
+    meta: fmtDate(i.date),
+    onEdit: () => openEdit('phone', i),
+    onDelete: () => del('phone', i.id)
+  })))), /*#__PURE__*/React.createElement(AccordionSection, {
     icon: "\uD83C\uDFE6",
-    title: "Pr\xE9stamos",
+    title: "Pr\u00e9stamos",
     total: totalLoans,
     color: CLR.fixed,
     colorBg: CLR.fixedBg,
     onAdd: () => openAdd('loan'),
-    addLabel: "Pr\xE9stamo"
+    addLabel: "Pr\u00e9stamo"
   }, loans.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
     icon: "\uD83C\uDFE6",
-    text: "Sin pr\xE9stamos registrados"
+    text: "Sin pr\u00e9stamos registrados"
   }) : /*#__PURE__*/React.createElement("div", {
     className: "line-items"
   }, loans.map(l => /*#__PURE__*/React.createElement(LineItem, {
@@ -2253,6 +2246,7 @@ function TabGastosFijos({
     name: l.name,
     amount: l.amount,
     color: CLR.fixed,
+    meta: fmtDate(l.date),
     onEdit: () => openEdit('loan', l),
     onDelete: () => del('loans', l.id)
   })))), /*#__PURE__*/React.createElement(AccordionSection, {
@@ -2275,6 +2269,7 @@ function TabGastosFijos({
       name: i.name,
       amount: amt,
       color: amt > 0 ? CLR.fixed : 'var(--text-muted)',
+      meta: fmtDate(i.date),
       badge: {
         text: freqLabel(i.freq),
         bg: amt > 0 ? CLR.fixedBg : 'var(--bg)',
@@ -2301,69 +2296,46 @@ function TabGastosFijos({
     name: o.name,
     amount: o.amount,
     color: CLR.fixed,
+    meta: fmtDate(o.date),
     onEdit: () => openEdit('other', o),
     onDelete: () => del('fixOthers', o.id)
   })))), /*#__PURE__*/React.createElement("div", {
     className: "card"
   }, /*#__PURE__*/React.createElement("div", {
     className: "card-body",
-    style: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center'
-    }
+    style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' }
   }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontWeight: 600,
-      color: 'var(--text-muted)',
-      fontSize: 13
-    }
+    style: { fontWeight: 600, color: 'var(--text-muted)', fontSize: 13 }
   }, "TOTAL GASTOS FIJOS"), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontFamily: 'var(--font-mono)',
-      fontSize: 20,
-      fontWeight: 600,
-      color: CLR.fixed
-    }
+    style: { fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 600, color: CLR.fixed }
   }, fmt(grandTotal)))), modal && /*#__PURE__*/React.createElement(Modal, {
-    title: `${editing ? 'Editar' : 'Añadir'} ${modal === 'loan' ? 'préstamo' : modal === 'ins' ? 'seguro' : 'gasto fijo'}`,
+    title: editing ? 'Editar' : ('A\u00f1adir ' + (modal === 'loan' ? 'pr\u00e9stamo' : modal === 'ins' ? 'seguro' : modal === 'mortgage' ? 'hipoteca/alquiler' : modal === 'internet' ? 'l\u00ednea de internet' : modal === 'phone' ? 'l\u00ednea de tel\u00e9fono' : 'gasto fijo')),
     onClose: () => setModal(null)
   }, /*#__PURE__*/React.createElement(Field, {
     label: "Nombre",
     value: form.name,
-    onChange: v => setForm(f => ({
-      ...f,
-      name: v
-    })),
-    placeholder: "Nombre descriptivo"
-  }), /*#__PURE__*/React.createElement(Field, {
+    onChange: v => setForm(f => ({...f, name: v})),
+    placeholder: modal === 'mortgage' ? 'Ej: Hipoteca BBVA, Alquiler...' : modal === 'internet' ? 'Ej: Fibra casa, Oficina...' : modal === 'phone' ? 'Ej: L\u00ednea Ra\u00fal, L\u00ednea Mar\u00eda...' : 'Nombre descriptivo'
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "form-row"
+  }, /*#__PURE__*/React.createElement(Field, {
     label: "Importe (\u20AC)",
     value: form.amount,
-    onChange: v => setForm(f => ({
-      ...f,
-      amount: v
-    })),
-    type: "number",
-    min: "0",
-    step: "0.01"
-  }), modal === 'ins' && /*#__PURE__*/React.createElement(SelectField, {
+    onChange: v => setForm(f => ({...f, amount: v})),
+    type: "number", min: "0", step: "0.01"
+  }), /*#__PURE__*/React.createElement(Field, {
+    label: "Fecha",
+    value: form.date,
+    onChange: v => setForm(f => ({...f, date: v})),
+    type: "date"
+  })), modal === 'ins' && /*#__PURE__*/React.createElement(SelectField, {
     label: "Periodicidad",
     value: form.freq,
-    onChange: v => setForm(f => ({
-      ...f,
-      freq: v
-    })),
+    onChange: v => setForm(f => ({...f, freq: v})),
     options: FREQ_OPTS
   }), modal === 'ins' && form.freq !== 'monthly' && /*#__PURE__*/React.createElement("div", {
-    style: {
-      padding: '10px 14px',
-      background: 'var(--amber-light)',
-      borderRadius: 7,
-      fontSize: 12,
-      color: 'var(--text-muted)',
-      marginBottom: 12
-    }
-  }, "\u26A0\uFE0F Este seguro solo computar\xE1 en el c\xE1lculo de este mes (", MONTHS[month - 1], "), y cada ", form.freq === 'quarterly' ? '3 meses' : form.freq === 'semiannual' ? '6 meses' : 'año', " desde esta fecha."), /*#__PURE__*/React.createElement("div", {
+    style: { padding: '10px 14px', background: 'var(--amber-light)', borderRadius: 7, fontSize: 12, color: 'var(--text-muted)', marginBottom: 12 }
+  }, "\u26A0\uFE0F Este seguro solo computar\u00e1 en el c\u00e1lculo de este mes (", MONTHS[month - 1], "), y cada ", form.freq === 'quarterly' ? '3 meses' : form.freq === 'semiannual' ? '6 meses' : 'a\u00f1o', " desde esta fecha."), /*#__PURE__*/React.createElement("div", {
     className: "form-actions"
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn",
@@ -2381,115 +2353,84 @@ function TabGastosVariables({
   monthData,
   updateMonth
 }) {
-  const [modal, setModal] = useState(false);
+  const [modal, setModal] = useState(null);
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({
-    name: '',
-    amount: ''
-  });
+  const [form, setForm] = useState({ name: '', amount: '', date: '' });
   const ve = monthData?.varExp || {};
-  const VAR_FIELDS = [{
-    key: 'electricity',
-    label: '💡 Luz',
-    icon: '💡'
-  }, {
-    key: 'water',
-    label: '💧 Agua',
-    icon: '💧'
-  }, {
-    key: 'supermarket',
-    label: '🛒 Supermercado',
-    icon: '🛒'
-  }, {
-    key: 'petrol',
-    label: '⛽ Gasolina',
-    icon: '⛽'
-  }, {
-    key: 'gas',
-    label: '🔥 Gas',
-    icon: '🔥'
-  }];
+  const VAR_FIELDS = [
+    { key: 'electricity', label: 'Luz', icon: '\uD83D\uDCA1', placeholder: 'Ej: Endesa mayo...' },
+    { key: 'water',       label: 'Agua', icon: '\uD83D\uDCA7', placeholder: 'Ej: Canal de Isabel II...' },
+    { key: 'supermarket', label: 'Supermercado', icon: '\uD83D\uDED2', placeholder: 'Ej: Mercadona semanal...' },
+    { key: 'petrol',      label: 'Gasolina', icon: '\u26FD', placeholder: 'Ej: Repostaje 1...' },
+    { key: 'gas',         label: 'Gas', icon: '\uD83D\uDD25', placeholder: 'Ej: Gas Natural mayo...' }
+  ];
+  const toArr = (val) => Array.isArray(val) ? val : (val > 0 ? [{id:'_v', name:'', amount: val, date:null}] : []);
   const others = ve.others || [];
-  const standardTotal = VAR_FIELDS.reduce((s, f) => s + (Number(ve[f.key]) || 0), 0);
+  const stdTotal = VAR_FIELDS.reduce((s, f) => s + arrSum(ve[f.key]), 0);
   const othersTotal = others.reduce((s, i) => s + (Number(i.amount) || 0), 0);
-  const grandTotal = standardTotal + othersTotal;
-  const setField = (key, val) => updateMonth(md => ({
-    ...md,
-    varExp: {
-      ...(md.varExp || {}),
-      [key]: Number(val) || 0
-    }
-  }));
-  const handleSave = () => {
-    if (!form.name || !form.amount) return;
-    const item = {
-      id: editing || genId(),
-      name: form.name,
-      amount: Number(form.amount)
-    };
-    updateMonth(md => ({
-      ...md,
-      varExp: {
-        ...(md.varExp || {}),
-        others: editing ? (md.varExp?.others || []).map(x => x.id === editing ? item : x) : [...(md.varExp?.others || []), item]
-      }
-    }));
-    setModal(false);
+  const grandTotal = stdTotal + othersTotal;
+  const openAdd = key => {
+    setEditing(null);
+    setForm({ name: '', amount: '', date: today.toISOString().split('T')[0] });
+    setModal(key);
   };
+  const openEdit = (key, item) => {
+    setEditing(item.id);
+    setForm({ name: item.name, amount: String(item.amount), date: item.date || '' });
+    setModal(key);
+  };
+  const handleSave = () => {
+    if (!form.amount) return;
+    const item = { id: editing || genId(), name: form.name || modal, amount: Number(form.amount), date: form.date };
+    if (modal === 'others') {
+      updateMonth(md => ({...md, varExp: {...(md.varExp||{}), others: editing ? (md.varExp?.others||[]).map(x => x.id === editing ? item : x) : [...(md.varExp?.others||[]), item]}}));
+    } else {
+      updateMonth(md => {
+        const arr = Array.isArray(md.varExp?.[modal]) ? md.varExp[modal] : (md.varExp?.[modal] > 0 ? [{id:'_v', name:'', amount: md.varExp[modal], date:null}] : []);
+        return {...md, varExp: {...(md.varExp||{}), [modal]: editing ? arr.map(x => x.id === editing ? item : x) : [...arr, item]}};
+      });
+    }
+    setModal(null);
+  };
+  const delVar = (key, id) => updateMonth(md => ({
+    ...md,
+    varExp: {...(md.varExp||{}), [key]: (Array.isArray(md.varExp?.[key]) ? md.varExp[key] : []).filter(x => x.id !== id)}
+  }));
   return /*#__PURE__*/React.createElement("div", {
-    className: "fade-in"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "card",
-    style: {
-      marginBottom: 14
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "card-header"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "card-header-left"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "card-icon"
-  }, "\uD83D\uDCCA"), /*#__PURE__*/React.createElement("div", {
-    className: "card-title"
-  }, "Gastos variables est\xE1ndar")), /*#__PURE__*/React.createElement("span", {
-    className: "card-total",
-    style: {
-      color: CLR.varExp
-    }
-  }, fmt(standardTotal))), /*#__PURE__*/React.createElement("div", {
-    className: "card-body"
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-      gap: 10
-    }
-  }, VAR_FIELDS.map(f => /*#__PURE__*/React.createElement("div", {
-    key: f.key
-  }, /*#__PURE__*/React.createElement("label", {
-    className: "form-label"
-  }, f.label), /*#__PURE__*/React.createElement("input", {
-    className: "form-input",
-    type: "number",
-    min: "0",
-    step: "0.01",
-    placeholder: "0,00",
-    value: ve[f.key] || '',
-    onChange: e => setField(f.key, e.target.value)
-  })))))), /*#__PURE__*/React.createElement(AccordionSection, {
+    className: "fade-in section-grid"
+  }, VAR_FIELDS.map(f => {
+    const items = toArr(ve[f.key]).filter(i => i.id !== '_v' || i.amount > 0);
+    const fieldTotal = items.reduce((s,i) => s + (Number(i.amount)||0), 0);
+    return /*#__PURE__*/React.createElement(AccordionSection, {
+      key: f.key,
+      icon: f.icon,
+      title: f.label,
+      total: fieldTotal,
+      color: CLR.varExp,
+      colorBg: CLR.varBg,
+      onAdd: () => openAdd(f.key),
+      addLabel: f.label
+    }, items.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
+      icon: f.icon,
+      text: 'Sin entradas de ' + f.label.toLowerCase() + ' este mes'
+    }) : /*#__PURE__*/React.createElement("div", {
+      className: "line-items"
+    }, items.map(i => /*#__PURE__*/React.createElement(LineItem, {
+      key: i.id,
+      name: i.name || f.label,
+      amount: i.amount,
+      color: CLR.varExp,
+      meta: fmtDate(i.date),
+      onEdit: () => openEdit(f.key, i),
+      onDelete: () => delVar(f.key, i.id)
+    }))));
+  }), /*#__PURE__*/React.createElement(AccordionSection, {
     icon: "\u2795",
     title: "Otros gastos variables",
     total: othersTotal,
     color: CLR.varExp,
     colorBg: CLR.varBg,
-    onAdd: () => {
-      setEditing(null);
-      setForm({
-        name: '',
-        amount: ''
-      });
-      setModal(true);
-    },
+    onAdd: () => { setEditing(null); setForm({ name: '', amount: '', date: today.toISOString().split('T')[0] }); setModal('others'); },
     addLabel: "Otro variable"
   }, others.length === 0 ? /*#__PURE__*/React.createElement(EmptyState, {
     icon: "\u2795",
@@ -2501,69 +2442,43 @@ function TabGastosVariables({
     name: o.name,
     amount: o.amount,
     color: CLR.varExp,
-    onEdit: () => {
-      setEditing(o.id);
-      setForm({
-        name: o.name,
-        amount: String(o.amount)
-      });
-      setModal(true);
-    },
-    onDelete: () => updateMonth(md => ({
-      ...md,
-      varExp: {
-        ...md.varExp,
-        others: md.varExp.others.filter(x => x.id !== o.id)
-      }
-    }))
+    meta: fmtDate(o.date),
+    onEdit: () => openEdit('others', o),
+    onDelete: () => delVar('others', o.id)
   })))), /*#__PURE__*/React.createElement("div", {
     className: "card"
   }, /*#__PURE__*/React.createElement("div", {
     className: "card-body",
-    style: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center'
-    }
+    style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' }
   }, /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontWeight: 600,
-      color: 'var(--text-muted)',
-      fontSize: 13
-    }
+    style: { fontWeight: 600, color: 'var(--text-muted)', fontSize: 13 }
   }, "TOTAL GASTOS VARIABLES"), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontFamily: 'var(--font-mono)',
-      fontSize: 20,
-      fontWeight: 600,
-      color: CLR.varExp
-    }
+    style: { fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 600, color: CLR.varExp }
   }, fmt(grandTotal)))), modal && /*#__PURE__*/React.createElement(Modal, {
-    title: `${editing ? 'Editar' : 'Añadir'} gasto variable`,
-    onClose: () => setModal(false)
+    title: `${editing ? 'Editar' : 'Añadir'} ${VAR_FIELDS.find(f => f.key === modal)?.label || 'gasto variable'}`,
+    onClose: () => setModal(null)
   }, /*#__PURE__*/React.createElement(Field, {
-    label: "Nombre",
+    label: "Descripci\xF3n (opcional)",
     value: form.name,
-    onChange: v => setForm(f => ({
-      ...f,
-      name: v
-    })),
-    placeholder: "Ej: Parking, Gimnasio..."
-  }), /*#__PURE__*/React.createElement(Field, {
+    onChange: v => setForm(f => ({...f, name: v})),
+    placeholder: VAR_FIELDS.find(f => f.key === modal)?.placeholder || 'Descripci\xF3n...'
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "form-row"
+  }, /*#__PURE__*/React.createElement(Field, {
     label: "Importe (\u20AC)",
     value: form.amount,
-    onChange: v => setForm(f => ({
-      ...f,
-      amount: v
-    })),
-    type: "number",
-    min: "0",
-    step: "0.01"
-  }), /*#__PURE__*/React.createElement("div", {
+    onChange: v => setForm(f => ({...f, amount: v})),
+    type: "number", min: "0", step: "0.01"
+  }), /*#__PURE__*/React.createElement(Field, {
+    label: "Fecha",
+    value: form.date,
+    onChange: v => setForm(f => ({...f, date: v})),
+    type: "date"
+  })), /*#__PURE__*/React.createElement("div", {
     className: "form-actions"
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn",
-    onClick: () => setModal(false)
+    onClick: () => setModal(null)
   }, "Cancelar"), /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: handleSave
