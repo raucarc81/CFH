@@ -3141,7 +3141,8 @@ function TabOtrosGastos({
 // ═══════════════════════════════════════════════════════════════
 function TabAhorro({
   monthData,
-  updateMonth
+  updateMonth,
+  userData
 }) {
   const [modal, setModal] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -3179,6 +3180,15 @@ function TabAhorro({
   const grandTotal = stdTotal + othersTotal;
   const patrimony = sv.patrimony || [];
   const patrimonyTotal = patrimony.reduce((s, p) => s + (Number(p.amount) || 0), 0);
+  // Suma aportaciones de ahorro de TODOS los meses (sin contar patrimony que es un snapshot)
+  const accumulatedSavings = Object.values(userData || {}).reduce((total, md) => {
+    if (!md || !md.savings) return total;
+    const s = md.savings;
+    const monthly = ['vacation', 'home', 'emergency', 'investment']
+      .reduce((acc, k) => acc + (Number(s[k]) || 0), 0)
+      + (s.others || []).reduce((acc, i) => acc + (Number(i.amount) || 0), 0);
+    return total + monthly;
+  }, 0);
   const setField = (key, val) => updateMonth(md => ({
     ...md,
     savings: {
@@ -3354,22 +3364,28 @@ function TabAhorro({
     className: "card-body"
   }, React.createElement('div', { style: { display: 'flex', flexDirection: 'column', gap: 6 } },
     React.createElement('div', {
-      style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 6 }
+      style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 4 }
     },
-      React.createElement('span', { style: { color: 'var(--text-muted)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 500 } }, 'Ahorro del mes'),
-      React.createElement('span', { style: { fontFamily: 'var(--font-mono)', fontSize: 16, fontWeight: 600, color: CLR.savings } }, fmt(grandTotal))
+      React.createElement('span', { style: { color: 'var(--text-muted)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 500 } }, 'Ahorro este mes'),
+      React.createElement('span', { style: { fontFamily: 'var(--font-mono)', fontSize: 15, fontWeight: 600, color: CLR.savings } }, fmt(grandTotal))
+    ),
+    accumulatedSavings !== grandTotal && React.createElement('div', {
+      style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 4 }
+    },
+      React.createElement('span', { style: { color: 'var(--text-muted)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 500 } }, 'Total ahorro acumulado'),
+      React.createElement('span', { style: { fontFamily: 'var(--font-mono)', fontSize: 15, fontWeight: 600, color: CLR.savings } }, fmt(accumulatedSavings))
     ),
     patrimonyTotal > 0 && React.createElement('div', {
-      style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 6 }
+      style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 4 }
     },
-      React.createElement('span', { style: { color: 'var(--text-muted)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 500 } }, 'Patrimonio acumulado'),
-      React.createElement('span', { style: { fontFamily: 'var(--font-mono)', fontSize: 16, fontWeight: 600, color: '#185FA5' } }, fmt(patrimonyTotal))
+      React.createElement('span', { style: { color: 'var(--text-muted)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 500 } }, 'Patrimonio'),
+      React.createElement('span', { style: { fontFamily: 'var(--font-mono)', fontSize: 15, fontWeight: 600, color: '#185FA5' } }, fmt(patrimonyTotal))
     ),
     React.createElement('div', {
       style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 8, borderTop: '1px solid var(--border)', marginTop: 2 }
     },
       React.createElement('span', { style: { fontWeight: 600, color: 'var(--text-muted)', fontSize: 13 } }, 'RIQUEZA NETA TOTAL'),
-      React.createElement('span', { style: { fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 600, color: CLR.savings } }, fmt(grandTotal + patrimonyTotal))
+      React.createElement('span', { style: { fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 600, color: CLR.savings } }, fmt(accumulatedSavings + patrimonyTotal))
     )
   ))), modal && /*#__PURE__*/React.createElement(Modal, {
     title: `${editing ? 'Editar' : 'Añadir'} objetivo de ahorro`,
@@ -3646,10 +3662,12 @@ function TabAjustes({
         const data = JSON.parse(ev.target.result);
         if (data.users && data.data) {
           setStore(data);
-          alert('✅ Datos importados correctamente');
-        } else alert('❌ Archivo no válido');
+          localStorage.setItem(STORE_KEY, JSON.stringify(data));
+          alert('✅ Datos importados correctamente. La app se recargará.');
+          setTimeout(() => window.location.reload(), 500);
+        } else alert('❌ Archivo no válido: no contiene la estructura esperada.');
       } catch {
-        alert('❌ Error al leer el archivo');
+        alert('❌ Error al leer el archivo. Comprueba que es un backup CFH válido.');
       }
     };
     reader.readAsText(file);
@@ -3893,19 +3911,16 @@ function TabAjustes({
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn btn-primary",
     onClick: exportData
-  }, "\u2B07\uFE0F Exportar backup"), /*#__PURE__*/React.createElement("label", {
+  }, "\u2B07\uFE0F Exportar backup"), /*#__PURE__*/React.createElement("button", {
     className: "btn",
-    style: {
-      cursor: 'pointer'
+    onClick: () => {
+      const inp = document.createElement('input');
+      inp.type = 'file';
+      inp.accept = '.json';
+      inp.onchange = importData;
+      inp.click();
     }
-  }, "\u2B06\uFE0F Importar backup", /*#__PURE__*/React.createElement("input", {
-    type: "file",
-    accept: ".json",
-    style: {
-      display: 'none'
-    },
-    onChange: importData
-  })))))), addUserModal && /*#__PURE__*/React.createElement(Modal, {
+  }, "\u2B06\uFE0F Importar backup"))))), addUserModal && /*#__PURE__*/React.createElement(Modal, {
     title: "A\xF1adir usuario",
     onClose: () => setAddUserModal(false)
   }, /*#__PURE__*/React.createElement(Field, {
@@ -4375,7 +4390,8 @@ function App() {
     updateMonth: updateMonth
   }), tab === 'ahorro' && /*#__PURE__*/React.createElement(TabAhorro, {
     monthData: monthData,
-    updateMonth: updateMonth
+    updateMonth: updateMonth,
+    userData: userData
   }), tab === 'graficos' && /*#__PURE__*/React.createElement(TabGraficos, {
     allMonthsData: userData,
     year: selectedYear,
