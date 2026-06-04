@@ -4279,8 +4279,19 @@ function App() {
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "header-title"
   }, PAGE_TITLES[tab]?.title), /*#__PURE__*/React.createElement("div", {
-    className: "header-subtitle"
-  }, MONTHS[selectedMonth - 1], " ", selectedYear, " \xB7 ", PAGE_TITLES[tab]?.sub)), /*#__PURE__*/React.createElement("div", {
+    className: "header-subtitle",
+    style: { display: 'flex', alignItems: 'center', gap: 0 }
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: prevMonth,
+    style: { background: 'none', border: 'none', cursor: 'pointer', color: 'var(--teal)', fontSize: 18, padding: '0 4px', lineHeight: 1, fontWeight: 700, touchAction: 'manipulation' }
+  }, "\u2039"), /*#__PURE__*/React.createElement("span", {
+    style: { fontWeight: 600, color: 'var(--text)', fontSize: 13 }
+  }, MONTHS[selectedMonth - 1], "\xA0", selectedYear), /*#__PURE__*/React.createElement("button", {
+    onClick: nextMonth,
+    style: { background: 'none', border: 'none', cursor: 'pointer', color: 'var(--teal)', fontSize: 18, padding: '0 4px', lineHeight: 1, fontWeight: 700, touchAction: 'manipulation' }
+  }, "\u203A"), /*#__PURE__*/React.createElement("span", {
+    style: { color: 'var(--text-muted)', fontSize: 12, marginLeft: 4 }
+  }, "\xB7\xA0", PAGE_TITLES[tab]?.sub))), /*#__PURE__*/React.createElement("div", {
     className: "header-actions"
   }, deferredPrompt && /*#__PURE__*/React.createElement("button", {
     className: "header-btn primary",
